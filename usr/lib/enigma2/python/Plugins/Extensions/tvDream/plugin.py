@@ -42,14 +42,16 @@ import sys
 import shutil
 import ssl
 import glob
-from Tools.LoadPixmap import LoadPixmap
+import json
+	
+# from Tools.LoadPixmap import LoadPixmap
 # from lxml import html
-global isDreamOS, regioni, vid
+global isDreamOS, regioni 
 global skin_path, pluglogo, pngx, pngl, pngs
 
 regioni = False
-
 isDreamOS = False
+
 try:
     from enigma import eMediaDatabase
     isDreamOS = True
@@ -158,7 +160,6 @@ if sslverify:
             if self.hostname:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
-
             
 def getUrl(url):
     try:
@@ -185,25 +186,6 @@ def getUrl(url):
             print('We failed to reach a server.')
             print('Reason: ', e.reason)
             
-# def getUrl(url):
-    # try:
-        # req = Request(url)
-        # req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
-        # # response = urlopen(req)
-        # # response = checkStr(ssl_urlopen(req))
-        # response = checkStr(urlopen(req))
-        # link = response.read()
-        # response.close()
-        # # print("link =", link)
-        # return link
-    # except:
-        # e = URLError #, e:
-        # # print('We failed to open "%s".' % url)
-        # if hasattr(e, 'code'):
-            # print('We failed with error code - %s.' % e.code)
-        # if hasattr(e, 'reason'):
-            # print('We failed to reach a server.')
-            # print('Reason: ', e.reason)
 
 DESKHEIGHT = getDesktop(0).size().height()
 currversion = '1.0'
@@ -214,9 +196,12 @@ pluglogo = plugin_path + '/res/pics/logo.png'
 pngx = plugin_path + '/res/pics/plugins.png'
 pngl = plugin_path + '/res/pics/plugin.png'
 pngs = plugin_path + '/res/pics/setting.png'
+b7 = 'aHR0cHM6Ly9mZWVkLmVudGVydGFpbm1lbnQudHYudGhlcGxhdGZvcm0uZXUvZi9QUjFHaEMvbWVkaWFzZXQtcHJvZC1hbGwtc3RhdGlvbnM='
+host_b7 = base64.b64decode(b7)
 HD = getDesktop(0).size()
 vid = plugin_path + '/vid.txt'
-
+desc_plugin = (_('..:: TiVu Dream Net Player by Lululla %s ::.. ' % currversion))
+name_plugin = (_('TiVuDream'))
 if HD.width() > 1280:
     if isDreamOS:
         skin_path = plugin_path + '/res/skins/fhd/dreamOs/'
@@ -469,6 +454,10 @@ class Mediaset(Screen):
         '''
         on kids and film no work play
         '''
+        
+        self.names.append("Live") 
+        self.urls.append("https://feed.entertainment.tv.theplatform.eu/f/PR1GhC/mediaset-prod-all-stations") 
+        
         self.names.append("Film")
         self.urls.append("http://www.mediasetplay.mediaset.it/film")
         # self.urls.append("https://www.mediasetplay.mediaset.it/browse/film-della-settimana_e5ed8badba6f547001beae4d2")
@@ -498,7 +487,91 @@ class Mediaset(Screen):
         url = self.urls[idx]
         # print('name : ', name)
         # print('url:  ', url)
-        self.session.open(Mediaset2, name, url)
+        
+        if 'Live' in str(name):
+            self.session.open(Mediaset1, name, url)            
+        else:
+            self.session.open(Mediaset2, name, url)
+
+class Mediaset1(Screen):
+    def __init__(self, session, name, url):
+        self.session = session
+        skin = skin_path + 'settings.xml'
+        with open(skin, 'r') as f:
+            self.skin = f.read()
+        self.setup_title = ('TiVuDream')
+        Screen.__init__(self, session)
+        self.setTitle(title_plug)
+        self.name = name
+        self.url = url
+        self.list = []
+        self['text'] = OneSetList([])
+        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['key_green'] = Button(_('Select'))
+        self['key_red'] = Button(_('Back'))
+        self['key_yellow'] = Button(_(''))
+        self["key_blue"] = Button(_(''))
+        self['key_yellow'].hide()
+        self['key_blue'].hide()
+        self.timer = eTimer()
+        self.timer.start(1500, True)
+        if isDreamOS:
+            self.timer_conn = self.timer.timeout.connect(self.search)
+        else:
+            self.timer.callback.append(self.search)
+        self['title'] = Label(title_plug)
+        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
+         'green': self.okRun,
+         'red': self.close,
+         'cancel': self.close}, -2)
+        
+    def search(self):
+        content = getUrl(host_b7)
+        print("content A =", content)
+        self.names = []
+        self.urls = []
+        items = []
+        d = json.loads(content)
+        for i in d:
+              k= i
+              v= d[i]
+              print("key =", k    )
+              print("value=", v   )
+              if k == "entries":
+                      d1 = v
+                      break
+        print("\n\n##########")
+        for a in d1:
+              for i in a:
+                     k= i
+                     v= a[i]
+                     print("key1 =", k    )
+                     print("value1 =", v  )
+                     if "title" in k:
+                             self.names.append(str(v))
+                     if k == "tuningInstruction":
+                             v1 = str(v)
+                             n1 = v1.find("publicUrls", 0)
+                             n2 = v1.find("http", n1)
+                             n3 = v1.find("'", n2)
+                             url = v1[n2:n3]
+                             self.urls.append(url)
+        j = 0
+        for name in self.names:
+                url = self.urls[j]
+                j = j+1
+                pic = " "
+                print("showContent name =", name)
+                print("showContent url =", url)
+        self.urls.append(url)
+        self.names.append(name)
+        showlist(self.names, self['text'])
+      
+    def okRun(self):
+        idx = self["text"].getSelectionIndex()
+        name = self.names[idx]
+        url = self.urls[idx]
+        self.session.open(Playstream2, name, url)
 
 class Mediaset2(Screen):
 
@@ -536,7 +609,6 @@ class Mediaset2(Screen):
     def _gotPageLoad(self):
         url = self.url
         datas = getUrl(url)
-        # print('datas :  ', datas)
         self.names = []
         self.urls = []
         # icount = 0
@@ -665,13 +737,10 @@ class Mediaset2(Screen):
                     self.names.append(name)
             self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
-
-
         else:
              pass
 
     def okRun(self):
-
         idx = self["text"].getSelectionIndex()
         name = self.names[idx]
         url = self.urls[idx]
@@ -1682,7 +1751,6 @@ class Dplay3(Screen):
         except:
             self['info'].setText(_('Nothing ...'))
             pass
-
 '''
 rai end
 '''
@@ -1971,16 +2039,13 @@ class tvCanal(Screen):
             if ("rai" in url.lower()) or ("rai" in name.lower()):
                 regexcat2 = 'liveVideo":{"mediaUrl":"(.*?)"'
                 match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
-                # print("getVideos match2 =", match2)
                 url = match2[0]
                 pic = ""
-                # print(" Here in playVideo url2 =", url)
                 self.session.open(Playstream2, name, url)
             else:
                 n1 = content2.find(".m3u8")
                 n2 = content2.rfind("http", 0, n1)
                 url = content2[n2:(n1+5)]
-                # print("getVideos2 url3 =", url)
                 pic = ""
                 self.session.open(Playstream2, name, url)
         except:
@@ -2016,34 +2081,23 @@ class Playstream2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifica
     def openTest(self):
         url = self.url
         name = self.name
-        # print("Here in Playvid name A =", name)
         name = name.replace(":", "-")
         name = name.replace("&", "-")
         name = name.replace(" ", "-")
         name = name.replace("/", "-")
         name = name.replace("›", "-")
         name = name.replace(",", "-")
-        # print("Here in Playvid name B2 =", name)
         if url is not None:
             url = str(url)
             url = url.replace(":", "%3a")
             url = url.replace("\\", "/")
-            # print("url final= ", url)
             ref = "4097:0:1:0:0:0:0:0:0:0:" + url
-            # print("ref= ", ref)
             sref = eServiceReference(ref)
             sref.setName(self.name)
             self.session.nav.stopService()
             self.session.nav.playService(sref)
         else:
            return
-
-    def openTestX(self):
-        ref = '4097:0:1:0:0:0:0:0:0:0:' + self.url
-        sref = eServiceReference(ref)
-        sref.setName(self.name)
-        self.session.nav.stopService()
-        self.session.nav.playService(sref)
 
     def cancel(self):
         if os.path.exists('/tmp/hls.avi'):
@@ -2077,8 +2131,6 @@ def Plugins(**kwargs):
     ico_path = 'logo.png'
     if not isDreamOS:
         ico_path = plugin_path + '/res/pics/logo.png'
-    desc_plugin = (_('..:: TiVu Dream Net Player by Lululla %s ::.. ' % currversion))
-    name_plugin = (_('TiVuDream'))
     # main_menu = PluginDescriptor(name = name_plugin, description = desc_plugin, where = PluginDescriptor.WHERE_MENU, fnc = StartSetup, needsRestart = True)
     extensions_menu = PluginDescriptor(name = name_plugin, description = desc_plugin, where = PluginDescriptor.WHERE_EXTENSIONSMENU, fnc = main, needsRestart = True)
     result = [PluginDescriptor(name = name_plugin, description = desc_plugin, where = PluginDescriptor.WHERE_PLUGINMENU, icon = ico_path, fnc = main)]
