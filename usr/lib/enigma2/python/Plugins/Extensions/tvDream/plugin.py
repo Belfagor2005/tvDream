@@ -101,7 +101,16 @@ except ImportError:
     # pass
 # else:
     # ssl._create_default_http_context = _create_unverified_http_context
-
+def clear_Title(txt):
+    txt = re.sub('<.+?>', '', txt)
+    txt = txt.replace("&quot;", "\"").replace('()', '').replace("&#038;", "&").replace('&#8211;', ':')
+    txt = txt.replace("&amp;", "&").replace('&#8217;', "'").replace('&#039;', ':').replace('&#;', '\'')
+    txt = txt.replace("&#38;", "&").replace('&#8221;', '"').replace('&#8216;', '"').replace('&#160;', '')
+    txt = txt.replace("&nbsp;", "").replace('&#8220;', '"').replace('\t', ' ').replace('\n', ' ')
+    # txt = txt.replace(":", "-").replace("&", "-").replace(" ", "-")
+    # txt = txt.replace("›", "-").replace(",", "-").replace("/", "-")
+    return txt
+    
 def checkStr(txt):
     if PY3:
         if type(txt) == type(bytes()):
@@ -626,8 +635,7 @@ class Mediaset2(Screen):
             # print ("_gotPageLoad match =", match)
             for url , name in match:
                 pic = " "
-                name = name.replace("&#x27;","'").replace("&amp;","&")
-                name = name.replace('&quot;','"').replace('&#39;',"'") 
+                name = clear_Title(name)
                 url = "http://www.mediasetplay.mediaset.it/fiction/" + url
                 '''
                 http://www.mediasetplay.mediaset.it/programmi-tv/alltogethernow_b100003640
@@ -647,8 +655,7 @@ class Mediaset2(Screen):
             # print ("_gotPageLoad match =", match)
             for url, name in match:
                 pic = " "
-                name = name.replace("&#x27;","'").replace("&amp;","&")
-                name = name.replace('&quot;','"').replace('&#39;',"'")
+                name = clear_Title(name)
                 url = "http://www.mediasetplay.mediaset.it/movie/" + url
                 '''
                 http://www.mediasetplay.mediaset.it/browse/film-per-tutta-la-famiglia_e5e6a15c523eec6001de37eac
@@ -667,7 +674,7 @@ class Mediaset2(Screen):
             # print ("_gotPageLoad match =", match)
             for url , name in match:
                 pic = " "
-                name = name.replace("&#x27;","'").replace("&amp;","&").replace('&quot;','"').replace('&#39;',"'")# url
+                name = clear_Title(name)
                 url = "http://www.mediasetplay.mediaset.it/programmi-tv/" + url
                 '''
                 http://www.mediasetplay.mediaset.it/programmi-tv/alltogethernow_b100003640
@@ -686,8 +693,7 @@ class Mediaset2(Screen):
             # print ("_gotPageLoad match =", match)
             for url, name in match:
                 pic = " "
-                name = name.replace("&#x27;","'").replace("&amp;","&")
-                name = name.replace('&quot;','"').replace('&#39;',"'")
+                name = clear_Title(name)
                 url = "http://www.mediasetplay.mediaset.it/playlist/" + url
                 # print('name : ', name)
                 # print('url:  ', url)
@@ -703,8 +709,7 @@ class Mediaset2(Screen):
             # print ("_gotPageLoad match =", match)
             for url, name in match:
                 pic = " "
-                name = name.replace("&#x27;","'").replace("&amp;","&")
-                name = name.replace('&quot;','"').replace('&#39;',"'") 
+                name = clear_Title(name)                
                 url = "http://www.mediasetplay.mediaset.it/movie/" + url
                 '''
                 http://www.mediasetplay.mediaset.it/programmi-tv/alltogethernow_b100003640
@@ -815,8 +820,7 @@ class Mediaset3(Screen):
             # print ("_gotPageLoad match =", match)
             for url, name  in match:
                 pic = " "
-                name = name.replace("&#x27;","'").replace("&amp;","&")
-                name = name.replace('&quot;','"').replace('&#39;',"'") 
+                name = clear_Title(name)
                 url = "http://www.mediasetplay.mediaset.it/video/" + url
                 # print('name : ', name)
                 # print('url1:  ', url)
@@ -901,8 +905,7 @@ class Mediaset4(Screen):
             # print ("_gotPageLoad match docs=", match)
             for url, name  in match:
                 pic = " "
-                name = name.replace("&#x27;","'").replace("&amp;","&")
-                name = name.replace('&quot;','"').replace('&#39;',"'") #url
+                name = clear_Title(name)
                 url = "https://www.mediasetplay.mediaset.it/video/" + url
                 # print('name : ', name)
                 # print('url1:  ', url)
@@ -1061,8 +1064,9 @@ class tvRai2(Screen):
                     # print ("showContent321 match2 =", match2)
                     url2 = match2[0].replace("json", "html")
                     url3 = "http://www.raiplay.it/video/" + url2
-                    name = name.replace("&#x27;","'").replace("&amp;","&")
-                    name = name.replace('&quot;','"').replace('&#39;',"'")
+                    name = clear_Title(name)
+                    # name = name.replace("&#x27;","'").replace("&amp;","&")
+                    # name = name.replace('&quot;','"').replace('&#39;',"'")
                     # item = name + "###" + url3
                     # items.append(item)
                 # items.sort()
@@ -1440,9 +1444,7 @@ class tvLa2(Screen):
         for url, pic, name in match:
             try:
                 url1 = "http://www.la7.it" + url
-                # name = html.unescape(name)
-                name = name.replace("&#x27;","'").replace("&amp;","&")
-                name = name.replace('&quot;','"').replace('&#39;',"'")
+                name = clear_Title(name)
                 pic1 = "http:" + pic
                 self.names.append(name)
                 self.urls.append(url1)
@@ -1514,9 +1516,7 @@ class tvLa3(Screen):
                 url3 = "http://www.la7.it/" + url1 + "/video" + url2
                 # print("showContent341 url3 =", url3)
                 pic1 = "http:" + pic
-                # name = html.unescape(name)
-                name = name.replace("&#x27;","'").replace("&amp;","&")
-                name = name.replace('&quot;','"').replace('&#39;',"'")
+                name = clear_Title(name)
                 self.names.append(name)
                 self.urls.append(url3)
                 self.pics.append(pic1)
@@ -1656,7 +1656,8 @@ class Dplay2(Screen):
             try:
                 # url1 = "http://it.dplay.com" + url
                 url1 = "http://www.discoveryplus.it" + url
-                name = name.replace("&#x27;","'").replace("&amp;","&").replace('&quot;','"').replace('&#39;',"'")
+                name = clear_Title(name)
+                # name = name.replace("&#x27;","'").replace("&amp;","&").replace('&quot;','"').replace('&#39;',"'")
                 self.names.append(name)
                 self.urls.append(url1)
             except:
@@ -1720,7 +1721,8 @@ class Dplay3(Screen):
             try:
                 # url1 = "http://it.dplay.com" + url
                 url1 = "http://www.discoveryplus.it" + url
-                name = name.replace("&#x27;","'").replace("&amp;","&").replace('&quot;','"').replace('&#39;',"'")
+                name = clear_Title(name)
+                # name = name.replace("&#x27;","'").replace("&amp;","&").replace('&quot;','"').replace('&#39;',"'")
                 self.names.append(name)
                 self.urls.append(url1)
             except:
@@ -2081,12 +2083,9 @@ class Playstream2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifica
     def openTest(self):
         url = self.url
         name = self.name
-        name = name.replace(":", "-")
-        name = name.replace("&", "-")
-        name = name.replace(" ", "-")
-        name = name.replace("/", "-")
-        name = name.replace("›", "-")
-        name = name.replace(",", "-")
+        name = clear_Title(name)
+        # name = name.replace(":", "-").replace("&", "-").replace(" ", "-")
+        # name = name.replace("›", "-").replace(",", "-").replace("/", "-")
         if url is not None:
             url = str(url)
             url = url.replace(":", "%3a")
