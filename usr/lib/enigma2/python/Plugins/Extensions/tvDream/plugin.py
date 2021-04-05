@@ -101,15 +101,17 @@ except ImportError:
     # pass
 # else:
     # ssl._create_default_http_context = _create_unverified_http_context
-def clear_Title(txt):
-    txt = re.sub('<.+?>', '', txt)
-    txt = txt.replace("&quot;", "\"").replace('()', '').replace("&#038;", "&").replace('&#8211;', ':')
-    txt = txt.replace("&amp;", "&").replace('&#8217;', "'").replace('&#039;', ':').replace('&#;', '\'')
-    txt = txt.replace("&#38;", "&").replace('&#8221;', '"').replace('&#8216;', '"').replace('&#160;', '')
-    txt = txt.replace("&nbsp;", "").replace('&#8220;', '"').replace('\t', ' ').replace('\n', ' ')
-    # txt = txt.replace(":", "-").replace("&", "-").replace(" ", "-")
-    # txt = txt.replace("›", "-").replace(",", "-").replace("/", "-")
-    return txt
+# def clear_Title(txt):
+    # txt = re.sub('<.+?>', '', txt)
+    # txt = txt.replace("&quot;", "\"").replace('()', '').replace("&#038;", "&").replace('&#8211;', ':')
+    # txt = txt.replace("&amp;", "&").replace('&#8217;', "'").replace('&#039;', ':').replace('&#;', '\'')
+    # txt = txt.replace("&#38;", "&").replace('&#8221;', '"').replace('&#8216;', '"').replace('&#160;', '')
+    # txt = txt.replace('&#x27;', "'").replace("&#39;", "'").replace("&nbsp;", "").replace('&#8220;', '"').replace('\t', ' ').replace('\n', ' ')
+    # # txt = txt.replace(":", "-").replace("&", "-").replace(" ", "-")
+    # # txt = txt.replace("›", "-").replace(",", "-").replace("/", "-")
+    
+    # # txt = txt.decode('utf8').encode('latin-1','ignore')
+    # return txt
     
 def checkStr(txt):
     if PY3:
@@ -170,6 +172,10 @@ if sslverify:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
             
+UserAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36"
+# MediapolisUserAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36"
+
+    
 def getUrl(url):
     try:
         if url.startswith("https") and sslverify:
@@ -180,7 +186,8 @@ def getUrl(url):
             url = url.encode()
                 
         req = Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
+        # req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
+        req.add_header('User-Agent', UserAgent)        
         response = urlopen(req)
         link = response.read()
         response.close()
@@ -198,7 +205,7 @@ def getUrl(url):
 
 DESKHEIGHT = getDesktop(0).size().height()
 currversion = '1.0'
-title_plug = '..:: TiVuDream V. %s ::..' % currversion
+
 plugin_path = os.path.dirname(sys.modules[__name__].__file__)
 skin_path = plugin_path
 pluglogo = plugin_path + '/res/pics/logo.png'
@@ -209,8 +216,10 @@ b7 = 'aHR0cHM6Ly9mZWVkLmVudGVydGFpbm1lbnQudHYudGhlcGxhdGZvcm0uZXUvZi9QUjFHaEMvbW
 host_b7 = base64.b64decode(b7)
 HD = getDesktop(0).size()
 vid = plugin_path + '/vid.txt'
-desc_plugin = (_('..:: TiVu Dream Net Player by Lululla %s ::.. ' % currversion))
-name_plugin = (_('TiVuDream'))
+desc_plugin = '..:: TiVu Dream Net Player by Lululla %s ::.. ' % currversion
+name_plugin = 'TiVuDream Player'
+
+
 if HD.width() > 1280:
     if isDreamOS:
         skin_path = plugin_path + '/res/skins/fhd/dreamOs/'
@@ -311,11 +320,11 @@ class MainSetting(Screen):
             self.skin = f.read()
         self.setup_title = ('MainSetting')
         Screen.__init__(self, session)
-        self.setTitle(title_plug)
+        self.setTitle(desc_plugin)
         self['text'] = SetList([])
         self.working = False
         self.selection = 'all'
-        self['title'] = Label(title_plug)
+        self['title'] = Label(desc_plugin)
         self['info'] = Label('')
         self['info'].setText(_('Please select ...'))
         self['key_yellow'] = Button(_(''))
@@ -375,11 +384,11 @@ class Vod(Screen):
             self.skin = f.read()
         self.setup_title = ('ITALIAN VOD MOVIE')
         Screen.__init__(self, session)
-        self.setTitle(title_plug)
+        self.setTitle(desc_plugin)
         self['text'] = SetList([])
         self.working = False
         self.selection = 'all'
-        self['title'] = Label(title_plug)
+        self['title'] = Label(desc_plugin)
         self['info'] = Label('')
         self['info'].setText(_('Please select ...'))
         self['key_yellow'] = Button(_(''))
@@ -435,7 +444,7 @@ class Mediaset(Screen):
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
-        self.setTitle(title_plug)
+        self.setTitle(desc_plugin)
         self.list = []
         self['text'] = OneSetList([])
         self['info'] = Label(_('Getting the list, please wait ...'))
@@ -451,7 +460,7 @@ class Mediaset(Screen):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(title_plug)
+        self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -510,7 +519,7 @@ class Mediaset1(Screen):
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
-        self.setTitle(title_plug)
+        self.setTitle(desc_plugin)
         self.name = name
         self.url = url
         self.list = []
@@ -528,7 +537,7 @@ class Mediaset1(Screen):
             self.timer_conn = self.timer.timeout.connect(self.search)
         else:
             self.timer.callback.append(self.search)
-        self['title'] = Label(title_plug)
+        self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -591,7 +600,7 @@ class Mediaset2(Screen):
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
-        self.setTitle(title_plug)
+        self.setTitle(desc_plugin)
         self.name = name
         self.url = url
         self.list = []
@@ -609,7 +618,7 @@ class Mediaset2(Screen):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(title_plug)
+        self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -635,7 +644,7 @@ class Mediaset2(Screen):
             # print ("_gotPageLoad match =", match)
             for url , name in match:
                 pic = " "
-                name = clear_Title(name)
+                name = decodeHtml(name)
                 url = "http://www.mediasetplay.mediaset.it/fiction/" + url
                 '''
                 http://www.mediasetplay.mediaset.it/programmi-tv/alltogethernow_b100003640
@@ -655,7 +664,7 @@ class Mediaset2(Screen):
             # print ("_gotPageLoad match =", match)
             for url, name in match:
                 pic = " "
-                name = clear_Title(name)
+                name = decodeHtml(name)
                 url = "http://www.mediasetplay.mediaset.it/movie/" + url
                 '''
                 http://www.mediasetplay.mediaset.it/browse/film-per-tutta-la-famiglia_e5e6a15c523eec6001de37eac
@@ -674,7 +683,7 @@ class Mediaset2(Screen):
             # print ("_gotPageLoad match =", match)
             for url , name in match:
                 pic = " "
-                name = clear_Title(name)
+                name = decodeHtml(name)
                 url = "http://www.mediasetplay.mediaset.it/programmi-tv/" + url
                 '''
                 http://www.mediasetplay.mediaset.it/programmi-tv/alltogethernow_b100003640
@@ -693,7 +702,7 @@ class Mediaset2(Screen):
             # print ("_gotPageLoad match =", match)
             for url, name in match:
                 pic = " "
-                name = clear_Title(name)
+                name = decodeHtml(name)
                 url = "http://www.mediasetplay.mediaset.it/playlist/" + url
                 # print('name : ', name)
                 # print('url:  ', url)
@@ -709,7 +718,7 @@ class Mediaset2(Screen):
             # print ("_gotPageLoad match =", match)
             for url, name in match:
                 pic = " "
-                name = clear_Title(name)                
+                name = decodeHtml(name)                
                 url = "http://www.mediasetplay.mediaset.it/movie/" + url
                 '''
                 http://www.mediasetplay.mediaset.it/programmi-tv/alltogethernow_b100003640
@@ -782,7 +791,7 @@ class Mediaset3(Screen):
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
-        self.setTitle(title_plug)
+        self.setTitle(desc_plugin)
         self.name = name
         self.url = url
         self.list = []
@@ -800,7 +809,7 @@ class Mediaset3(Screen):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(title_plug)
+        self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -820,7 +829,7 @@ class Mediaset3(Screen):
             # print ("_gotPageLoad match =", match)
             for url, name  in match:
                 pic = " "
-                name = clear_Title(name)
+                name = decodeHtml(name)
                 url = "http://www.mediasetplay.mediaset.it/video/" + url
                 # print('name : ', name)
                 # print('url1:  ', url)
@@ -868,7 +877,7 @@ class Mediaset4(Screen):
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
-        self.setTitle(title_plug)
+        self.setTitle(desc_plugin)
         self.name = name
         self.url = url
         self.list = []
@@ -886,7 +895,7 @@ class Mediaset4(Screen):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(title_plug)
+        self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -905,7 +914,7 @@ class Mediaset4(Screen):
             # print ("_gotPageLoad match docs=", match)
             for url, name  in match:
                 pic = " "
-                name = clear_Title(name)
+                name = decodeHtml(name)
                 url = "https://www.mediasetplay.mediaset.it/video/" + url
                 # print('name : ', name)
                 # print('url1:  ', url)
@@ -956,7 +965,7 @@ class Rai(Screen):
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
-        self.setTitle(title_plug)
+        self.setTitle(desc_plugin)
         self.list = []
         self['text'] = OneSetList([])
         self['info'] = Label(_('Getting the list, please wait ...'))
@@ -972,7 +981,7 @@ class Rai(Screen):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(title_plug)
+        self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -1017,7 +1026,7 @@ class tvRai2(Screen):
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
-        self.setTitle(title_plug)
+        self.setTitle(desc_plugin)
         self.list = []
         self.name = name
         self.url = url
@@ -1035,7 +1044,7 @@ class tvRai2(Screen):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(title_plug)
+        self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -1064,7 +1073,7 @@ class tvRai2(Screen):
                     # print ("showContent321 match2 =", match2)
                     url2 = match2[0].replace("json", "html")
                     url3 = "http://www.raiplay.it/video/" + url2
-                    name = clear_Title(name)
+                    name = decodeHtml(name)
                     # name = name.replace("&#x27;","'").replace("&amp;","&")
                     # name = name.replace('&quot;','"').replace('&#39;',"'")
                     # item = name + "###" + url3
@@ -1113,7 +1122,7 @@ class tgrRai(Screen):
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
-        self.setTitle(title_plug)
+        self.setTitle(desc_plugin)
         self.list = []
         self['text'] = OneSetList([])
         self['info'] = Label(_('Getting the list, please wait ...'))
@@ -1129,7 +1138,7 @@ class tgrRai(Screen):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(title_plug)
+        self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -1178,7 +1187,7 @@ class tgrRai2(Screen):
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
-        self.setTitle(title_plug)
+        self.setTitle(desc_plugin)
         self.list = []
         self.name = name
         self.url = url
@@ -1196,7 +1205,7 @@ class tgrRai2(Screen):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(title_plug)
+        self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -1266,7 +1275,7 @@ class tgrRai3(Screen):
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
-        self.setTitle(title_plug)
+        self.setTitle(desc_plugin)
         self.list = []
         self.name = name
         self.url = url
@@ -1284,7 +1293,7 @@ class tgrRai3(Screen):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(title_plug)
+        self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -1357,7 +1366,7 @@ class La7(Screen):
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
-        self.setTitle(title_plug)
+        self.setTitle(desc_plugin)
         self.list = []
         self['text'] = OneSetList([])
         self['info'] = Label(_('Getting the list, please wait ...'))
@@ -1373,7 +1382,7 @@ class La7(Screen):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(title_plug)
+        self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -1405,7 +1414,7 @@ class tvLa2(Screen):
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
-        self.setTitle(title_plug)
+        self.setTitle(desc_plugin)
         self.list = []
         self.name = name
         self.url = url
@@ -1423,7 +1432,7 @@ class tvLa2(Screen):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(title_plug)
+        self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -1444,7 +1453,7 @@ class tvLa2(Screen):
         for url, pic, name in match:
             try:
                 url1 = "http://www.la7.it" + url
-                name = clear_Title(name)
+                name = decodeHtml(name)
                 pic1 = "http:" + pic
                 self.names.append(name)
                 self.urls.append(url1)
@@ -1472,7 +1481,7 @@ class tvLa3(Screen):
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
-        self.setTitle(title_plug)
+        self.setTitle(desc_plugin)
         self.list = []
         self.name = name
         self.url = url
@@ -1490,7 +1499,7 @@ class tvLa3(Screen):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(title_plug)
+        self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -1516,7 +1525,7 @@ class tvLa3(Screen):
                 url3 = "http://www.la7.it/" + url1 + "/video" + url2
                 # print("showContent341 url3 =", url3)
                 pic1 = "http:" + pic
-                name = clear_Title(name)
+                name = decodeHtml(name)
                 self.names.append(name)
                 self.urls.append(url3)
                 self.pics.append(pic1)
@@ -1555,7 +1564,7 @@ class Dplay(Screen):
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
-        self.setTitle(title_plug)
+        self.setTitle(desc_plugin)
         self.list = []
         self['text'] = OneSetList([])
         self['info'] = Label(_('Getting the list, please wait ...'))
@@ -1571,7 +1580,7 @@ class Dplay(Screen):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(title_plug)
+        self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -1617,7 +1626,7 @@ class Dplay2(Screen):
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
-        self.setTitle(title_plug)
+        self.setTitle(desc_plugin)
         self.list = []
         self.name = name
         self.url = url
@@ -1635,7 +1644,7 @@ class Dplay2(Screen):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(title_plug)
+        self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -1656,7 +1665,7 @@ class Dplay2(Screen):
             try:
                 # url1 = "http://it.dplay.com" + url
                 url1 = "http://www.discoveryplus.it" + url
-                name = clear_Title(name)
+                name = decodeHtml(name)
                 # name = name.replace("&#x27;","'").replace("&amp;","&").replace('&quot;','"').replace('&#39;',"'")
                 self.names.append(name)
                 self.urls.append(url1)
@@ -1682,7 +1691,7 @@ class Dplay3(Screen):
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
-        self.setTitle(title_plug)
+        self.setTitle(desc_plugin)
         self.list = []
         self.name = name
         self.url = url
@@ -1700,7 +1709,7 @@ class Dplay3(Screen):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(title_plug)
+        self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -1721,7 +1730,7 @@ class Dplay3(Screen):
             try:
                 # url1 = "http://it.dplay.com" + url
                 url1 = "http://www.discoveryplus.it" + url
-                name = clear_Title(name)
+                name = decodeHtml(name)
                 # name = name.replace("&#x27;","'").replace("&amp;","&").replace('&quot;','"').replace('&#39;',"'")
                 self.names.append(name)
                 self.urls.append(url1)
@@ -1766,7 +1775,7 @@ class State(Screen):
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
-        self.setTitle(title_plug)
+        self.setTitle(desc_plugin)
         self.list = []
         self['text'] = OneSetList([])
         self['info'] = Label(_('Getting the list, please wait ...'))
@@ -1782,7 +1791,7 @@ class State(Screen):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(title_plug)
+        self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -1834,7 +1843,7 @@ class tvRegioni(Screen):
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
-        self.setTitle(title_plug)
+        self.setTitle(desc_plugin)
         self.list = []
         self['text'] = OneSetList([])
         self['info'] = Label(_('Getting the list, please wait ...'))
@@ -1850,7 +1859,7 @@ class tvRegioni(Screen):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(title_plug)
+        self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -1902,7 +1911,7 @@ class tvItalia(Screen):
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
-        self.setTitle(title_plug)
+        self.setTitle(desc_plugin)
         self.list = []
         self['text'] = OneSetList([])
         self['info'] = Label(_('Getting the list, please wait ...'))
@@ -1920,7 +1929,7 @@ class tvItalia(Screen):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(title_plug)
+        self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -1970,7 +1979,7 @@ class tvCanal(Screen):
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
-        self.setTitle(title_plug)
+        self.setTitle(desc_plugin)
         self.list = []
         self['text'] = OneSetList([])
         self['info'] = Label(_('Getting the list, please wait ...'))
@@ -1988,7 +1997,7 @@ class tvCanal(Screen):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(title_plug)
+        self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -2083,7 +2092,7 @@ class Playstream2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifica
     def openTest(self):
         url = self.url
         name = self.name
-        name = clear_Title(name)
+        name = decodeHtml(name)
         # name = name.replace(":", "-").replace("&", "-").replace(" ", "-")
         # name = name.replace("›", "-").replace(",", "-").replace("/", "-")
         if url is not None:
@@ -2136,3 +2145,117 @@ def Plugins(**kwargs):
     result.append(extensions_menu)
     # result.append(main_menu)
     return result
+
+
+def decodeUrl(text):
+	text = text.replace('%20',' ')
+	text = text.replace('%21','!')
+	text = text.replace('%22','"')
+	text = text.replace('%23','&')
+	text = text.replace('%24','$')
+	text = text.replace('%25','%')
+	text = text.replace('%26','&')
+	text = text.replace('%2B','+')
+	text = text.replace('%2F','/')
+	text = text.replace('%3A',':')
+	text = text.replace('%3B',';')
+	text = text.replace('%3D','=')
+	text = text.replace('&#x3D;','=')
+	text = text.replace('%3F','?')
+	text = text.replace('%40','@')
+	return text
+
+def decodeHtml(text):
+	text = text.replace('&auml;','ä')
+	text = text.replace('\u00e4','ä')
+	text = text.replace('&#228;','ä')
+	text = text.replace('&oacute;','ó')
+	text = text.replace('&eacute;','e')
+	text = text.replace('&aacute;','a')
+	text = text.replace('&ntilde;','n')
+
+	text = text.replace('&Auml;','Ä')
+	text = text.replace('\u00c4','Ä')
+	text = text.replace('&#196;','Ä')
+	
+	text = text.replace('&ouml;','ö')
+	text = text.replace('\u00f6','ö')
+	text = text.replace('&#246;','ö')
+	
+	text = text.replace('&ouml;','Ö')
+	text = text.replace('\u00d6','Ö')
+	text = text.replace('&#214;','Ö')
+	
+	text = text.replace('&uuml;','ü')
+	text = text.replace('\u00fc','ü')
+	text = text.replace('&#252;','ü')
+	
+	text = text.replace('&Uuml;','Ü')
+	text = text.replace('\u00dc','Ü')
+	text = text.replace('&#220;','Ü')
+	
+	text = text.replace('&szlig;','ß')
+	text = text.replace('\u00df','ß')
+	text = text.replace('&#223;','ß')
+	
+	text = text.replace('&amp;','&')
+	text = text.replace('&quot;','\"')
+	text = text.replace('&quot_','\"')
+
+	text = text.replace('&gt;','>')
+	text = text.replace('&apos;',"'")
+	text = text.replace('&acute;','\'')
+	text = text.replace('&ndash;','-')
+	text = text.replace('&bdquo;','"')
+	text = text.replace('&rdquo;','"')
+	text = text.replace('&ldquo;','"')
+	text = text.replace('&lsquo;','\'')
+	text = text.replace('&rsquo;','\'')
+	text = text.replace('&#034;','\'')
+	text = text.replace('&#038;','&')
+	text = text.replace('&#039;','\'')
+	text = text.replace('&#39;','\'')
+	text = text.replace('&#160;',' ')
+	text = text.replace('\u00a0',' ')
+	text = text.replace('&#174;','')
+	text = text.replace('&#225;','a')
+	text = text.replace('&#233;','e')
+	text = text.replace('&#243;','o')
+	text = text.replace('&#8211;',"-")
+	text = text.replace('\u2013',"-")
+	text = text.replace('&#8216;',"'")
+	text = text.replace('&#8217;',"'")
+	text = text.replace('#8217;',"'")
+	text = text.replace('&#8220;',"'")
+	text = text.replace('&#8221;','"')
+	text = text.replace('&#8222;',',')
+	text = text.replace('&#x27;',"'")
+	text = text.replace('&#8230;','...')
+	text = text.replace('\u2026','...')
+	text = text.replace('&#41;',')')
+	text = text.replace('&lowbar;','_')
+	text = text.replace('&rsquo;','\'')
+	text = text.replace('&lpar;','(')
+	text = text.replace('&rpar;',')')
+	text = text.replace('&comma;',',')
+	text = text.replace('&period;','.')
+	text = text.replace('&plus;','+')
+	text = text.replace('&num;','#')
+	text = text.replace('&excl;','!')
+	text = text.replace('&#039','\'')
+	text = text.replace('&semi;','')
+	text = text.replace('&lbrack;','[')
+	text = text.replace('&rsqb;',']')
+	text = text.replace('&nbsp;','')
+	text = text.replace('&#133;','')
+	text = text.replace('&#4','')
+	text = text.replace('&#40;','')
+
+	text = text.replace('&atilde;',"'")
+	text = text.replace('&colon;',':')
+	text = text.replace('&sol;','/')
+	text = text.replace('&percnt;','%')
+	text = text.replace('&commmat;',' ')
+	text = text.replace('&#58;',':')
+
+	return text	
