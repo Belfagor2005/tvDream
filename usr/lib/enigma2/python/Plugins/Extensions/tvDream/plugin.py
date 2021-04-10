@@ -20,12 +20,17 @@ from Components.PluginList import *
 from Components.ScrollLabel import ScrollLabel
 from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
+from Components.AVSwitch import AVSwitch
+from Components.config import ConfigSubsection, config, configfile, ConfigText, ConfigDirectory, ConfigSelection,ConfigYesNo, ConfigEnableDisable
+
 from Plugins.Plugin import PluginDescriptor
 from Screens.Console import Console
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
-from Screens.InfoBarGenerics import *
+# from Screens.InfoBarGenerics import *
 from Screens.InfoBar import MoviePlayer, InfoBar
+from Screens.InfoBarGenerics import InfoBarAudioSelection, InfoBarNotifications 
+from Screens.InfoBarGenerics import InfoBarShowHide, InfoBarMenu, InfoBarSeek 
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from Tools.Directories import *
 from Tools.Directories import resolveFilename, SCOPE_LANGUAGE, fileExists
@@ -679,6 +684,7 @@ class Mediaset2(Screen):
 
         elif "programmi" in url:
             regexcat = 'a href="/programmi-tv/(.*?)".*?class="_2_UgV">(.*?)</p'    #ok
+            # regexcat2 = 'class="QONIw"><div><a href="(.*?)</p.*?class="_2_UgV">(.*?)</p>'#ok        
             match = re.compile(regexcat, re.DOTALL).findall(datas)
             # print ("_gotPageLoad match =", match)
             for url , name in match:
@@ -693,6 +699,21 @@ class Mediaset2(Screen):
                 if not url in self.urls:
                     self.urls.append(url)
                     self.names.append(name)
+            # match2 = re.compile(regexcat2, re.DOTALL).findall(datas)
+            # # print ("_gotPageLoad match =", match2)
+            # for url , name in match2:
+                # pic = " "
+                # name = decodeHtml(name)
+                # url = "http://www.mediasetplay.mediaset.it/programmi-tv/" + url
+                # '''
+                # http://www.mediasetplay.mediaset.it/programmi-tv/alltogethernow_b100003640
+                # '''
+                # # print('name : ', name)
+                # # print('url:  ', url)
+                # if not url in self.urls:
+                    # self.urls.append(url)
+                    # self.names.append(name)                    
+
             self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
 
@@ -2063,65 +2084,339 @@ class tvCanal(Screen):
             self['info'].setText(_('Nothing ...'))
             pass
 
-class Playstream2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoBarShowHide):
+class TvInfoBarShowHide():
+    """ InfoBar show/hide control, accepts toggleShow and hide actions, might start
+    fancy animations. """
+    STATE_HIDDEN = 0
+    STATE_HIDING = 1
+    STATE_SHOWING = 2
+    STATE_SHOWN = 3
+   
+
+    def __init__(self):
+        self["ShowHideActions"] = ActionMap(["InfobarShowHideActions"], {"toggleShow": self.toggleShow,
+         "hide": self.hide}, 0)
+        self.__event_tracker = ServiceEventTracker(screen=self, eventmap={iPlayableService.evStart: self.serviceStarted})
+        self.__state = self.STATE_SHOWN
+        self.__locked = 0
+        self.hideTimer = eTimer()
+        self.hideTimer.start(5000, True)
+
+        try:
+            self.hideTimer_conn = self.hideTimer.timeout.connect(self.doTimerHide)
+            
+        except:
+            self.hideTimer.callback.append(self.doTimerHide)
+        self.onShow.append(self.__onShow)
+        self.onHide.append(self.__onHide)
+
+    def serviceStarted(self):
+        if self.execing:
+            if config.usage.show_infobar_on_zap.value:
+                self.doShow()
+
+    def __onShow(self):
+        self.__state = self.STATE_SHOWN
+        self.startHideTimer()
+                
+
+    def startHideTimer(self):
+        if self.__state == self.STATE_SHOWN and not self.__locked:
+            idx = config.usage.infobar_timeout.index
+            if idx:
+                self.hideTimer.start(idx * 1500, True)
+
+    def __onHide(self):
+        self.__state = self.STATE_HIDDEN
+                 
+            
+    def doShow(self):
+        self.show()
+        self.startHideTimer()
+
+    def doTimerHide(self):
+        self.hideTimer.stop()
+        if self.__state == self.STATE_SHOWN:
+            self.hide()
+
+    def toggleShow(self):
+        if self.__state == self.STATE_SHOWN:
+            self.hide()
+            self.hideTimer.stop()
+        elif self.__state == self.STATE_HIDDEN:
+            self.show()
+
+    def lockShow(self):
+        self.__locked = self.__locked + 1
+        if self.execing:
+            self.show()
+            self.hideTimer.stop()
+
+    def unlockShow(self):
+        self.__locked = self.__locked - 1
+        if self.execing:
+            self.startHideTimer()
+
+    def debug(obj, text = ""):
+        print(text + " %s\n" % obj)
+                                           
+class Playstream2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoBarAudioSelection, TvInfoBarShowHide): #,InfoBarSubtitleSupport
+    STATE_IDLE = 0
+    STATE_PLAYING = 1
+    STATE_PAUSED = 2
+    ENABLE_RESUME_SUPPORT = True
+    ALLOW_SUSPEND = True
+    screen_timeout = 5000                          
 
     def __init__(self, session, name, url):
         Screen.__init__(self, session)
         self.skinName = 'MoviePlayer'
         title = 'Play'
+
+        # InfoBarBase.__init__(self)
+        # InfoBarShowHide.__init__(self)
+
         InfoBarMenu.__init__(self)
         InfoBarNotifications.__init__(self)
-        InfoBarBase.__init__(self)
-        InfoBarShowHide.__init__(self)
+        InfoBarBase.__init__(self, steal_current_service=True)
+        TvInfoBarShowHide.__init__(self)
+        InfoBarAudioSelection.__init__(self)
+        try:
+            self.init_aspect = int(self.getAspect())
+        except:
+            self.init_aspect = 0     
+        self.new_aspect = self.init_aspect
         self['actions'] = ActionMap(['WizardActions',
          'MoviePlayerActions',
+         'MovieSelectionActions',
+         'MediaPlayerActions',
          'EPGSelectActions',
          'MediaPlayerSeekActions',
+         'SetupActions',
          'ColorActions',
          'InfobarShowHideActions',
-         'InfobarActions'], {'leavePlayer': self.cancel,
+         'InfobarActions',
+         'InfobarSeekActions'], {'leavePlayer': self.cancel,
+         'epg': self.showIMDB,
+         'info': self.showinfo,
+         # 'info': self.cicleStreamType,
+         'tv': self.cicleStreamType,
+         'stop': self.leavePlayer,
+         'cancel': self.cancel,
          'back': self.cancel}, -1)
+        
+        # self['actions'] = ActionMap(['WizardActions',
+         # 'MoviePlayerActions',
+         # 'EPGSelectActions',
+         # 'MediaPlayerSeekActions',
+         # 'ColorActions',
+         # 'InfobarShowHideActions',
+         # 'InfobarActions'], {'leavePlayer': self.cancel,
+         # 'back': self.cancel}, -1)
         self.allowPiP = False
-        InfoBarSeek.__init__(self, actionmap='MediaPlayerSeekActions')
+        InfoBarSeek.__init__(self, actionmap='InfobarSeekActions')                      
+        self.service = None
+        service = None                      
+        # InfoBarSeek.__init__(self, actionmap='MediaPlayerSeekActions')
         url = url.replace(':', '%3a')
         self.url = url
-        self.name = name
+        self.pcip = 'None'
+        self.name = decodeHtml(name)
+        self.state = self.STATE_PLAYING                                 
+        self.hideTimer = eTimer()
+        self.hideTimer.start(5000, True)
+        try:
+            self.hideTimer_conn = self.hideTimer.timeout.connect(self.ok)
+        except:
+            self.hideTimer.callback.append(self.ok)                                                                            
         self.srefOld = self.session.nav.getCurrentlyPlayingServiceReference()
-        self.onLayoutFinish.append(self.openTest)
+        # self.onLayoutFinish.append(self.openTest)
+        self.onLayoutFinish.append(self.cicleStreamType)
+        self.onClose.append(self.cancel)
+        return
+        
+    def getAspect(self):
+        return AVSwitch().getAspectRatioSetting()
 
-    def openTest(self):
-        url = self.url
-        name = self.name
-        name = decodeHtml(name)
-        # name = name.replace(":", "-").replace("&", "-").replace(" ", "-")
-        # name = name.replace("›", "-").replace(",", "-").replace("/", "-")
-        if url is not None:
-            url = str(url)
-            url = url.replace(":", "%3a")
-            url = url.replace("\\", "/")
-            ref = "4097:0:1:0:0:0:0:0:0:0:" + url
-            sref = eServiceReference(ref)
-            sref.setName(self.name)
-            self.session.nav.stopService()
-            self.session.nav.playService(sref)
+    def getAspectString(self, aspectnum):
+        return {0: _('4:3 Letterbox'),
+         1: _('4:3 PanScan'),
+         2: _('16:9'),
+         3: _('16:9 always'),
+         4: _('16:10 Letterbox'),
+         5: _('16:10 PanScan'),
+         6: _('16:9 Letterbox')}[aspectnum]
+
+    def setAspect(self, aspect):
+        map = {0: '4_3_letterbox',
+         1: '4_3_panscan',
+         2: '16_9',
+         3: '16_9_always',
+         4: '16_10_letterbox',
+         5: '16_10_panscan',
+         6: '16_9_letterbox'}
+        config.av.aspectratio.setValue(map[aspect])
+        try:
+            AVSwitch().setAspectRatio(aspect)
+        except:
+            pass
+
+    def av(self):
+        temp = int(self.getAspect())
+        temp = temp + 1
+        if temp > 6:
+            temp = 0
+        self.new_aspect = temp
+        self.setAspect(temp)        
+        
+    def showinfo(self):
+        debug = True
+        sTitle = ''
+        sServiceref = ''
+        try:
+            servicename, serviceurl = getserviceinfo(sref)
+            if servicename is not None:
+                sTitle = servicename
+            else:
+                sTitle = ''
+            if serviceurl is not None:
+                sServiceref = serviceurl
+            else:
+                sServiceref = ''
+            currPlay = self.session.nav.getCurrentService()
+            sTagCodec = currPlay.info().getInfoString(iServiceInformation.sTagCodec)
+            sTagVideoCodec = currPlay.info().getInfoString(iServiceInformation.sTagVideoCodec)
+            sTagAudioCodec = currPlay.info().getInfoString(iServiceInformation.sTagAudioCodec)
+            message = 'stitle:' + str(sTitle) + '\n' + 'sServiceref:' + str(sServiceref) + '\n' + 'sTagCodec:' + str(sTagCodec) + '\n' + 'sTagVideoCodec:' + str(sTagVideoCodec) + '\n' + 'sTagAudioCodec :' + str(sTagAudioCodec)
+            self.mbox = self.session.open(MessageBox, message, MessageBox.TYPE_INFO)
+
+        except:
+            pass
+
+        return
+        
+    def showIMDB(self):
+        if fileExists("/usr/lib/enigma2/python/Plugins/Extensions/TMBD/plugin.pyo"):
+            from Plugins.Extensions.TMBD.plugin import TMBD
+            text_clear = self.name
+            text = charRemove(text_clear)
+            self.session.open(TMBD, text, False)
+        elif os.path.exists("/usr/lib/enigma2/python/Plugins/Extensions/IMDb/plugin.pyo"):
+            from Plugins.Extensions.IMDb.plugin import IMDB
+            text_clear = self.name
+            text = charRemove(text_clear)
+            HHHHH = text
+            self.session.open(IMDB, HHHHH)
         else:
-           return
+            text_clear = self.name
+            self.session.open(MessageBox, text_clear, MessageBox.TYPE_INFO)  
+            
+    # def openTest(self):
+        # url = self.url
+        # name = self.name
+        # # name = decodeHtml(name)
+        # # name = name.replace(":", "-").replace("&", "-").replace(" ", "-")
+        # # name = name.replace("›", "-").replace(",", "-").replace("/", "-")
+        # if url is not None:
+            # url = str(url)
+            # url = url.replace(":", "%3a")
+            # url = url.replace("\\", "/")
+            # ref = "4097:0:1:0:0:0:0:0:0:0:" + url
+            # sref = eServiceReference(ref)
+            # sref.setName(self.name)
+            # self.session.nav.stopService()
+            # self.session.nav.playService(sref)
+        # else:
+           # return
+           
+    def openTest(self,servicetype, url):
+        url = url
+        ref = str(servicetype) +':0:1:0:0:0:0:0:0:0:' + str(url)
+        print('final reference :   ', ref)
+        sref = eServiceReference(ref)
+        sref.setName(self.name)
+        self.session.nav.stopService()
+        self.session.nav.playService(sref)
+        
+    def cicleStreamType(self):
+        from itertools import cycle, islice
+        self.servicetype ='4097'#str(config.plugins.exodus.services.value)# 
+        print('servicetype1: ', self.servicetype)
+        url = str(self.url)
+        currentindex = 0
+        streamtypelist = ["1", "4097"]
+        if os.path.exists("/usr/bin/gstplayer"):
+            streamtypelist.append("5001")
+        if os.path.exists("/usr/bin/exteplayer3"):
+            streamtypelist.append("5002")
+        if os.path.exists("/usr/bin/apt-get"):
+            streamtypelist.append("8193")
+        for index, item in enumerate(streamtypelist, start=0):
+            if str(item) == str(self.servicetype):
+                currentindex = index
+                break
+        nextStreamType = islice(cycle(streamtypelist), currentindex + 1, None)
+        self.servicetype = int(next(nextStreamType))
+        print('servicetype2: ', self.servicetype)
+        self.openTest(self.servicetype, url)
 
+    def keyNumberGlobal(self, number):
+        self['text'].number(number)     
+        
     def cancel(self):
         if os.path.exists('/tmp/hls.avi'):
             os.remove('/tmp/hls.avi')
         self.session.nav.stopService()
         self.session.nav.playService(self.srefOld)
+        if self.pcip != 'None':
+            url2 = 'http://' + self.pcip + ':8080/requests/status.xml?command=pl_stop'
+            resp = urlopen(url2)
+        if not self.new_aspect == self.init_aspect:
+            try:
+                self.setAspect(self.init_aspect)
+            except:
+                pass
         self.close()
 
+    def __setHideTimer(self):
+              self.hidetimer.start(self.screen_timeout)
+
+    def showInfobar(self):
+        self.vlcservice.refresh()
+        self.show()
+        if self.state == self.STATE_PLAYING:
+            self.__setHideTimer()
+        else:
+            pass
+
+    def hideInfobar(self):
+        self.hide()
+        # self.hidetimer.stop()
+
+    def ok(self):
+        if self.shown:
+            self.hideInfobar()
+        else:
+            self.showInfobar()                                                       
     def keyLeft(self):
         self['text'].left()
 
     def keyRight(self):
         self['text'].right()
 
-    def keyNumberGlobal(self, number):
-        self['text'].number(number)
+    def showVideoInfo(self):
+        if self.shown:
+            self.hideInfobar()
+        if self.infoCallback is not None:
+            self.infoCallback()
+        return
+
+    def showAfterSeek(self):
+        if isinstance(self, TvInfoBarShowHide):
+            self.doShow()
+
+    def leavePlayer(self):
+        self.close()                                            
 
 def main(session, **kwargs):
     if checkInternet():
