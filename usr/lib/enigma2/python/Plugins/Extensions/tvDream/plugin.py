@@ -48,7 +48,7 @@ import shutil
 import ssl
 import glob
 import json
-import six
+import six          
 	
 # from Tools.LoadPixmap import LoadPixmap
 # from lxml import html
@@ -551,7 +551,7 @@ class Mediaset1(Screen):
         
     def search(self):
         content = getUrl(host_b7)
-        content = six.ensure_str(content)
+        content = six.ensure_str(content)                                         
         print("content A =", content)
         self.names = []
         self.urls = []
@@ -634,7 +634,7 @@ class Mediaset2(Screen):
     def _gotPageLoad(self):
         url = self.url
         datas = getUrl(url)
-        datas = six.ensure_str(datas)
+        datas = six.ensure_str(datas)                                     
         self.names = []
         self.urls = []
         # icount = 0
@@ -842,7 +842,7 @@ class Mediaset3(Screen):
     def _gotPageLoad(self):
         url = self.url
         datas = getUrl(url)
-        datas = six.ensure_str(datas)
+        datas = six.ensure_str(datas)                                     
         # print('datas :  ', datas)
         self.names = []
         self.urls = []
@@ -929,7 +929,7 @@ class Mediaset4(Screen):
     def _gotPageLoad(self):
         url = self.url
         datas = getUrl(url)
-        datas = six.ensure_str(datas)
+        datas = six.ensure_str(datas)                                     
         # print('datas :  ', datas)
         self.names = []
         self.urls = []
@@ -1080,7 +1080,7 @@ class tvRai2(Screen):
         url = self.url
         name = self.name
         content = getUrl(url)
-        content = six.ensure_str(content)
+        content = six.ensure_str(content)                                         
         # items = []
         self.names = []
         self.urls = []
@@ -1094,7 +1094,7 @@ class tvRai2(Screen):
                 # if 'raiplay' in url.lower():
                     url1 = "http://www.raiplay.it" + url
                     content2 = getUrl(url1)
-                    content2 = six.ensure_str(content2)
+                    content2 = six.ensure_str(content2)                                                       
                     # print ("showContent321 content2 =", content2)
                     regexcat2 = '"/video/(.*?)"'
                     match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
@@ -1248,7 +1248,7 @@ class tgrRai2(Screen):
         self['info'].setText(_('Try again later ...'))
 
     def _gotPageLoad2(self, data):
-        data = six.ensure_str(data)
+        data = six.ensure_str(data)                                   
         content = data.replace("\r", "").replace("\t", "").replace("\n", "")
         name = self.name
         self.names = []
@@ -1337,7 +1337,7 @@ class tgrRai3(Screen):
         self['info'].setText(_('Try again later ...'))
 
     def _gotPageLoad2(self, data):
-        data = six.ensure_str(data)
+        data = six.ensure_str(data)                                   
         content = data.replace("\r", "").replace("\t", "").replace("\n", "")
         name = self.name
         self.names = []
@@ -1472,7 +1472,7 @@ class tvLa2(Screen):
         url = self.url
         name = self.name
         content = getUrl(url)
-        content = six.ensure_str(content)
+        content = six.ensure_str(content)                                         
         self.names = []
         self.urls = []
         self.pics = []
@@ -1540,7 +1540,7 @@ class tvLa3(Screen):
         url = self.url
         name = self.name
         content = getUrl(url)
-        content = six.ensure_str(content)
+        content = six.ensure_str(content)                                         
         self.names = []
         self.urls = []
         self.pics = []
@@ -1575,7 +1575,7 @@ class tvLa3(Screen):
         regex2 = '/content/(.*?).mp4'
         regex3 = 'm3u8: "(.*?)"'
         content2 = getUrl(url)
-        content2 = six.ensure_str(content2)
+        content2 = six.ensure_str(content2)                                           
         # print('tvLa3 content2:  ', content2)
         x1 = 0
         if x1 == 0:
@@ -1624,7 +1624,7 @@ class Dplay(Screen):
         # url = "http://it.dplay.com/generi/"
         url = "http://www.discoveryplus.it/generi/"
         content = getUrl(url)
-        content = six.ensure_str(content)
+        content = six.ensure_str(content)                                         
         # print("showContent35 content =", content)
         self.names = []
         self.urls = []
@@ -1688,7 +1688,7 @@ class Dplay2(Screen):
         url = self.url
         name = self.name
         content = getUrl(url)
-        content = six.ensure_str(content)
+        content = six.ensure_str(content)                                         
         self.names = []
         self.urls = []
         self.pics = []
@@ -1754,7 +1754,7 @@ class Dplay3(Screen):
         url = self.url
         name = self.name
         content = getUrl(url)
-        content = six.ensure_str(content)
+        content = six.ensure_str(content)                                         
         self.names = []
         self.urls = []
         pic = " "
@@ -1836,7 +1836,7 @@ class State(Screen):
     def _gotPageLoad(self):
         url = 'http://www.tvdream.net/web-tv/paesi/'
         datas = getUrl(url)
-        datas = six.ensure_str(datas)
+        datas = six.ensure_str(datas)                                     
         # print('datas :  ', datas)
         self.names = []
         self.urls = []
@@ -1905,7 +1905,7 @@ class tvRegioni(Screen):
     def _gotPageLoad(self):
         url = 'http://www.tvdream.net/web-tv/regioni/'
         datas = getUrl(url)
-        datas = six.ensure_str(datas)
+        datas = six.ensure_str(datas)                                     
         # print('datas :  ', datas)
         self.names = []
         self.urls = []
@@ -1977,7 +1977,7 @@ class tvItalia(Screen):
         name = self.name
         url = self.url
         datas = getUrl(url)
-        datas =six.ensure_str(datas)
+        datas =six.ensure_str(datas)                                    
         # print('datas :  ', datas)
         self.names = []
         self.urls = []
@@ -2046,7 +2046,7 @@ class tvCanal(Screen):
         url = self.url
         name = self.name
         datas = getUrl(url)
-        datas = six.ensure_str(datas)
+        datas = six.ensure_str(datas)                                     
         # print('datas :  ', datas)
         self.names = []
         self.urls = []
@@ -2078,7 +2078,7 @@ class tvCanal(Screen):
             name = self.names[idx]
             url = self.urls[idx]
             content = getUrl(url)
-            content = six.ensure_str(content)
+            content = six.ensure_str(content)                                             
             # print('content :  ', content)
             regexcat = '"player".*?href="(.*?)"'
             if regioni == True:
@@ -2087,7 +2087,7 @@ class tvCanal(Screen):
             # print("getVideos2 match =", match)
             url2 = match[0]
             content2 = getUrl(url2)
-            content2 = six.ensure_str(content2)
+            content2 = six.ensure_str(content2)                                               
             # print("getVideos2 content2 =", content2)
             if ("rai" in url.lower()) or ("rai" in name.lower()):
                 regexcat2 = 'liveVideo":{"mediaUrl":"(.*?)"'
@@ -2403,7 +2403,7 @@ class Playstream2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifica
               self.hidetimer.start(self.screen_timeout)
 
     def showInfobar(self):
-        self.vlcservice.refresh()
+        # self.vlcservice.refresh()
         self.show()
         if self.state == self.STATE_PLAYING:
             self.__setHideTimer()
