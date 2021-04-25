@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 '''
 ****************************************
 *        coded by Lululla & PCD        *
@@ -22,7 +23,6 @@ from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
 from Components.AVSwitch import AVSwitch
 from Components.config import ConfigSubsection, config, configfile, ConfigText, ConfigDirectory, ConfigSelection,ConfigYesNo, ConfigEnableDisable
-
 from Plugins.Plugin import PluginDescriptor
 from Screens.Console import Console
 from Screens.MessageBox import MessageBox
@@ -121,10 +121,10 @@ except ImportError:
     
 def checkStr(txt):
     if PY3:
-        if type(txt) == type(bytes()):
+        if isinstance(txt, type(bytes())):
             txt = txt.decode('utf-8')
     else:
-        if type(txt) == type(unicode()):
+        if isinstance(txt, type(six.text_type())):
             txt = txt.encode('utf-8')
     return txt
 
@@ -2193,10 +2193,8 @@ class Playstream2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifica
         Screen.__init__(self, session)
         self.skinName = 'MoviePlayer'
         title = 'Play'
-
         # InfoBarBase.__init__(self)
         # InfoBarShowHide.__init__(self)
-
         InfoBarMenu.__init__(self)
         InfoBarNotifications.__init__(self)
         InfoBarBase.__init__(self, steal_current_service=True)
@@ -2225,7 +2223,6 @@ class Playstream2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifica
          'stop': self.leavePlayer,
          'cancel': self.cancel,
          'back': self.cancel}, -1)
-        
         # self['actions'] = ActionMap(['WizardActions',
          # 'MoviePlayerActions',
          # 'EPGSelectActions',
@@ -2244,12 +2241,12 @@ class Playstream2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifica
         self.pcip = 'None'
         self.name = decodeHtml(name)
         self.state = self.STATE_PLAYING                                 
-        self.hideTimer = eTimer()
-        self.hideTimer.start(5000, True)
-        try:
-            self.hideTimer_conn = self.hideTimer.timeout.connect(self.ok)
-        except:
-            self.hideTimer.callback.append(self.ok)                                                                            
+        # self.hideTimer = eTimer()
+        # self.hideTimer.start(5000, True)
+        # try:
+            # self.hideTimer_conn = self.hideTimer.timeout.connect(self.ok)
+        # except:
+            # self.hideTimer.callback.append(self.ok)                                                                            
         self.srefOld = self.session.nav.getCurrentlyPlayingServiceReference()
         # self.onLayoutFinish.append(self.openTest)
         self.onLayoutFinish.append(self.cicleStreamType)
@@ -2310,7 +2307,6 @@ class Playstream2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifica
             sTagAudioCodec = currPlay.info().getInfoString(iServiceInformation.sTagAudioCodec)
             message = 'stitle:' + str(sTitle) + '\n' + 'sServiceref:' + str(sServiceref) + '\n' + 'sTagCodec:' + str(sTagCodec) + '\n' + 'sTagVideoCodec:' + str(sTagVideoCodec) + '\n' + 'sTagAudioCodec :' + str(sTagAudioCodec)
             self.mbox = self.session.open(MessageBox, message, MessageBox.TYPE_INFO)
-
         except:
             pass
 
@@ -2332,24 +2328,6 @@ class Playstream2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifica
             text_clear = self.name
             self.session.open(MessageBox, text_clear, MessageBox.TYPE_INFO)  
             
-    # def openTest(self):
-        # url = self.url
-        # name = self.name
-        # # name = decodeHtml(name)
-        # # name = name.replace(":", "-").replace("&", "-").replace(" ", "-")
-        # # name = name.replace("›", "-").replace(",", "-").replace("/", "-")
-        # if url is not None:
-            # url = str(url)
-            # url = url.replace(":", "%3a")
-            # url = url.replace("\\", "/")
-            # ref = "4097:0:1:0:0:0:0:0:0:0:" + url
-            # sref = eServiceReference(ref)
-            # sref.setName(self.name)
-            # self.session.nav.stopService()
-            # self.session.nav.playService(sref)
-        # else:
-           # return
-           
     def openTest(self,servicetype, url):
         url = url
         ref = str(servicetype) +':0:1:0:0:0:0:0:0:0:' + str(url)
@@ -2399,32 +2377,6 @@ class Playstream2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifica
                 pass
         self.close()
 
-    def __setHideTimer(self):
-              self.hidetimer.start(self.screen_timeout)
-
-    def showInfobar(self):
-        # self.vlcservice.refresh()
-        self.show()
-        if self.state == self.STATE_PLAYING:
-            self.__setHideTimer()
-        else:
-            pass
-
-    def hideInfobar(self):
-        self.hide()
-        # self.hidetimer.stop()
-
-    def ok(self):
-        if self.shown:
-            self.hideInfobar()
-        else:
-            self.showInfobar()                                                       
-    def keyLeft(self):
-        self['text'].left()
-
-    def keyRight(self):
-        self['text'].right()
-
     def showVideoInfo(self):
         if self.shown:
             self.hideInfobar()
@@ -2432,12 +2384,38 @@ class Playstream2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifica
             self.infoCallback()
         return
 
-    def showAfterSeek(self):
-        if isinstance(self, TvInfoBarShowHide):
-            self.doShow()
-
     def leavePlayer(self):
-        self.close()                                            
+        self.close() 
+
+    # def __setHideTimer(self):
+          # self.hidetimer.start(self.screen_timeout)
+
+    # def showInfobar(self):
+        # # self.vlcservice.refresh()
+        # self.show()
+        # if self.state == self.STATE_PLAYING:
+            # self.__setHideTimer()
+        # else:
+            # pass
+
+    # def hideInfobar(self):
+        # self.hide()
+        # # self.hidetimer.stop()
+
+    # def ok(self):
+        # if self.shown:
+            # self.hideInfobar()
+        # else:
+            # self.showInfobar()                                                       
+    # def keyLeft(self):
+        # self['text'].left()
+
+    # def keyRight(self):
+        # self['text'].right()
+
+    # def showAfterSeek(self):
+        # if isinstance(self, TvInfoBarShowHide):
+            # self.doShow()
 
 def main(session, **kwargs):
     if checkInternet():
