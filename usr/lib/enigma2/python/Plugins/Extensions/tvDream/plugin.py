@@ -2387,36 +2387,6 @@ class Playstream2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifica
     def leavePlayer(self):
         self.close() 
 
-    # def __setHideTimer(self):
-          # self.hidetimer.start(self.screen_timeout)
-
-    # def showInfobar(self):
-        # # self.vlcservice.refresh()
-        # self.show()
-        # if self.state == self.STATE_PLAYING:
-            # self.__setHideTimer()
-        # else:
-            # pass
-
-    # def hideInfobar(self):
-        # self.hide()
-        # # self.hidetimer.stop()
-
-    # def ok(self):
-        # if self.shown:
-            # self.hideInfobar()
-        # else:
-            # self.showInfobar()                                                       
-    # def keyLeft(self):
-        # self['text'].left()
-
-    # def keyRight(self):
-        # self['text'].right()
-
-    # def showAfterSeek(self):
-        # if isinstance(self, TvInfoBarShowHide):
-            # self.doShow()
-
 def main(session, **kwargs):
     if checkInternet():
         session.open(MainSetting)
