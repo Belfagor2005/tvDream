@@ -62,7 +62,6 @@ import hmac
 import hashlib
 import base64
 import threading 
-import hashlib
 g_stopEvent=None
 g_downloader=None
 

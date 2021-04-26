@@ -5,7 +5,7 @@
 ****************************************
 *        coded by Lululla & PCD        *
 *             skin by MMark            *
-*             04/02/2021               *
+*             04/04/2021               *
 *       Skin by MMark                  *
 ****************************************
 '''
@@ -64,9 +64,6 @@ try:
 except:
     isDreamOS = False
 
-'''
-PY3 = sys.version_info.major >= 3
-'''
 PY3 = sys.version_info[0] == 3
 
 if PY3:
