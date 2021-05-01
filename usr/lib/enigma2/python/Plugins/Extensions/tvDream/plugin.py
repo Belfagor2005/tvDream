@@ -1088,25 +1088,14 @@ class tvRai2(Screen):
         # print('name : ', name)
         for url, name in match:
             try:
-                # if 'raiplay' in url.lower():
                     url1 = "http://www.raiplay.it" + url
                     content2 = getUrl(url1)
                     content2 = six.ensure_str(content2)                                                       
-                    # print ("showContent321 content2 =", content2)
                     regexcat2 = '"/video/(.*?)"'
                     match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
-                    # print ("showContent321 match2 =", match2)
                     url2 = match2[0].replace("json", "html")
                     url3 = "http://www.raiplay.it/video/" + url2
                     name = decodeHtml(name)
-                    # name = name.replace("&#x27;","'").replace("&amp;","&")
-                    # name = name.replace('&quot;','"').replace('&#39;',"'")
-                    # item = name + "###" + url3
-                    # items.append(item)
-                # items.sort()
-                # for item in items:
-                    # name = item.split("###")[0]
-                    # url3 = item.split("###")[1]
                     self.names.append(name)
                     self.urls.append(url3)
             except:
