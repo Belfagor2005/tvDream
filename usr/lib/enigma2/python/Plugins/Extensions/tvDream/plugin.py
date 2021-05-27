@@ -572,6 +572,10 @@ class Mediaset1(Screen):
                 pic = " "
                 print("showContent name =", name)
                 print("showContent url =", url)
+
+        url = checkStr(url)
+        name = checkStr(name)
+                
         self.urls.append(url)
         self.names.append(name)
         showlist(self.names, self['text'])
@@ -644,6 +648,9 @@ class Mediaset2(Screen):
                 # print('name : ', name)
                 # print('url:  ', url)
                 if not url in self.urls:
+                    url = checkStr(url)
+                    name = checkStr(name)
+                
                     self.urls.append(url)
                     self.names.append(name)
 
@@ -664,6 +671,9 @@ class Mediaset2(Screen):
                 # print('name : ', name)
                 # print('url:  ', url)
                 if not url in self.urls:
+                    url = checkStr(url)
+                    name = checkStr(name)
+                
                     self.urls.append(url)
                     self.names.append(name)
             self['info'].setText(_('Please select ...'))
@@ -684,6 +694,9 @@ class Mediaset2(Screen):
                 # print('name : ', name)
                 # print('url:  ', url)
                 if not url in self.urls:
+                    url = checkStr(url)
+                    name = checkStr(name)
+                
                     self.urls.append(url)
                     self.names.append(name)
             # match2 = re.compile(regexcat2, re.DOTALL).findall(datas)
@@ -715,6 +728,9 @@ class Mediaset2(Screen):
                 # print('name : ', name)
                 # print('url:  ', url)
                 if not url in self.urls:
+                    url = checkStr(url)
+                    name = checkStr(name)
+                
                     self.urls.append(url)
                     self.names.append(name)
             self['info'].setText(_('Please select ...'))
@@ -734,6 +750,9 @@ class Mediaset2(Screen):
                 # print('name : ', name)
                 # print('url:  ', url)
                 if not url in self.urls:
+                    url = checkStr(url)
+                    name = checkStr(name)
+                    
                     self.urls.append(url)
                     self.names.append(name)
             self['info'].setText(_('Please select ...'))
@@ -755,6 +774,9 @@ class Mediaset2(Screen):
                 # print('name : ', name)
                 # print('url:  ', url)
                 if not url in self.urls:
+                    url = checkStr(url)
+                    name = checkStr(name)
+                
                     self.urls.append(url)
                     self.names.append(name)
             self['info'].setText(_('Please select ...'))
@@ -843,6 +865,9 @@ class Mediaset3(Screen):
                 # print('name : ', name)
                 # print('url1:  ', url)
                 if not url in self.urls:
+                    url = checkStr(url)
+                    name = checkStr(name)
+                
                     self.urls.append(url)
                     self.names.append(name)
             self['info'].setText(_('Please select ...'))
@@ -929,6 +954,9 @@ class Mediaset4(Screen):
                 # print('name : ', name)
                 # print('url1:  ', url)
                 if not url in self.urls:
+                    url = checkStr(url)
+                    name = checkStr(name)
+                
                     self.urls.append(url)
                     self.names.append(name)
             self['info'].setText(_('Please select ...'))
@@ -1083,6 +1111,10 @@ class tvRai2(Screen):
                     url2 = match2[0].replace("json", "html")
                     url3 = "http://www.raiplay.it/video/" + url2
                     name = decodeHtml(name)
+                    
+                    url3 = checkStr(url3)
+                    name = checkStr(name)
+                
                     self.names.append(name)
                     self.urls.append(url3)
             except:
@@ -1248,6 +1280,9 @@ class tgrRai2(Screen):
                 else:
                     url1 = "http://www.tgr.rai.it" + url
                 # pic = image
+                url = checkStr(url)
+                name = checkStr(name)
+                
                 self.names.append(name)
                 self.urls.append(url1)
                 # self.pics.append(pic)
@@ -1339,6 +1374,10 @@ class tgrRai3(Screen):
                 else:
                     url1 = "http://www.tgr.rai.it" + url
                 # pic = image
+                
+                url = checkStr(url)
+                name = checkStr(name)
+                
                 self.names.append(name)
                 self.urls.append(url1)
                 # self.pics.append(pic)
@@ -1459,6 +1498,10 @@ class tvLa2(Screen):
                 url1 = "http://www.la7.it" + url
                 name = decodeHtml(name)
                 pic1 = "http:" + pic
+                
+                url1 = checkStr(url1)
+                name = checkStr(name)
+                
                 self.names.append(name)
                 self.urls.append(url1)
                 self.pics.append(pic1)
@@ -1531,6 +1574,10 @@ class tvLa3(Screen):
                 # print("showContent341 url3 =", url3)
                 pic1 = "http:" + pic
                 name = decodeHtml(name)
+                
+                url3 = checkStr(url3)
+                name = checkStr(name)
+                
                 self.names.append(name)
                 self.urls.append(url3)
                 self.pics.append(pic1)
@@ -1608,7 +1655,9 @@ class Dplay(Screen):
             try:
                 # url1 = "http://it.dplay.com/genere/" + url
                 url1 = "http://www.discoveryplus.it/generi" + url
-                name = url
+                name = checkStr(url)
+                url1 = checkStr(url1)
+                
                 self.names.append(name)
                 self.urls.append(url1)
             except:
@@ -1675,6 +1724,8 @@ class Dplay2(Screen):
                 url1 = "http://www.discoveryplus.it" + url
                 name = decodeHtml(name)
                 # name = name.replace("&#x27;","'").replace("&amp;","&").replace('&quot;','"').replace('&#39;',"'")
+                url1 = checkStr(url1)
+                name = checkStr(name)
                 self.names.append(name)
                 self.urls.append(url1)
             except:
@@ -1741,6 +1792,9 @@ class Dplay3(Screen):
                 url1 = "http://www.discoveryplus.it" + url
                 name = decodeHtml(name)
                 # name = name.replace("&#x27;","'").replace("&amp;","&").replace('&quot;','"').replace('&#39;',"'")
+                url1 = checkStr(url1)
+                name = checkStr(name)
+                
                 self.names.append(name)
                 self.urls.append(url1)
             except:
@@ -1828,6 +1882,8 @@ class State(Screen):
             for url, name in match:
                 # print('name : ', name)
                 # print('url:  ', url)
+                url = checkStr(url)
+                name = checkStr(name)
                 self.urls.append(url)
                 self.names.append(name)
             self['info'].setText(_('Please select ...'))
@@ -1897,6 +1953,8 @@ class tvRegioni(Screen):
             for url, name in match:
                 # print('name : ', name)
                 # print('url:  ', url)
+                url = checkStr(url)
+                name = checkStr(name)
                 self.urls.append(url)
                 self.names.append(name)
             self['info'].setText(_('Please select ...'))
@@ -1955,7 +2013,7 @@ class tvItalia(Screen):
         self.names = []
         self.urls = []
         try:
-            pages = [1, 2, 3, 4, 5, 6, 7 ]
+            pages = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
             for page in pages:
                 url1 = url + "page/" + str(page) + "/"
                 name = "Page " + str(page)
@@ -2037,6 +2095,9 @@ class tvCanal(Screen):
             for url, name in match:
                 # print('name ch1: ', name)
                 # print('url ch1:  ', url)
+                
+                url = checkStr(url)
+                name = checkStr(name)
                 self.urls.append(url)
                 self.names.append(name)
             self['info'].setText(_('Please select ...'))
