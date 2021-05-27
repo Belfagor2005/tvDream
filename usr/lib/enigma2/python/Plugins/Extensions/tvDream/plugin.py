@@ -98,12 +98,6 @@ try:
 except ImportError:
     eDVBDB = None
 
-# try:
-    # _create_unverified_http_context = ssl._create_unverified_context
-# except AttributeError:
-    # pass
-# else:
-    # ssl._create_default_http_context = _create_unverified_http_context
 # def clear_Title(txt):
     # txt = re.sub('<.+?>', '', txt)
     # txt = txt.replace("&quot;", "\"").replace('()', '').replace("&#038;", "&").replace('&#8211;', ':')
@@ -177,40 +171,39 @@ if sslverify:
             
 UserAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36"
 # MediapolisUserAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36"
-
-    
-def getUrl(url):
-    try:
-        if url.startswith("https") and sslverify:
-            parsed_uri = urlparse(url)
-            domain = parsed_uri.hostname
-            sniFactory = SNIFactory(domain)
-        if PY3 == 3:
-            url = url.encode()
-                
-        req = Request(url)
-        # req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
-        req.add_header('User-Agent', UserAgent)        
-        response = urlopen(req)
-        link = response.read()
-        response.close()
-        print("link =", link)
-        return link
-    except:
-        e = URLError
-        print('We failed to open "%s".' % url)
-        if hasattr(e, 'code'):
-            print('We failed with error code - %s.' % e.code)
-        if hasattr(e, 'reason'):
-            print('We failed to reach a server.')
-            print('Reason: ', e.reason)
             
-
+def getUrl(url):
+        print( "Here in getUrl url =", url)
+        try:
+            req = Request(url)
+        except:
+            req = Request(url)       
+        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+        try:
+            try:
+                response = urlopen(req)
+            except:       
+                response = urlopen(req)
+            link=response.read()
+            response.close()
+            return link
+        except:
+            import ssl
+            gcontext = ssl._create_unverified_context()
+            try:
+                response = urlopen(req)
+            except:       
+                response = urlopen(req)
+            link=response.read()
+            response.close()
+            return link
+            
 DESKHEIGHT = getDesktop(0).size().height()
 currversion = '1.0'
 
 plugin_path = os.path.dirname(sys.modules[__name__].__file__)
 skin_path = plugin_path
+res_plugin_path = plugin_path + '/res/'
 pluglogo = plugin_path + '/res/pics/logo.png'
 pngx = plugin_path + '/res/pics/plugins.png'
 pngl = plugin_path + '/res/pics/plugin.png'
@@ -222,17 +215,13 @@ vid = plugin_path + '/vid.txt'
 desc_plugin = '..:: TiVu Dream Net Player by Lululla %s ::.. ' % currversion
 name_plugin = 'TiVuDream Player'
 
-
 if HD.width() > 1280:
-    if isDreamOS:
-        skin_path = plugin_path + '/res/skins/fhd/dreamOs/'
-    else:
-        skin_path = plugin_path + '/res/skins/fhd/'
+    skin_path = res_plugin_path + 'skins/fhd/'
 else:
-    if isDreamOS:
-        skin_path = plugin_path + '/res/skins/hd/dreamOs/'
-    else:
-        skin_path = plugin_path + '/res/skins/hd/'
+    skin_path = res_plugin_path + 'skins/hd/'
+if isDreamOS:
+    skin_path = skin_path + 'dreamOs/'
+    
 
 Panel_Dlist = [
  ('TVD Regioni'),
@@ -274,11 +263,9 @@ class SetList(MenuList):
 def DListEntry(name, idx):
     res = [name]
     if HD.width() > 1280:
-
         res.append(MultiContentEntryPixmapAlphaTest(pos = (10, 12), size = (34, 25), png = loadPNG(pngs)))
         res.append(MultiContentEntryText(pos = (60, 0), size = (1900, 50), font = 7, text = name, color = 0xa6d1fe, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
-
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 6), size=(34, 25), png=loadPNG(pngs)))
         res.append(MultiContentEntryText(pos = (60, 0), size = (1000, 50), font = 1, text = name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT))
     return res
@@ -1968,7 +1955,7 @@ class tvItalia(Screen):
         self.names = []
         self.urls = []
         try:
-            pages = [1, 2 ]
+            pages = [1, 2, 3, 4, 5, 6, 7 ]
             for page in pages:
                 url1 = url + "page/" + str(page) + "/"
                 name = "Page " + str(page)
@@ -2042,7 +2029,7 @@ class tvCanal(Screen):
             data2 = datas
             # print("data A5 =", data2)
             pic = " "
-            regexcat = '<div class="item-head.*?href="(.*?)".*?bookmark">(.*?)<'
+            regexcat = '<div class="item__.*?href="(.*?)".*?alt="(.*?)"'
             '''
             regexcat   = '<div class="item-head.*?a href="(.*?)".*?bookmark">(.*?)<'
             '''
@@ -2057,6 +2044,7 @@ class tvCanal(Screen):
         except:
             self['info'].setText(_('Nothing ...'))
             pass
+
 
     def okRun(self):
         try:
@@ -2204,35 +2192,21 @@ class Playstream2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifica
          'InfobarSeekActions'], {'leavePlayer': self.cancel,
          'epg': self.showIMDB,
          'info': self.showinfo,
-         # 'info': self.cicleStreamType,
          'tv': self.cicleStreamType,
          'stop': self.leavePlayer,
          'cancel': self.cancel,
          'back': self.cancel}, -1)
-        # self['actions'] = ActionMap(['WizardActions',
-         # 'MoviePlayerActions',
-         # 'EPGSelectActions',
-         # 'MediaPlayerSeekActions',
-         # 'ColorActions',
-         # 'InfobarShowHideActions',
-         # 'InfobarActions'], {'leavePlayer': self.cancel,
-         # 'back': self.cancel}, -1)
         self.allowPiP = False
         InfoBarSeek.__init__(self, actionmap='InfobarSeekActions')                      
         self.service = None
         service = None                      
         # InfoBarSeek.__init__(self, actionmap='MediaPlayerSeekActions')
         url = url.replace(':', '%3a')
+        url = url.replace(' ','%20')
         self.url = url
         self.pcip = 'None'
         self.name = decodeHtml(name)
         self.state = self.STATE_PLAYING                                 
-        # self.hideTimer = eTimer()
-        # self.hideTimer.start(5000, True)
-        # try:
-            # self.hideTimer_conn = self.hideTimer.timeout.connect(self.ok)
-        # except:
-            # self.hideTimer.callback.append(self.ok)                                                                            
         self.srefOld = self.session.nav.getCurrentlyPlayingServiceReference()
         # self.onLayoutFinish.append(self.openTest)
         self.onLayoutFinish.append(self.cicleStreamType)
@@ -2274,7 +2248,6 @@ class Playstream2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifica
         self.setAspect(temp)        
         
     def showinfo(self):
-        debug = True
         sTitle = ''
         sServiceref = ''
         try:
@@ -2329,7 +2302,7 @@ class Playstream2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifica
         print('servicetype1: ', self.servicetype)
         url = str(self.url)
         currentindex = 0
-        streamtypelist = ["1", "4097"]
+        streamtypelist = ["4097"]
         if os.path.exists("/usr/bin/gstplayer"):
             streamtypelist.append("5001")
         if os.path.exists("/usr/bin/exteplayer3"):
