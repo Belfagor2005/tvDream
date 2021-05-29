@@ -645,14 +645,14 @@ class Mediaset2(Screen):
                 '''
                 http://www.mediasetplay.mediaset.it/programmi-tv/alltogethernow_b100003640
                 '''
-                # print('name : ', name)
-                # print('url:  ', url)
+                print('name : ', name)
+                print('url:  ', url)
                 if not url in self.urls:
                     url = checkStr(url)
                     name = checkStr(name)
                 
-                    self.urls.append(url)
-                    self.names.append(name)
+                self.urls.append(url)
+                self.names.append(name)
 
             self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
@@ -674,8 +674,8 @@ class Mediaset2(Screen):
                     url = checkStr(url)
                     name = checkStr(name)
                 
-                    self.urls.append(url)
-                    self.names.append(name)
+                self.urls.append(url)
+                self.names.append(name)
             self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
 
@@ -697,8 +697,8 @@ class Mediaset2(Screen):
                     url = checkStr(url)
                     name = checkStr(name)
                 
-                    self.urls.append(url)
-                    self.names.append(name)
+                self.urls.append(url)
+                self.names.append(name)
             # match2 = re.compile(regexcat2, re.DOTALL).findall(datas)
             # # print ("_gotPageLoad match =", match2)
             # for url , name in match2:
@@ -731,8 +731,8 @@ class Mediaset2(Screen):
                     url = checkStr(url)
                     name = checkStr(name)
                 
-                    self.urls.append(url)
-                    self.names.append(name)
+                self.urls.append(url)
+                self.names.append(name)
             self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
 
@@ -753,8 +753,8 @@ class Mediaset2(Screen):
                     url = checkStr(url)
                     name = checkStr(name)
                     
-                    self.urls.append(url)
-                    self.names.append(name)
+                self.urls.append(url)
+                self.names.append(name)
             self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
 
@@ -777,8 +777,8 @@ class Mediaset2(Screen):
                     url = checkStr(url)
                     name = checkStr(name)
                 
-                    self.urls.append(url)
-                    self.names.append(name)
+                self.urls.append(url)
+                self.names.append(name)
             self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
         else:
@@ -868,8 +868,8 @@ class Mediaset3(Screen):
                     url = checkStr(url)
                     name = checkStr(name)
                 
-                    self.urls.append(url)
-                    self.names.append(name)
+                self.urls.append(url)
+                self.names.append(name)
             self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
         except:
@@ -957,8 +957,8 @@ class Mediaset4(Screen):
                     url = checkStr(url)
                     name = checkStr(name)
                 
-                    self.urls.append(url)
-                    self.names.append(name)
+                self.urls.append(url)
+                self.names.append(name)
             self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
         except:
