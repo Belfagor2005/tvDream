@@ -9,7 +9,7 @@
 *       Skin by MMark                  *
 ****************************************
 '''
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
 from Components.ActionMap import ActionMap, NumberActionMap
 from Components.Button import Button
 from Components.Label import Label
@@ -64,20 +64,23 @@ try:
 except:
     isDreamOS = False
 
-PY3 = sys.version_info[0] == 3
-
-if PY3:
-    from urllib.request import urlopen, Request
-    from urllib.error import URLError, HTTPError
-    from urllib.parse import urlparse
-    from urllib.parse import urlencode, quote
-    from urllib.request import urlretrieve
-else:
-    from urllib2 import urlopen, Request
-    from urllib2 import URLError, HTTPError
-    from urlparse import urlparse
-    from urllib import urlencode, quote
-    from urllib import urlretrieve
+PY3 = sys.version_info.major >= 3
+print('Py3: ',PY3)
+from six.moves.urllib.request import urlopen
+from six.moves.urllib.request import Request
+from six.moves.urllib.error import HTTPError, URLError
+from six.moves.urllib.request import urlretrieve    
+from six.moves.urllib.parse import urlparse
+from six.moves.urllib.parse import parse_qs
+from six.moves.urllib.request import build_opener
+from six.moves.urllib.parse import quote_plus
+from six.moves.urllib.parse import unquote_plus
+from six.moves.urllib.parse import quote
+from six.moves.urllib.parse import unquote
+from six.moves.urllib.parse import urlencode
+import six.moves.urllib.request
+import six.moves.urllib.parse
+import six.moves.urllib.error
 
 
 if sys.version_info >= (2, 7, 9):
@@ -154,11 +157,6 @@ except:
     sslverify = False
 
 if sslverify:
-    try:
-        from urlparse import urlparse
-    except:
-        from urllib.parse import urlparse
-
     class SNIFactory(ssl.ClientContextFactory):
         def __init__(self, hostname=None):
             self.hostname = hostname
@@ -793,7 +791,7 @@ class Mediaset2(Screen):
         try:        
             if ("movie" in url) or ("video" in url):
                 # print("In playVideo2 url =", url)
-                from youtube_dl import YoutubeDL
+                from Plugins.Extensions.tvDream.youtube_dl import YoutubeDL
                 '''
                 ydl_opts = {'format': 'best'}
                 ydl_opts = {'format': 'bestaudio/best'}
@@ -884,7 +882,7 @@ class Mediaset3(Screen):
         # print('url:  ', url)
         try:
             # print("In playVideo2 url =", url)
-            from youtube_dl import YoutubeDL
+            from Plugins.Extensions.tvDream.youtube_dl import YoutubeDL
             ydl_opts = {'format': 'best'}
             '''
             ydl_opts = {'format': 'bestaudio/best'}
@@ -973,7 +971,7 @@ class Mediaset4(Screen):
         # print('url:  ', url)
         try:
             # print("In playVideo2 url =", url)
-            from youtube_dl import YoutubeDL
+            from Plugins.Extensions.tvDream.youtube_dl import YoutubeDL
             ydl_opts = {'format': 'best'}
             '''
             ydl_opts = {'format': 'bestaudio/best'}
@@ -1130,7 +1128,7 @@ class tvRai2(Screen):
         # print('urlok:  ', url)
         try:
             # print("In playVideo2 url =", url)
-            from youtube_dl import YoutubeDL
+            from Plugins.Extensions.tvDream.youtube_dl import YoutubeDL
             ydl_opts = {'format': 'best'}
             '''
             ydl_opts = {'format': 'bestaudio/best'}
@@ -1810,7 +1808,7 @@ class Dplay3(Screen):
         # print('url:  ', url)
         try:
             # print("In playVideo2 url =", url)
-            from youtube_dl import YoutubeDL
+            from Plugins.Extensions.tvDream.youtube_dl import YoutubeDL
             '''
             ydl_opts = {'format': 'best'}
             '''
