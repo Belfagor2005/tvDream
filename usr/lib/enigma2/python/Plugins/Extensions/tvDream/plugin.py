@@ -5,11 +5,11 @@
 ****************************************
 *        coded by Lululla & PCD        *
 *             skin by MMark            *
-*             04/04/2021               *
+*             15/07/2021               *
 *       Skin by MMark                  *
 ****************************************
 '''
-from __future__ import print_function, unicode_literals
+from __future__ import print_function#, unicode_literals
 from Components.ActionMap import ActionMap, NumberActionMap
 from Components.Button import Button
 from Components.Label import Label
@@ -53,17 +53,15 @@ import six
 # from Tools.LoadPixmap import LoadPixmap
 # from lxml import html
 global isDreamOS, regioni 
-global skin_path, pluglogo, pngx, pngl, pngs
+global skin_dream, pluglogo, pngx, pngl, pngs
 
 regioni = False
 isDreamOS = False
-
 try:
     from enigma import eMediaDatabase
     isDreamOS = True
 except:
     isDreamOS = False
-
 PY3 = sys.version_info.major >= 3
 print('Py3: ',PY3)
 from six.moves.urllib.request import urlopen
@@ -81,7 +79,6 @@ from six.moves.urllib.parse import urlencode
 import six.moves.urllib.request
 import six.moves.urllib.parse
 import six.moves.urllib.error
-
 
 if sys.version_info >= (2, 7, 9):
     try:
@@ -155,7 +152,6 @@ try:
     sslverify = True
 except:
     sslverify = False
-
 if sslverify:
     class SNIFactory(ssl.ClientContextFactory):
         def __init__(self, hostname=None):
@@ -169,56 +165,66 @@ if sslverify:
             
 UserAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36"
 # MediapolisUserAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36"
-            
+# def getUrl(url):
+        # print( "Here in getUrl url =", url)
+        # try:
+            # req = Request(url)
+        # except:
+            # req = Request(url)       
+        # req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+        # try:
+            # try:
+                # response = urlopen(req)
+            # except:       
+                # response = urlopen(req)
+            # link=response.read()
+            # response.close()
+            # return link
+        # except:
+            # import ssl
+            # gcontext = ssl._create_unverified_context()
+            # try:
+                # response = urlopen(req)
+            # except:       
+                # response = urlopen(req)
+            # link=response.read()
+            # response.close()
+            # return link
+
 def getUrl(url):
-        print( "Here in getUrl url =", url)
-        try:
-            req = Request(url)
-        except:
-            req = Request(url)       
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-        try:
-            try:
-                response = urlopen(req)
-            except:       
-                response = urlopen(req)
-            link=response.read()
-            response.close()
-            return link
-        except:
-            import ssl
-            gcontext = ssl._create_unverified_context()
-            try:
-                response = urlopen(req)
-            except:       
-                response = urlopen(req)
-            link=response.read()
-            response.close()
-            return link
+    link = []
+    print("Here in client2 getUrl url =", url)
+    req = Request(url)
+    req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+    response = urlopen(req)
+    link=response.read()
+    response.close()
+    print("Here in client2 link =", link)
+    return link
             
 DESKHEIGHT = getDesktop(0).size().height()
-currversion = '1.0'
-
+currversion = '1.1'
 plugin_path = os.path.dirname(sys.modules[__name__].__file__)
-skin_path = plugin_path
+skin_dream = plugin_path
 res_plugin_path = plugin_path + '/res/'
 pluglogo = plugin_path + '/res/pics/logo.png'
 pngx = plugin_path + '/res/pics/plugins.png'
 pngl = plugin_path + '/res/pics/plugin.png'
 pngs = plugin_path + '/res/pics/setting.png'
-b7 = 'aHR0cHM6Ly9mZWVkLmVudGVydGFpbm1lbnQudHYudGhlcGxhdGZvcm0uZXUvZi9QUjFHaEMvbWVkaWFzZXQtcHJvZC1hbGwtc3RhdGlvbnM='
-host_b7 = base64.b64decode(b7)
+# b7 = 'aHR0cHM6Ly9mZWVkLmVudGVydGFpbm1lbnQudHYudGhlcGxhdGZvcm0uZXUvZi9QUjFHaEMvbWVkaWFzZXQtcHJvZC1hbGwtc3RhdGlvbnM='
+# host_b7 = base64.b64decode(b7)
+host_b7 = 'https://feed.entertainment.tv.theplatform.eu/f/PR1GhC/mediaset-prod-all-stations'
 HD = getDesktop(0).size()
 vid = plugin_path + '/vid.txt'
 desc_plugin = '..:: TiVu Dream Net Player by Lululla %s ::.. ' % currversion
 name_plugin = 'TiVuDream Player'
 
 if HD.width() > 1280:
-    skin_path = res_plugin_path + 'skins/fhd/'
+    skin_dream = res_plugin_path + 'skins/fhd/'
 else:
-    skin_path = res_plugin_path + 'skins/hd/'
+    skin_dream = res_plugin_path + 'skins/hd/'
 if isDreamOS:
-    skin_path = skin_path + 'dreamOs/'
+    skin_dream = skin_dream + 'dreamOs/'
     
 
 Panel_Dlist = [
@@ -230,7 +236,7 @@ Panel_Dlist = [
 
 Panel_Dlist2 = [
  ("Rai"),
- ("Mediaset"),
+ # ("Mediaset"),
  ("La7"),
  # ("Dplay")
  ]
@@ -303,7 +309,7 @@ def showlist(data, list):
 class MainSetting(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'settings.xml'
+        skin = skin_dream + 'settings.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('MainSetting')
@@ -367,7 +373,7 @@ class MainSetting(Screen):
 class Vod(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'settings.xml'
+        skin = skin_dream + 'settings.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('ITALIAN VOD MOVIE')
@@ -427,7 +433,7 @@ mediaset start
 class Mediaset(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'settings.xml'
+        skin = skin_dream + 'settings.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -502,7 +508,7 @@ class Mediaset(Screen):
 class Mediaset1(Screen):
     def __init__(self, session, name, url):
         self.session = session
-        skin = skin_path + 'settings.xml'
+        skin = skin_dream + 'settings.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -532,12 +538,13 @@ class Mediaset1(Screen):
          'cancel': self.close}, -2)
         
     def search(self):
-        content = getUrl(host_b7)
-        content = six.ensure_str(content)                                         
-        print("content A =", content)
         self.names = []
         self.urls = []
-        items = []
+        items = []    
+        content = getUrl(host_b7)
+        if PY3:
+            content = six.ensure_str(content)                                         
+        # print("content A =", content)
         d = json.loads(content)
         for i in d:
               k= i
@@ -547,7 +554,7 @@ class Mediaset1(Screen):
               if k == "entries":
                       d1 = v
                       break
-        print("\n\n##########")
+        # print("\n\n##########")
         for a in d1:
               for i in a:
                      k= i
@@ -568,8 +575,8 @@ class Mediaset1(Screen):
                 url = self.urls[j]
                 j = j+1
                 pic = " "
-                print("showContent name =", name)
-                print("showContent url =", url)
+                # print("showContent name =", name)
+                # print("showContent url =", url)
 
         url = checkStr(url)
         name = checkStr(name)
@@ -588,7 +595,7 @@ class Mediaset2(Screen):
 
     def __init__(self, session, name, url):
         self.session = session
-        skin = skin_path + 'settings.xml'
+        skin = skin_dream + 'settings.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -618,11 +625,13 @@ class Mediaset2(Screen):
          'cancel': self.close}, -2)
 
     def _gotPageLoad(self):
-        url = self.url
-        datas = getUrl(url)
-        datas = six.ensure_str(datas)                                     
         self.names = []
-        self.urls = []
+        self.urls = []    
+        url = self.url
+        name = self.name
+        datas = getUrl(url)
+        if PY3:
+            datas = six.ensure_str(datas)                                     
         # icount = 0
         # start = 0
         # n1 = datas.find(' <body>', 0)
@@ -643,8 +652,8 @@ class Mediaset2(Screen):
                 '''
                 http://www.mediasetplay.mediaset.it/programmi-tv/alltogethernow_b100003640
                 '''
-                print('name : ', name)
-                print('url:  ', url)
+                # print('name : ', name)
+                # print('url:  ', url)
                 if not url in self.urls:
                     url = checkStr(url)
                     name = checkStr(name)
@@ -652,8 +661,8 @@ class Mediaset2(Screen):
                 self.urls.append(url)
                 self.names.append(name)
 
-            self['info'].setText(_('Please select ...'))
-            showlist(self.names, self['text'])
+            # self['info'].setText(_('Please select ...'))
+            # showlist(self.names, self['text'])
 
         elif "family" in url:
             regexcat = 'href="/movie/(.*?)".*?class="_1ovAG">(.*?)</h3'    #ok
@@ -674,8 +683,8 @@ class Mediaset2(Screen):
                 
                 self.urls.append(url)
                 self.names.append(name)
-            self['info'].setText(_('Please select ...'))
-            showlist(self.names, self['text'])
+            # self['info'].setText(_('Please select ...'))
+            # showlist(self.names, self['text'])
 
         elif "programmi" in url:
             regexcat = 'a href="/programmi-tv/(.*?)".*?class="_2_UgV">(.*?)</p'    #ok
@@ -697,23 +706,8 @@ class Mediaset2(Screen):
                 
                 self.urls.append(url)
                 self.names.append(name)
-            # match2 = re.compile(regexcat2, re.DOTALL).findall(datas)
-            # # print ("_gotPageLoad match =", match2)
-            # for url , name in match2:
-                # pic = " "
-                # name = decodeHtml(name)
-                # url = "http://www.mediasetplay.mediaset.it/programmi-tv/" + url
-                # '''
-                # http://www.mediasetplay.mediaset.it/programmi-tv/alltogethernow_b100003640
-                # '''
-                # # print('name : ', name)
-                # # print('url:  ', url)
-                # if not url in self.urls:
-                    # self.urls.append(url)
-                    # self.names.append(name)                    
-
-            self['info'].setText(_('Please select ...'))
-            showlist(self.names, self['text'])
+            # self['info'].setText(_('Please select ...'))
+            # showlist(self.names, self['text'])
 
         elif "documentari" in url:
             regexcat = 'href="/playlist/(.*?)">.*?class="P4EQe _1ovAG">(.*?)</h4'
@@ -731,8 +725,8 @@ class Mediaset2(Screen):
                 
                 self.urls.append(url)
                 self.names.append(name)
-            self['info'].setText(_('Please select ...'))
-            showlist(self.names, self['text'])
+            # self['info'].setText(_('Please select ...'))
+            # showlist(self.names, self['text'])
 
         elif "film" in url:
             regexcat = 'a href="/movie/(.*?)".*?class="_2_UgV">(.*?)</p'
@@ -753,34 +747,35 @@ class Mediaset2(Screen):
                     
                 self.urls.append(url)
                 self.names.append(name)
-            self['info'].setText(_('Please select ...'))
-            showlist(self.names, self['text'])
+            # self['info'].setText(_('Please select ...'))
+            # showlist(self.names, self['text'])
 
-        elif "kids" in url:
-            regexcat = 'href="/video/(.*?)".*?class="_2s7uR"><span>(.*?)</span'      #ok
-            #https://www.mediasetplay.mediaset.it/video/tomjerryshow/il-topo-mascherato_F310175801005201
-            match = re.compile(regexcat, re.DOTALL).findall(datas)
-            # print ("kids _gotPageLoad match =", match)
-            for url, name in match:
-                pic = " "
-                name = name.replace("&#x27;","'").replace("&amp;","&")
-                name = name.replace('&quot;','"').replace('&#39;',"'")
-                url = "http://www.mediasetplay.mediaset.it/video/" + url
-                '''
-                http://www.mediasetplay.mediaset.it/kids
-                '''
-                # print('name : ', name)
-                # print('url:  ', url)
-                if not url in self.urls:
-                    url = checkStr(url)
-                    name = checkStr(name)
-                
-                self.urls.append(url)
-                self.names.append(name)
-            self['info'].setText(_('Please select ...'))
-            showlist(self.names, self['text'])
         else:
-             pass
+            if "kids" in url:
+                regexcat = 'href="/video/(.*?)".*?class="_2s7uR"><span>(.*?)</span'      #ok
+                #https://www.mediasetplay.mediaset.it/video/tomjerryshow/il-topo-mascherato_F310175801005201
+                match = re.compile(regexcat, re.DOTALL).findall(datas)
+                # print ("kids _gotPageLoad match =", match)
+                for url, name in match:
+                    pic = " "
+                    name = name.replace("&#x27;","'").replace("&amp;","&")
+                    name = name.replace('&quot;','"').replace('&#39;',"'")
+                    url = "http://www.mediasetplay.mediaset.it/video/" + url
+                    '''
+                    http://www.mediasetplay.mediaset.it/kids
+                    '''
+                    # print('name : ', name)
+                    # print('url:  ', url)
+                    if not url in self.urls:
+                        url = checkStr(url)
+                        name = checkStr(name)
+                
+                    self.urls.append(url)
+                    self.names.append(name)
+        self['info'].setText(_('Please select ...'))
+        showlist(self.names, self['text'])
+        # else:
+             # pass
 
     def okRun(self):
         idx = self["text"].getSelectionIndex()
@@ -814,7 +809,7 @@ class Mediaset3(Screen):
 
     def __init__(self, session, name, url):
         self.session = session
-        skin = skin_path + 'settings.xml'
+        skin = skin_dream + 'settings.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -844,12 +839,13 @@ class Mediaset3(Screen):
          'cancel': self.close}, -2)
 
     def _gotPageLoad(self):
+        self.names = []
+        self.urls = []    
         url = self.url
         datas = getUrl(url)
-        datas = six.ensure_str(datas)                                     
+        if PY3:
+            datas = six.ensure_str(datas)                                     
         # print('datas :  ', datas)
-        self.names = []
-        self.urls = []
         try:
             regexcat = 'href="/video/(.*?)".*?class="_1ovAG">(.*?)</h4>'
             if ("playlist" in url):
@@ -904,7 +900,7 @@ class Mediaset4(Screen):
 
     def __init__(self, session, name, url):
         self.session = session
-        skin = skin_path + 'settings.xml'
+        skin = skin_dream + 'settings.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -934,12 +930,13 @@ class Mediaset4(Screen):
          'cancel': self.close}, -2)
 
     def _gotPageLoad(self):
+        self.names = []
+        self.urls = []    
         url = self.url
         datas = getUrl(url)
-        datas = six.ensure_str(datas)                                     
+        if PY3:
+            datas = six.ensure_str(datas)                                     
         # print('datas :  ', datas)
-        self.names = []
-        self.urls = []
         try:
             #https://vod05.msf.cdn.mediaset.net/farmunica/2020/01/527829_16f8582f2437d2/dashrcclean/hd_no_mpl.mpd
             regexcat = 'url":.*?"https://www.mediasetplay.mediaset.it/video/(.*?)".*?"name": "(.*?)"'
@@ -996,7 +993,7 @@ class Rai(Screen):
 
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'settings.xml'
+        skin = skin_dream + 'settings.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -1057,7 +1054,7 @@ class tvRai2(Screen):
 
     def __init__(self, session, name, url):
         self.session = session
-        skin = skin_path + 'settings.xml'
+        skin = skin_dream + 'settings.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -1087,13 +1084,15 @@ class tvRai2(Screen):
          'cancel': self.close}, -2)
 
     def _gotPageLoad(self):
+        self.names = []
+        self.urls = []    
         url = self.url
         name = self.name
         content = getUrl(url)
-        content = six.ensure_str(content)                                         
+        if PY3:
+            content = six.ensure_str(content)                                         
         # items = []
-        self.names = []
-        self.urls = []
+
         pic = " "
         regexcat = 'data-video-json="(.*?)".*?<img alt="(.*?)"'
         match = re.compile(regexcat, re.DOTALL).findall(content)
@@ -1103,7 +1102,8 @@ class tvRai2(Screen):
             try:
                     url1 = "http://www.raiplay.it" + url
                     content2 = getUrl(url1)
-                    content2 = six.ensure_str(content2)                                                       
+                    if PY3:
+                        content2 = six.ensure_str(content2)                                                       
                     regexcat2 = '"/video/(.*?)"'
                     match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
                     url2 = match2[0].replace("json", "html")
@@ -1148,7 +1148,7 @@ class tgrRai(Screen):
 
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'settings.xml'
+        skin = skin_dream + 'settings.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -1213,7 +1213,7 @@ class tgrRai2(Screen):
 
     def __init__(self, session, name, url):
         self.session = session
-        skin = skin_path + 'settings.xml'
+        skin = skin_dream + 'settings.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -1242,21 +1242,24 @@ class tgrRai2(Screen):
          'red': self.close,
          'cancel': self.close}, -2)
 
+    # def _gotPageLoad(self):
+        # url = self.url
+        # getPage(url).addCallback(self._gotPageLoad2).addErrback(self.errorLoad)
+
+    # def errorLoad(self, error):
+        # print(str(error))
+        # self['info'].setText(_('Try again later ...'))
+
     def _gotPageLoad(self):
-        url = self.url
-        getPage(url).addCallback(self._gotPageLoad2).addErrback(self.errorLoad)
-
-    def errorLoad(self, error):
-        print(str(error))
-        self['info'].setText(_('Try again later ...'))
-
-    def _gotPageLoad2(self, data):
-        data = six.ensure_str(data)                                   
-        content = data.replace("\r", "").replace("\t", "").replace("\n", "")
-        name = self.name
         self.names = []
         self.urls = []
-        self.pics = []
+        self.pics = []  
+        name = self.name        
+        url = self.url
+        content = getUrl(url)
+        if PY3:
+            content = six.ensure_str(content)  
+        content = content.replace("\r", "").replace("\t", "").replace("\n", "")
         pic = " "
         try:
             if 'type="video">' in content:
@@ -1305,7 +1308,7 @@ class tgrRai3(Screen):
 
     def __init__(self, session, name, url):
         self.session = session
-        skin = skin_path + 'settings.xml'
+        skin = skin_dream + 'settings.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -1334,21 +1337,24 @@ class tgrRai3(Screen):
          'red': self.close,
          'cancel': self.close}, -2)
 
+    # def _gotPageLoad(self):
+        # url = self.url
+        # getPage(url).addCallback(self._gotPageLoad2).addErrback(self.errorLoad)
+
+    # def errorLoad(self, error):
+        # print(str(error))
+        # self['info'].setText(_('Try again later ...'))
+
     def _gotPageLoad(self):
-        url = self.url
-        getPage(url).addCallback(self._gotPageLoad2).addErrback(self.errorLoad)
-
-    def errorLoad(self, error):
-        print(str(error))
-        self['info'].setText(_('Try again later ...'))
-
-    def _gotPageLoad2(self, data):
-        data = six.ensure_str(data)                                   
-        content = data.replace("\r", "").replace("\t", "").replace("\n", "")
-        name = self.name
         self.names = []
         self.urls = []
-        self.pics = []
+        self.pics = [] 
+        name = self.name        
+        url = self.url
+        content = getUrl(url)
+        if PY3:
+            content = six.ensure_str(content)
+        content = content.replace("\r", "").replace("\t", "").replace("\n", "")
         pic = " "
         try:
             if 'type="video">' in content:
@@ -1401,7 +1407,7 @@ class La7(Screen):
 
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'settings.xml'
+        skin = skin_dream + 'settings.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -1449,7 +1455,7 @@ class tvLa2(Screen):
 
     def __init__(self, session, name, url):
         self.session = session
-        skin = skin_path + 'settings.xml'
+        skin = skin_dream + 'settings.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -1479,13 +1485,14 @@ class tvLa2(Screen):
          'cancel': self.close}, -2)
 
     def _gotPageLoad(self):
+        self.names = []
+        self.urls = []
+        self.pics = []    
         url = self.url
         name = self.name
         content = getUrl(url)
-        content = six.ensure_str(content)                                         
-        self.names = []
-        self.urls = []
-        self.pics = []
+        if PY3:
+            content = six.ensure_str(content)                                         
         pic = " "
         regexcat = '"list-item list-item-.*?a href="(.*?)".*?data-background-image="(.*?)".*?class="titolo">(.*?)<'
         match = re.compile(regexcat, re.DOTALL).findall(content)
@@ -1496,10 +1503,8 @@ class tvLa2(Screen):
                 url1 = "http://www.la7.it" + url
                 name = decodeHtml(name)
                 pic1 = "http:" + pic
-                
                 url1 = checkStr(url1)
                 name = checkStr(name)
-                
                 self.names.append(name)
                 self.urls.append(url1)
                 self.pics.append(pic1)
@@ -1509,7 +1514,6 @@ class tvLa2(Screen):
         showlist(self.names, self['text'])
 
     def okRun(self):
-
         idx = self["text"].getSelectionIndex()
         name = self.names[idx]
         url = self.urls[idx]
@@ -1521,7 +1525,7 @@ class tvLa3(Screen):
 
     def __init__(self, session, name, url):
         self.session = session
-        skin = skin_path + 'settings.xml'
+        skin = skin_dream + 'settings.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -1551,13 +1555,14 @@ class tvLa3(Screen):
          'cancel': self.close}, -2)
 
     def _gotPageLoad(self):
+        self.names = []
+        self.urls = []
+        self.pics = []    
         url = self.url
         name = self.name
         content = getUrl(url)
-        content = six.ensure_str(content)                                         
-        self.names = []
-        self.urls = []
-        self.pics = []
+        if PY3:
+            content = six.ensure_str(content)                                         
         pic = " "
         if 'protagonisti' in url:
             regexcat = '<div class="list.*?a href="/(.*?)/video(.*?)".*?data-background-image="(.*?)".*?class="title">(.*?)<'
@@ -1593,7 +1598,8 @@ class tvLa3(Screen):
         regex2 = '/content/(.*?).mp4'
         regex3 = 'm3u8: "(.*?)"'
         content2 = getUrl(url)
-        content2 = six.ensure_str(content2)                                           
+        if PY3:
+            content2 = six.ensure_str(content2)                                           
         # print('tvLa3 content2:  ', content2)
         x1 = 0
         if x1 == 0:
@@ -1610,7 +1616,7 @@ class Dplay(Screen):
 
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'settings.xml'
+        skin = skin_dream + 'settings.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -1639,13 +1645,14 @@ class Dplay(Screen):
 
 
     def _gotPageLoad(self):
+        self.names = []
+        self.urls = []    
         # url = "http://it.dplay.com/generi/"
         url = "http://www.discoveryplus.it/generi/"
         content = getUrl(url)
-        content = six.ensure_str(content)                                         
+        if PY3:
+            content = six.ensure_str(content)                                         
         # print("showContent35 content =", content)
-        self.names = []
-        self.urls = []
         regexcat = 'a href="/genere/(.*?)"'
         match = re.compile(regexcat, re.DOTALL).findall(content)
         # print("showContent2 match =", match)
@@ -1675,7 +1682,7 @@ class Dplay2(Screen):
 
     def __init__(self, session, name, url):
         self.session = session
-        skin = skin_path + 'settings.xml'
+        skin = skin_dream + 'settings.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -1705,13 +1712,14 @@ class Dplay2(Screen):
          'cancel': self.close}, -2)
 
     def _gotPageLoad(self):
+        self.names = []
+        self.urls = []
+        self.pics = []    
         url = self.url
         name = self.name
         content = getUrl(url)
-        content = six.ensure_str(content)                                         
-        self.names = []
-        self.urls = []
-        self.pics = []
+        if PY3:
+            content = six.ensure_str(content)                                         
         pic = " "
         regexcat = '<div class="b-show-list__single-show">.*?<a href="(.*?)".*?lazy-src="(.*?)".*?alt="(.*?)"'
         match = re.compile(regexcat, re.DOTALL).findall(content)
@@ -1743,7 +1751,7 @@ class Dplay3(Screen):
 
     def __init__(self, session, name, url):
         self.session = session
-        skin = skin_path + 'settings.xml'
+        skin = skin_dream + 'settings.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -1773,12 +1781,13 @@ class Dplay3(Screen):
          'cancel': self.close}, -2)
 
     def _gotPageLoad(self):
+        self.names = []
+        self.urls = []    
         url = self.url
         name = self.name
         content = getUrl(url)
-        content = six.ensure_str(content)                                         
-        self.names = []
-        self.urls = []
+        if PY3:
+            content = six.ensure_str(content)                                         
         pic = " "
         regexcat = 'div class="carousel-cell.*?<a href="(.*?)".*?lazyload="(.*?)".*?alt="(.*?)"'
         match = re.compile(regexcat, re.DOTALL).findall(content)
@@ -1831,7 +1840,7 @@ class State(Screen):
 
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'settings.xml'
+        skin = skin_dream + 'settings.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -1859,12 +1868,13 @@ class State(Screen):
          'cancel': self.close}, -2)
 
     def _gotPageLoad(self):
+        self.names = []
+        self.urls = []    
         url = 'http://www.tvdream.net/web-tv/paesi/'
         datas = getUrl(url)
-        datas = six.ensure_str(datas)                                     
+        if PY3:
+            datas = six.ensure_str(datas)                                     
         # print('datas :  ', datas)
-        self.names = []
-        self.urls = []
         try:
             icount = 0
             start = 0
@@ -1902,7 +1912,7 @@ class tvRegioni(Screen):
 
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'settings.xml'
+        skin = skin_dream + 'settings.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -1930,12 +1940,13 @@ class tvRegioni(Screen):
          'cancel': self.close}, -2)
 
     def _gotPageLoad(self):
+        self.names = []
+        self.urls = []    
         url = 'http://www.tvdream.net/web-tv/regioni/'
         datas = getUrl(url)
-        datas = six.ensure_str(datas)                                     
+        if PY3:
+            datas = six.ensure_str(datas)                                     
         # print('datas :  ', datas)
-        self.names = []
-        self.urls = []
         try:
             icount = 0
             start = 0
@@ -1973,7 +1984,7 @@ class tvItalia(Screen):
 
     def __init__(self, session, name, url ):
         self.session = session
-        skin = skin_path + 'settings.xml'
+        skin = skin_dream + 'settings.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -2003,13 +2014,14 @@ class tvItalia(Screen):
          'cancel': self.close}, -2)
 
     def _gotPageLoad(self):
+        self.names = []
+        self.urls = []    
         name = self.name
         url = self.url
         datas = getUrl(url)
-        datas =six.ensure_str(datas)                                    
+        if PY3:
+            datas =six.ensure_str(datas)                                    
         # print('datas :  ', datas)
-        self.names = []
-        self.urls = []
         try:
             pages = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
             for page in pages:
@@ -2042,7 +2054,7 @@ class tvCanal(Screen):
 
     def __init__(self, session, name, url ):
         self.session = session
-        skin = skin_path + 'settings.xml'
+        skin = skin_dream + 'settings.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -2072,13 +2084,14 @@ class tvCanal(Screen):
          'cancel': self.close}, -2)
 
     def _gotPageLoad(self):
+        self.names = []
+        self.urls = []    
         url = self.url
         name = self.name
         datas = getUrl(url)
-        datas = six.ensure_str(datas)                                     
+        if PY3:
+            datas = six.ensure_str(datas)                                     
         # print('datas :  ', datas)
-        self.names = []
-        self.urls = []
         try:
             icount = 0
             start = 0
@@ -2111,7 +2124,8 @@ class tvCanal(Screen):
             name = self.names[idx]
             url = self.urls[idx]
             content = getUrl(url)
-            content = six.ensure_str(content)                                             
+            if PY3:
+                content = six.ensure_str(content)                                             
             # print('content :  ', content)
             regexcat = '"player".*?href="(.*?)"'
             if regioni == True:
@@ -2120,7 +2134,8 @@ class tvCanal(Screen):
             # print("getVideos2 match =", match)
             url2 = match[0]
             content2 = getUrl(url2)
-            content2 = six.ensure_str(content2)                                               
+            if PY3:
+                content2 = six.ensure_str(content2)                                               
             # print("getVideos2 content2 =", content2)
             if ("rai" in url.lower()) or ("rai" in name.lower()):
                 regexcat2 = 'liveVideo":{"mediaUrl":"(.*?)"'
@@ -2145,7 +2160,6 @@ class TvInfoBarShowHide():
     STATE_HIDING = 1
     STATE_SHOWING = 2
     STATE_SHOWN = 3
-   
 
     def __init__(self):
         self["ShowHideActions"] = ActionMap(["InfobarShowHideActions"], {"toggleShow": self.toggleShow,
@@ -2173,7 +2187,6 @@ class TvInfoBarShowHide():
         self.__state = self.STATE_SHOWN
         self.startHideTimer()
                 
-
     def startHideTimer(self):
         if self.__state == self.STATE_SHOWN and not self.__locked:
             idx = config.usage.infobar_timeout.index
@@ -2183,7 +2196,6 @@ class TvInfoBarShowHide():
     def __onHide(self):
         self.__state = self.STATE_HIDDEN
                  
-            
     def doShow(self):
         self.show()
         self.startHideTimer()
