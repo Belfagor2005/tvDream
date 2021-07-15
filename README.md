@@ -4,7 +4,7 @@ Enigma2 project
 
 <img src="https://github.com/Belfagor2005/tvDream/blob/main/usr/lib/enigma2/python/Plugins/Extensions/tvDream/logo.png">
 
-Player for Rai Player - Mediaset Play - La7 - tvdream.net
+Player tvdream.net
 
 No video files are stored in this repository. The repository simply contains user-submitted links to publicly available video stream URLs, which to the best of our knowledge have been intentionally made publicly by the copyright holders. If any links in these playlists infringe on your rights as a copyright holder, they may be removed by sending a pull request or opening an issue.
 
