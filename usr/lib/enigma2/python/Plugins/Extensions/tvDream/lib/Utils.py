@@ -45,26 +45,34 @@ import os
 import re
 import socket
 import sys
+import six
+from six.moves.urllib.request import urlopen
+from six.moves.urllib.request import Request
+from six.moves.urllib.error import HTTPError, URLError
+from six.moves.urllib.request import urlretrieve    
+from six.moves.urllib.parse import urlparse
+from six.moves.urllib.parse import parse_qs
+from six.moves.urllib.request import build_opener
+from six.moves.urllib.parse import quote_plus
+from six.moves.urllib.parse import unquote_plus
+from six.moves.urllib.parse import quote
+from six.moves.urllib.parse import unquote
+from six.moves.urllib.parse import urlencode
+import six.moves.urllib.request
+import six.moves.urllib.parse
+import six.moves.urllib.error
 
 PY3 = sys.version_info[0] == 3
 if PY3:
     from http.client import HTTPConnection, CannotSendRequest, BadStatusLine, HTTPException
-    from urllib.parse import quote, unquote_plus, unquote
-    from urllib.request import Request, urlopen as urlopen2
-    from urllib.error import URLError
-    from urllib.request import urlopen
-    from urllib.parse import parse_qs
     import http.client
-    import urllib.request, urllib.parse, urllib.error
 else:
     from httplib import HTTPConnection, CannotSendRequest, BadStatusLine, HTTPException
-    from urllib import quote, unquote_plus, unquote
-    from urllib2 import Request, URLError, urlopen as urlopen2
-    from urllib2 import urlopen
-    from urlparse import parse_qs
     import httplib
     import urllib
-    import urlparse
+    # import urlparse
+
+
 
 HTTPConnection.debuglevel = 1
 DESKHEIGHT = getDesktop(0).size().height()
@@ -261,7 +269,6 @@ class Playvid(Screen):
     def showError(self, error):
                print("DownloadPage error = ", error)
 
-
     def updateStatus(self):
      if self.pop == 1:
             try:
@@ -405,8 +412,6 @@ class Playvid2FHD():
 		</widget>
 	</screen>"""
 
-
-
 class PlayvidB():
     skin = """
        	<screen name="Playvid" position="0,550" size="1280,150" title="InfoBar" backgroundColor="transparent" flags="wfNoBorder">
@@ -485,7 +490,7 @@ class Playvid3(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
         if DESKHEIGHT > 1000:
               self.skin = Playvid2FHD.skin
         else:
-        #                      self.skin = Playvid2HD.skin
+        #self.skin = Playvid2HD.skin
               self.skin = PlayvidB.skin
         title = "Play"
         self.sref=None
@@ -568,8 +573,6 @@ class Playvid3(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotificatio
         self.setAspect(temp)
         print(self.getAspectString(temp))
         self.statusScreen.setStatus(self.getAspectString(temp))
-
-
 
     def showinfo(self):
             debug=True

