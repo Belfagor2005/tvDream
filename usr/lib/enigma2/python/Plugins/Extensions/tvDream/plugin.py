@@ -119,19 +119,6 @@ def checkStr(txt):
             txt = txt.encode('utf-8')
     return txt
 
-def checkInternet():
-    try:
-        response = checkStr(urlopen("http://google.com", None, 5))
-        response.close()
-    except HTTPError:
-        return False
-    except URLError:
-        return False
-    except socket.timeout:
-        return False
-    else:
-        return True
-
 def checkUrl(url):
     try:
         response = checkStr(urlopen(url, None, 5))
@@ -2418,10 +2405,7 @@ class Playstream2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifica
         self.close() 
 
 def main(session, **kwargs):
-    if checkInternet():
-        session.open(MainSetting)
-    else:
-        session.open(MessageBox, "No Internet", MessageBox.TYPE_INFO)
+    session.open(MainSetting)
 
 def StartSetup(menuid, **kwargs):
     if menuid == 'mainmenu':
