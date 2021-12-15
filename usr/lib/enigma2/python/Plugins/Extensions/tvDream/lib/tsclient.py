@@ -30,27 +30,22 @@ import six
 from six.moves.urllib.request import urlopen
 from six.moves.urllib.request import Request
 from six.moves.urllib.error import HTTPError, URLError
-from six.moves.urllib.request import urlretrieve    
 from six.moves.urllib.parse import urlparse
-from six.moves.urllib.parse import parse_qs
-from six.moves.urllib.request import build_opener
+from six.moves.urllib.parse import quote
+from six.moves.urllib.parse import urlencode
+from six.moves.urllib.parse import unquote
 from six.moves.urllib.parse import quote_plus
 from six.moves.urllib.parse import unquote_plus
-from six.moves.urllib.parse import quote
-from six.moves.urllib.parse import unquote
-from six.moves.urllib.parse import urlencode
-import six.moves.urllib.request
-import six.moves.urllib.parse
-import six.moves.urllib.error
-
-PY3 = sys.version_info[0] == 3
+from six.moves.urllib.parse import parse_qs
+from six.moves.urllib.request import urlretrieve  
+from sys import version_info
+PY3 = sys.version_info.major >= 3
 
 def log(msg):
         f1=open("/tmp/e.log","a")
         ms = "\n" + msg
         f1.write(ms)
         f1.close()
-
 
 
 SUPPORTED_VERSION = 3

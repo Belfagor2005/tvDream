@@ -10,7 +10,7 @@
 ****************************************
 '''
 from __future__ import print_function#, unicode_literals
-from Components.ActionMap import ActionMap, NumberActionMap
+from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.Label import Label
 from Components.MenuList import MenuList
@@ -23,20 +23,31 @@ from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
 from Components.AVSwitch import AVSwitch
 from Components.config import ConfigSubsection, config, configfile, ConfigText, ConfigDirectory, ConfigSelection,ConfigYesNo, ConfigEnableDisable
+from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from Plugins.Plugin import PluginDescriptor
 from Screens.Console import Console
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 # from Screens.InfoBarGenerics import *
 from Screens.InfoBar import MoviePlayer, InfoBar
-from Screens.InfoBarGenerics import InfoBarAudioSelection, InfoBarNotifications 
-from Screens.InfoBarGenerics import InfoBarShowHide, InfoBarMenu, InfoBarSeek 
-from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
+from Screens.InfoBarGenerics import InfoBarMenu, InfoBarSeek, InfoBarAudioSelection, InfoBarMoviePlayerSummarySupport, \
+    InfoBarSubtitleSupport, InfoBarSummarySupport, InfoBarServiceErrorPopupSupport, InfoBarNotifications
+
 from Tools.Directories import *
 from Tools.Directories import resolveFilename, SCOPE_LANGUAGE, fileExists
-from enigma import *
-from enigma import RT_HALIGN_LEFT, getDesktop, RT_HALIGN_RIGHT, RT_HALIGN_CENTER
+
+from ServiceReference import ServiceReference                                           
+from Tools.Directories import SCOPE_PLUGINS
+from enigma import RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER#, getDesktop
 from enigma import eTimer, eListboxPythonMultiContent, eListbox, eConsoleAppContainer, gFont
+from enigma import *
+from enigma import eServiceCenter
+from enigma import eServiceReference
+from enigma import eSize, ePicLoad
+from enigma import iServiceInformation
+from enigma import loadPNG 
+from enigma import quitMainloop
+from enigma import iPlayableService 
 from os import path, listdir, remove, mkdir, chmod
 from twisted.web.client import downloadPage, getPage
 from xml.dom import Node, minidom
@@ -49,36 +60,28 @@ import ssl
 import glob
 import json
 import six          
-	
+try:
+    from Plugins.Extensions.tvDream.Utils import *
+except:
+    from . import Utils
+
+
 # from Tools.LoadPixmap import LoadPixmap
 # from lxml import html
-global isDreamOS, regioni 
-global skin_dream, pluglogo, pngx, pngl, pngs
-
+global regioni, skin_dream
 regioni = False
-isDreamOS = False
-try:
-    from enigma import eMediaDatabase
-    isDreamOS = True
-except:
-    isDreamOS = False
+
 PY3 = sys.version_info.major >= 3
 print('Py3: ',PY3)
-from six.moves.urllib.request import urlopen
-from six.moves.urllib.request import Request
-from six.moves.urllib.error import HTTPError, URLError
-from six.moves.urllib.request import urlretrieve    
-from six.moves.urllib.parse import urlparse
-from six.moves.urllib.parse import parse_qs
-from six.moves.urllib.request import build_opener
-from six.moves.urllib.parse import quote_plus
-from six.moves.urllib.parse import unquote_plus
-from six.moves.urllib.parse import quote
-from six.moves.urllib.parse import unquote
-from six.moves.urllib.parse import urlencode
-import six.moves.urllib.request
-import six.moves.urllib.parse
-import six.moves.urllib.error
+# from six.moves.urllib.request import urlopen
+# from six.moves.urllib.request import Request
+
+if PY3:
+    from urllib.request import urlopen
+    from urllib.request import Request
+else:
+    from urllib2 import Request
+    from urllib2 import urlopen
 
 if sys.version_info >= (2, 7, 9):
     try:
@@ -92,46 +95,6 @@ def ssl_urlopen(url):
         return urlopen(url, context=sslContext)
     else:
         return urlopen(url)
-
-try:
-    from enigma import eDVBDB
-except ImportError:
-    eDVBDB = None
-
-# def clear_Title(txt):
-    # txt = re.sub('<.+?>', '', txt)
-    # txt = txt.replace("&quot;", "\"").replace('()', '').replace("&#038;", "&").replace('&#8211;', ':')
-    # txt = txt.replace("&amp;", "&").replace('&#8217;', "'").replace('&#039;', ':').replace('&#;', '\'')
-    # txt = txt.replace("&#38;", "&").replace('&#8221;', '"').replace('&#8216;', '"').replace('&#160;', '')
-    # txt = txt.replace('&#x27;', "'").replace("&#39;", "'").replace("&nbsp;", "").replace('&#8220;', '"').replace('\t', ' ').replace('\n', ' ')
-    # # txt = txt.replace(":", "-").replace("&", "-").replace(" ", "-")
-    # # txt = txt.replace("›", "-").replace(",", "-").replace("/", "-")
-    
-    # # txt = txt.decode('utf8').encode('latin-1','ignore')
-    # return txt
-    
-def checkStr(txt):
-    if PY3:
-        if isinstance(txt, type(bytes())):
-            txt = txt.decode('utf-8')
-    else:
-        if isinstance(txt, type(six.text_type())):
-            txt = txt.encode('utf-8')
-    return txt
-
-def checkUrl(url):
-    try:
-        response = checkStr(urlopen(url, None, 5))
-        response.close()
-    except HTTPError:
-        return False
-    except URLError:
-        return False
-    except socket.timeout:
-        return False
-    else:
-        return True
-
 try:
     from OpenSSL import SSL
     from twisted.internet import ssl
@@ -149,83 +112,35 @@ if sslverify:
             if self.hostname:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
-            
-UserAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36"
-# MediapolisUserAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36"
-# def getUrl(url):
-        # print( "Here in getUrl url =", url)
-        # try:
-            # req = Request(url)
-        # except:
-            # req = Request(url)       
-        # req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-        # try:
-            # try:
-                # response = urlopen(req)
-            # except:       
-                # response = urlopen(req)
-            # link=response.read()
-            # response.close()
-            # return link
-        # except:
-            # import ssl
-            # gcontext = ssl._create_unverified_context()
-            # try:
-                # response = urlopen(req)
-            # except:       
-                # response = urlopen(req)
-            # link=response.read()
-            # response.close()
-            # return link
 
-def getUrl(url):
-    link = []
-    print("Here in client2 getUrl url =", url)
-    req = Request(url)
-    req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-    response = urlopen(req)
-    link=response.read()
-    response.close()
-    print("Here in client2 link =", link)
-    return link
-            
-DESKHEIGHT = getDesktop(0).size().height()
-currversion = '1.1'
+currversion = '1.2'
 plugin_path = os.path.dirname(sys.modules[__name__].__file__)
-skin_dream = plugin_path
+skin_dream = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/fhd/".format('tvDream'))
 res_plugin_path = plugin_path + '/res/'
-pluglogo = plugin_path + '/res/pics/logo.png'
-pngx = plugin_path + '/res/pics/plugins.png'
-pngl = plugin_path + '/res/pics/plugin.png'
-pngs = plugin_path + '/res/pics/setting.png'
-# b7 = 'aHR0cHM6Ly9mZWVkLmVudGVydGFpbm1lbnQudHYudGhlcGxhdGZvcm0uZXUvZi9QUjFHaEMvbWVkaWFzZXQtcHJvZC1hbGwtc3RhdGlvbnM='
-# host_b7 = base64.b64decode(b7)
 host_b7 = 'https://feed.entertainment.tv.theplatform.eu/f/PR1GhC/mediaset-prod-all-stations'
-HD = getDesktop(0).size()
-vid = plugin_path + '/vid.txt'
 desc_plugin = '..:: TiVu Dream Net Player by Lululla %s ::.. ' % currversion
 name_plugin = 'TiVuDream Player'
-
-if HD.width() > 1280:
-    skin_dream = res_plugin_path + 'skins/fhd/'
+if isFHD():
+    skin_dream = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/fhd/".format('tvDream'))
 else:
-    skin_dream = res_plugin_path + 'skins/hd/'
-if isDreamOS:
+    skin_dream = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/hd/".format('tvDream'))
+if DreamOS():
     skin_dream = skin_dream + 'dreamOs/'
-    
 
 Panel_Dlist = [
- ('TVD Regioni'),
- ('TVD Paesi'),
+ ('TVD Regions'),
+ ('TVD State'),
  ('TVD Italia'),
- ('ITALIAN VOD MOVIE')
+ ('TVD Category'), 
+ ('TVD New'),  
+# ('ITALIAN VOD MOVIE')
  ]
 
 Panel_Dlist2 = [
- ("Rai"),
- # ("Mediaset"),
+ # ("Rai"),
+ ("Mediaset"),
  ("La7"),
- # ("Dplay")
+# ("Dplay")
  ]
 
 Panel_Dlist3 = [
@@ -246,41 +161,31 @@ class SetList(MenuList):
         self.l.setFont(7, gFont('Regular', 34))
         self.l.setFont(8, gFont('Regular', 36))
         self.l.setFont(9, gFont('Regular', 40))
-        if HD.width() > 1280:
+        if isFHD():
             self.l.setItemHeight(50)
         else:
             self.l.setItemHeight(50)
 
 def DListEntry(name, idx):
     res = [name]
-    if HD.width() > 1280:
+    pngs = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('tvDream'))
+    if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos = (10, 12), size = (34, 25), png = loadPNG(pngs)))
         res.append(MultiContentEntryText(pos = (60, 0), size = (1900, 50), font = 7, text = name, color = 0xa6d1fe, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 6), size=(34, 25), png=loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos = (60, 0), size = (1000, 50), font = 1, text = name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT))
+        res.append(MultiContentEntryText(pos = (60, 0), size = (1000, 50), font = 2, text = name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
-
-class OneSetList(MenuList):
-    def __init__(self, list):
-        MenuList.__init__(self, list, True, eListboxPythonMultiContent)
-        if HD.width() > 1280:
-            self.l.setItemHeight(50)
-            textfont = int(34)
-            self.l.setFont(0, gFont('Regular', textfont))
-        else:
-            self.l.setItemHeight(50)
-            textfont = int(22)
-            self.l.setFont(0, gFont('Regular', textfont))
 
 def OneSetListEntry(name):
     res = [name]
-    if HD.width() > 1280:
+    pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/plugins.png".format('tvDream'))
+    if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos = (10, 12), size = (34, 25), png = loadPNG(pngx)))
         res.append(MultiContentEntryText(pos = (60, 0), size = (1200, 50), font = 0, text = name, color = 0xa6d1fe, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
         res.append(MultiContentEntryPixmapAlphaTest(pos = (10, 6), size = (34, 25), png = loadPNG(pngx)))
-        res.append(MultiContentEntryText(pos = (60, 2), size = (1000, 50), font = 0, text = name, color = 0xa6d1fe, flags = RT_HALIGN_LEFT))
+        res.append(MultiContentEntryText(pos = (60, 2), size = (1000, 50), font = 2, text = name, color = 0xa6d1fe, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
 
 def showlist(data, list):
@@ -291,7 +196,6 @@ def showlist(data, list):
         plist.append(OneSetListEntry(name))
         icount = icount+1
         list.setList(plist)
-
 
 class MainSetting(Screen):
     def __init__(self, session):
@@ -314,7 +218,7 @@ class MainSetting(Screen):
         self['key_red'] = Button(_('Exit'))
         self["key_blue"] = Button(_(''))
         self['key_blue'].hide()
-        self['actions'] = NumberActionMap(['SetupActions', 'ColorActions', ], {'ok': self.okRun,
+        self['actions'] = ActionMap(['SetupActions', 'ColorActions', ], {'ok': self.okRun,
          'green': self.okRun,
          'back': self.closerm,
          'red': self.closerm,
@@ -343,1488 +247,29 @@ class MainSetting(Screen):
     def keyNumberGlobalCB(self, idx):
         global regioni
         sel = self.menu_list[idx]
-        if sel == _('TVD Paesi'):
+        if sel == _('TVD State'):
             regioni = False
             self.session.open(State)
-        elif sel == _('TVD Regioni'):
+        elif sel == _('TVD Regions'):
             regioni = True
             self.session.open(tvRegioni)
         elif sel == ('TVD Italia'):
             name = 'Italia'
             url = "http://www.tvdream.net/web-tv/paesi/italia/"
             self.session.open(tvItalia, name, url)
-
-        elif sel == ('ITALIAN VOD MOVIE'):
-            self.session.open(Vod)
-
-class Vod(Screen):
-    def __init__(self, session):
-        self.session = session
-        skin = skin_dream + 'settings.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('ITALIAN VOD MOVIE')
-        Screen.__init__(self, session)
-        self.setTitle(desc_plugin)
-        self['text'] = SetList([])
-        self.working = False
-        self.selection = 'all'
-        self['title'] = Label(desc_plugin)
-        self['info'] = Label('')
-        self['info'].setText(_('Please select ...'))
-        self['key_yellow'] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Exit'))
-        self["key_blue"] = Button(_(''))
-        self['key_blue'].hide()
-        self['actions'] = NumberActionMap(['SetupActions', 'ColorActions', ], {'ok': self.okRun,
-         'green': self.okRun,
-         'back': self.closerm,
-         'red': self.closerm,
-         'cancel': self.closerm}, -1)
-        self.onLayoutFinish.append(self.updateMenuList)
-
-    def closerm(self):
-        self.close()
-
-    def updateMenuList(self):
-        self.menu_list = []
-        for x in self.menu_list:
-            del self.menu_list[0]
-        list = []
-        idx = 0
-        for x in Panel_Dlist2:
-            list.append(DListEntry(x, idx))
-            self.menu_list.append(x)
-            idx += 1
-        self['text'].setList(list)
-
-    def okRun(self):
-        self.keyNumberGlobalCB(self['text'].getSelectedIndex())
-
-    def keyNumberGlobalCB(self, idx):
-        sel = self.menu_list[idx]
-        if sel == _('Rai'):
-            self.session.open(Rai)
-        elif sel == _('Mediaset'):
-            self.session.open(Mediaset)
-        elif sel == _('La7'):
-            self.session.open(La7)
-        # elif sel == _('Dplay'):
-            # self.session.open(Dplay)
-
-'''
-mediaset start
-'''
-class Mediaset(Screen):
-    def __init__(self, session):
-        self.session = session
-        skin = skin_dream + 'settings.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('TiVuDream')
-        Screen.__init__(self, session)
-        self.setTitle(desc_plugin)
-        self.list = []
-        self['text'] = OneSetList([])
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.timer = eTimer()
-        self.timer.start(1500, True)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
-        else:
-            self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def _gotPageLoad(self):
-        self.names = []
-        self.urls = []
-        '''
-        on kids and film no work play
-        '''
-        
-        self.names.append("Live") 
-        self.urls.append("https://feed.entertainment.tv.theplatform.eu/f/PR1GhC/mediaset-prod-all-stations") 
-        
-        self.names.append("Film")
-        self.urls.append("http://www.mediasetplay.mediaset.it/film")
-        # self.urls.append("https://www.mediasetplay.mediaset.it/browse/film-della-settimana_e5ed8badba6f547001beae4d2")
-        self.names.append("Kids")
-        self.urls.append("http://www.mediasetplay.mediaset.it/kids")
-        '''
-        on kids and film no work play
-        '''
-        self.names.append("Documentari")
-        self.urls.append("http://www.mediasetplay.mediaset.it/documentari") #ok
-        self.names.append("Family")
-        self.urls.append("http://www.mediasetplay.mediaset.it/family") #ok
-        self.names.append("Fiction")
-        self.urls.append("http://www.mediasetplay.mediaset.it/fiction") #ok
-        self.names.append("Programmitv")
-        self.urls.append("http://www.mediasetplay.mediaset.it/programmitv") #ok
-
-        showlist(self.names, self['text'])
-        self['info'].setText(_('Please select ...'))
-
-    def okRun(self):
-        self.keyNumberGlobalCB(self['text'].getSelectedIndex())
-
-    def keyNumberGlobalCB(self, idx):
-        idx = self["text"].getSelectionIndex()
-        name = self.names[idx]
-        url = self.urls[idx]
-        # print('name : ', name)
-        # print('url:  ', url)
-        
-        if 'Live' in str(name):
-            self.session.open(Mediaset1, name, url)            
-        else:
-            self.session.open(Mediaset2, name, url)
-
-class Mediaset1(Screen):
-    def __init__(self, session, name, url):
-        self.session = session
-        skin = skin_dream + 'settings.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('TiVuDream')
-        Screen.__init__(self, session)
-        self.setTitle(desc_plugin)
-        self.name = name
-        self.url = url
-        self.list = []
-        self['text'] = OneSetList([])
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.timer = eTimer()
-        self.timer.start(1500, True)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self.search)
-        else:
-            self.timer.callback.append(self.search)
-        self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-        
-    def search(self):
-        self.names = []
-        self.urls = []
-        items = []    
-        content = getUrl(host_b7)
-        if PY3:
-            content = six.ensure_str(content)                                         
-        # print("content A =", content)
-        d = json.loads(content)
-        for i in d:
-              k= i
-              v= d[i]
-              print("key =", k    )
-              print("value=", v   )
-              if k == "entries":
-                      d1 = v
-                      break
-        # print("\n\n##########")
-        for a in d1:
-              for i in a:
-                     k= i
-                     v= a[i]
-                     print("key1 =", k    )
-                     print("value1 =", v  )
-                     if "title" in k:
-                             self.names.append(str(v))
-                     if k == "tuningInstruction":
-                             v1 = str(v)
-                             n1 = v1.find("publicUrls", 0)
-                             n2 = v1.find("http", n1)
-                             n3 = v1.find("'", n2)
-                             url = v1[n2:n3]
-                             self.urls.append(url)
-        j = 0
-        for name in self.names:
-                url = self.urls[j]
-                j = j+1
-                pic = " "
-                # print("showContent name =", name)
-                # print("showContent url =", url)
-
-        url = checkStr(url)
-        name = checkStr(name)
-                
-        self.urls.append(url)
-        self.names.append(name)
-        showlist(self.names, self['text'])
-      
-    def okRun(self):
-        idx = self["text"].getSelectionIndex()
-        name = self.names[idx]
-        url = self.urls[idx]
-        self.session.open(Playstream2, name, url)
-
-class Mediaset2(Screen):
-
-    def __init__(self, session, name, url):
-        self.session = session
-        skin = skin_dream + 'settings.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('TiVuDream')
-        Screen.__init__(self, session)
-        self.setTitle(desc_plugin)
-        self.name = name
-        self.url = url
-        self.list = []
-        self['text'] = OneSetList([])
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.timer = eTimer()
-        self.timer.start(1500, True)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
-        else:
-            self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def _gotPageLoad(self):
-        self.names = []
-        self.urls = []    
-        url = self.url
-        name = self.name
-        datas = getUrl(url)
-        if PY3:
-            datas = six.ensure_str(datas)                                     
-        # icount = 0
-        # start = 0
-        # n1 = datas.find(' <body>', 0)
-        # # if n1 < 0:
-           # # return
-        # n2 = datas.find("</script>", n1)
-        # datas = datas[n1:n2]
-        # print("data A2 =", datas)
-
-        if "fiction" in url:
-            regexcat = 'a href="/fiction/(.*?)".*?class="_2_UgV">(.*?)</p'      #ok
-            match = re.compile(regexcat, re.DOTALL).findall(datas)
-            # print ("_gotPageLoad match =", match)
-            for url , name in match:
-                pic = " "
-                name = decodeHtml(name)
-                url = "http://www.mediasetplay.mediaset.it/fiction/" + url
-                '''
-                http://www.mediasetplay.mediaset.it/programmi-tv/alltogethernow_b100003640
-                '''
-                # print('name : ', name)
-                # print('url:  ', url)
-                if not url in self.urls:
-                    url = checkStr(url)
-                    name = checkStr(name)
-                
-                self.urls.append(url)
-                self.names.append(name)
-
-            # self['info'].setText(_('Please select ...'))
-            # showlist(self.names, self['text'])
-
-        elif "family" in url:
-            regexcat = 'href="/movie/(.*?)".*?class="_1ovAG">(.*?)</h3'    #ok
-            match = re.compile(regexcat, re.DOTALL).findall(datas)
-            # print ("_gotPageLoad match =", match)
-            for url, name in match:
-                pic = " "
-                name = decodeHtml(name)
-                url = "http://www.mediasetplay.mediaset.it/movie/" + url
-                '''
-                http://www.mediasetplay.mediaset.it/browse/film-per-tutta-la-famiglia_e5e6a15c523eec6001de37eac
-                '''
-                # print('name : ', name)
-                # print('url:  ', url)
-                if not url in self.urls:
-                    url = checkStr(url)
-                    name = checkStr(name)
-                
-                self.urls.append(url)
-                self.names.append(name)
-            # self['info'].setText(_('Please select ...'))
-            # showlist(self.names, self['text'])
-
-        elif "programmi" in url:
-            regexcat = 'a href="/programmi-tv/(.*?)".*?class="_2_UgV">(.*?)</p'    #ok
-            # regexcat2 = 'class="QONIw"><div><a href="(.*?)</p.*?class="_2_UgV">(.*?)</p>'#ok        
-            match = re.compile(regexcat, re.DOTALL).findall(datas)
-            # print ("_gotPageLoad match =", match)
-            for url , name in match:
-                pic = " "
-                name = decodeHtml(name)
-                url = "http://www.mediasetplay.mediaset.it/programmi-tv/" + url
-                '''
-                http://www.mediasetplay.mediaset.it/programmi-tv/alltogethernow_b100003640
-                '''
-                # print('name : ', name)
-                # print('url:  ', url)
-                if not url in self.urls:
-                    url = checkStr(url)
-                    name = checkStr(name)
-                
-                self.urls.append(url)
-                self.names.append(name)
-            # self['info'].setText(_('Please select ...'))
-            # showlist(self.names, self['text'])
-
-        elif "documentari" in url:
-            regexcat = 'href="/playlist/(.*?)">.*?class="P4EQe _1ovAG">(.*?)</h4'
-            match = re.compile(regexcat, re.DOTALL).findall(datas)
-            # print ("_gotPageLoad match =", match)
-            for url, name in match:
-                pic = " "
-                name = decodeHtml(name)
-                url = "http://www.mediasetplay.mediaset.it/playlist/" + url
-                # print('name : ', name)
-                # print('url:  ', url)
-                if not url in self.urls:
-                    url = checkStr(url)
-                    name = checkStr(name)
-                
-                self.urls.append(url)
-                self.names.append(name)
-            # self['info'].setText(_('Please select ...'))
-            # showlist(self.names, self['text'])
-
-        elif "film" in url:
-            regexcat = 'a href="/movie/(.*?)".*?class="_2_UgV">(.*?)</p'
-            match = re.compile(regexcat, re.DOTALL).findall(datas)
-            # print ("_gotPageLoad match =", match)
-            for url, name in match:
-                pic = " "
-                name = decodeHtml(name)                
-                url = "http://www.mediasetplay.mediaset.it/movie/" + url
-                '''
-                http://www.mediasetplay.mediaset.it/programmi-tv/alltogethernow_b100003640
-                '''
-                # print('name : ', name)
-                # print('url:  ', url)
-                if not url in self.urls:
-                    url = checkStr(url)
-                    name = checkStr(name)
-                    
-                self.urls.append(url)
-                self.names.append(name)
-            # self['info'].setText(_('Please select ...'))
-            # showlist(self.names, self['text'])
-
-        else:
-            if "kids" in url:
-                regexcat = 'href="/video/(.*?)".*?class="_2s7uR"><span>(.*?)</span'      #ok
-                #https://www.mediasetplay.mediaset.it/video/tomjerryshow/il-topo-mascherato_F310175801005201
-                match = re.compile(regexcat, re.DOTALL).findall(datas)
-                # print ("kids _gotPageLoad match =", match)
-                for url, name in match:
-                    pic = " "
-                    name = name.replace("&#x27;","'").replace("&amp;","&")
-                    name = name.replace('&quot;','"').replace('&#39;',"'")
-                    url = "http://www.mediasetplay.mediaset.it/video/" + url
-                    '''
-                    http://www.mediasetplay.mediaset.it/kids
-                    '''
-                    # print('name : ', name)
-                    # print('url:  ', url)
-                    if not url in self.urls:
-                        url = checkStr(url)
-                        name = checkStr(name)
-                
-                    self.urls.append(url)
-                    self.names.append(name)
-        self['info'].setText(_('Please select ...'))
-        showlist(self.names, self['text'])
-        # else:
-             # pass
-
-    def okRun(self):
-        idx = self["text"].getSelectionIndex()
-        name = self.names[idx]
-        url = self.urls[idx]
-        # print('name : ', name)
-        # print('url:  ', url)
-        try:        
-            if ("movie" in url) or ("video" in url):
-                # print("In playVideo2 url =", url)
-                from Plugins.Extensions.tvDream.youtube_dl import YoutubeDL
-                '''
-                ydl_opts = {'format': 'best'}
-                ydl_opts = {'format': 'bestaudio/best'}
-                '''
-                ydl_opts = {'format': 'best'}
-                ydl = YoutubeDL(ydl_opts)
-                ydl.add_default_info_extractors()
-                result = ydl.extract_info(url, download=False)
-                # print ("mediaset result =", result)
-                url = result["url"]
-                # print ("mediaset final url =", url)
-                self.session.open(Playstream2, name, url)
-            else:
-                self.session.open(Mediaset3, name, url)
-        except:
-            return                
-                
-
-class Mediaset3(Screen):
-
-    def __init__(self, session, name, url):
-        self.session = session
-        skin = skin_dream + 'settings.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('TiVuDream')
-        Screen.__init__(self, session)
-        self.setTitle(desc_plugin)
-        self.name = name
-        self.url = url
-        self.list = []
-        self['text'] = OneSetList([])
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['key_green'] = Button(_('Play'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.timer = eTimer()
-        self.timer.start(1500, True)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
-        else:
-            self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def _gotPageLoad(self):
-        self.names = []
-        self.urls = []    
-        url = self.url
-        datas = getUrl(url)
-        if PY3:
-            datas = six.ensure_str(datas)                                     
-        # print('datas :  ', datas)
-        try:
-            regexcat = 'href="/video/(.*?)".*?class="_1ovAG">(.*?)</h4>'
-            if ("playlist" in url):
-                regexcat = 'url":.*?"https://www.mediasetplay.mediaset.it/video/(.*?)".*?"name": "(.*?)"'
-            match = re.compile(regexcat, re.DOTALL).findall(datas)
-            # print ("_gotPageLoad match =", match)
-            for url, name  in match:
-                pic = " "
-                name = decodeHtml(name)
-                url = "http://www.mediasetplay.mediaset.it/video/" + url
-                # print('name : ', name)
-                # print('url1:  ', url)
-                if not url in self.urls:
-                    url = checkStr(url)
-                    name = checkStr(name)
-                
-                self.urls.append(url)
-                self.names.append(name)
-            self['info'].setText(_('Please select ...'))
-            showlist(self.names, self['text'])
-        except:
-            self['info'].setText(_('Nothing Dok...'))
-            pass
-
-    def okRun(self):
-        idx = self["text"].getSelectionIndex()
-        name = self.names[idx]
-        url = self.urls[idx]
-        # print('name : ', name)
-        # print('url:  ', url)
-        try:
-            # print("In playVideo2 url =", url)
-            from Plugins.Extensions.tvDream.youtube_dl import YoutubeDL
-            ydl_opts = {'format': 'best'}
-            '''
-            ydl_opts = {'format': 'bestaudio/best'}
-            '''
-            ydl = YoutubeDL(ydl_opts)
-            ydl.add_default_info_extractors()
-            result = ydl.extract_info(url, download=False)
-            # print ("mediaset result =", result)
-            url = result["url"]
-            # print ("mediaset final url =", url)
-
-            self.session.open(Playstream2, name, url)
-        except:
-            self['info'].setText(_('Nothing KO ...'))
-            pass
-
-'''not used'''
-class Mediaset4(Screen):
-
-    def __init__(self, session, name, url):
-        self.session = session
-        skin = skin_dream + 'settings.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('TiVuDream')
-        Screen.__init__(self, session)
-        self.setTitle(desc_plugin)
-        self.name = name
-        self.url = url
-        self.list = []
-        self['text'] = OneSetList([])
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['key_green'] = Button(_('Play'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.timer = eTimer()
-        self.timer.start(1500, True)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
-        else:
-            self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def _gotPageLoad(self):
-        self.names = []
-        self.urls = []    
-        url = self.url
-        datas = getUrl(url)
-        if PY3:
-            datas = six.ensure_str(datas)                                     
-        # print('datas :  ', datas)
-        try:
-            #https://vod05.msf.cdn.mediaset.net/farmunica/2020/01/527829_16f8582f2437d2/dashrcclean/hd_no_mpl.mpd
-            regexcat = 'url":.*?"https://www.mediasetplay.mediaset.it/video/(.*?)".*?"name": "(.*?)"'
-            match = re.compile(regexcat, re.DOTALL).findall(datas)
-            # print ("_gotPageLoad match docs=", match)
-            for url, name  in match:
-                pic = " "
-                name = decodeHtml(name)
-                url = "https://www.mediasetplay.mediaset.it/video/" + url
-                # print('name : ', name)
-                # print('url1:  ', url)
-                if not url in self.urls:
-                    url = checkStr(url)
-                    name = checkStr(name)
-                
-                self.urls.append(url)
-                self.names.append(name)
-            self['info'].setText(_('Please select ...'))
-            showlist(self.names, self['text'])
-        except:
-            self['info'].setText(_('Nothing ...'))
-            pass
-
-    def okRun(self):
-        idx = self["text"].getSelectionIndex()
-        name = self.names[idx]
-        url = self.urls[idx]
-        # print('name : ', name)
-        # print('url:  ', url)
-        try:
-            # print("In playVideo2 url =", url)
-            from Plugins.Extensions.tvDream.youtube_dl import YoutubeDL
-            ydl_opts = {'format': 'best'}
-            '''
-            ydl_opts = {'format': 'bestaudio/best'}
-            '''
-            ydl = YoutubeDL(ydl_opts)
-            ydl.add_default_info_extractors()
-            result = ydl.extract_info(url, download=False)
-            # print ("mediaset result =", result)
-            url = result["url"]
-            # print ("mediaset final url =", url)
-            self.session.open(Playstream2, name, url)
-        except:
-            self['info'].setText(_('Nothing ...'))
-            pass
-'''
-mediaset end
-'''
-'''
-rai start
-'''
-class Rai(Screen):
-
-    def __init__(self, session):
-        self.session = session
-        skin = skin_dream + 'settings.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('TiVuDream')
-        Screen.__init__(self, session)
-        self.setTitle(desc_plugin)
-        self.list = []
-        self['text'] = OneSetList([])
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.timer = eTimer()
-        self.timer.start(1500, True)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
-        else:
-            self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def _gotPageLoad(self):
-        self.names = []
-        self.urls = []
-        self.names.append("Film")
-        self.urls.append("http://www.raiplay.it/film/")
-        self.names.append("Serietv")
-        self.urls.append("http://www.raiplay.it/serietv/")
-        self.names.append("Fiction")
-        self.urls.append("http://www.raiplay.it/fiction/")
-        self.names.append("Documentari")
-        self.urls.append("http://www.raiplay.it/documentari/")
-        self.names.append("Bambini")
-        self.urls.append("http://www.raiplay.it/bambini/")
-        self.names.append("Teen")
-        self.urls.append("http://www.raiplay.it/teen/")
-        self.names.append("Tgr")
-        self.urls.append("http://www.tgr.rai.it/dl/tgr/mhp/home.xml")
-        showlist(self.names, self['text'])
-
-    def okRun(self):
-        idx = self["text"].getSelectionIndex()
-        name = self.names[idx]
-        url = self.urls[idx]
-        # print('name : ', name)
-        # print('url:  ', url)
-        if 'Tgr' in name:
-            self.session.open(tgrRai)
-        else:
-            self.session.open(tvRai2, name, url)
-
-class tvRai2(Screen):
-
-    def __init__(self, session, name, url):
-        self.session = session
-        skin = skin_dream + 'settings.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('TiVuDream')
-        Screen.__init__(self, session)
-        self.setTitle(desc_plugin)
-        self.list = []
-        self.name = name
-        self.url = url
-        self['text'] = OneSetList([])
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['key_green'] = Button(_('Play'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.timer = eTimer()
-        self.timer.start(1500, True)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
-        else:
-            self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def _gotPageLoad(self):
-        self.names = []
-        self.urls = []    
-        url = self.url
-        name = self.name
-        content = getUrl(url)
-        if PY3:
-            content = six.ensure_str(content)                                         
-        # items = []
-
-        pic = " "
-        regexcat = 'data-video-json="(.*?)".*?<img alt="(.*?)"'
-        match = re.compile(regexcat, re.DOTALL).findall(content)
-        # print("showContent2 match =", match)
-        # print('name : ', name)
-        for url, name in match:
-            try:
-                    url1 = "http://www.raiplay.it" + url
-                    content2 = getUrl(url1)
-                    if PY3:
-                        content2 = six.ensure_str(content2)                                                       
-                    regexcat2 = '"/video/(.*?)"'
-                    match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
-                    url2 = match2[0].replace("json", "html")
-                    url3 = "http://www.raiplay.it/video/" + url2
-                    name = decodeHtml(name)
-                    
-                    url3 = checkStr(url3)
-                    name = checkStr(name)
-                
-                    self.names.append(name)
-                    self.urls.append(url3)
-            except:
-                continue
-        self['info'].setText(_('Please select ...'))
-        showlist(self.names, self['text'])
-
-    def okRun(self):
-        idx = self["text"].getSelectionIndex()
-        name = self.names[idx]
-        url = self.urls[idx]
-        # print('nameok : ', name)
-        # print('urlok:  ', url)
-        try:
-            # print("In playVideo2 url =", url)
-            from Plugins.Extensions.tvDream.youtube_dl import YoutubeDL
-            ydl_opts = {'format': 'best'}
-            '''
-            ydl_opts = {'format': 'bestaudio/best'}
-            '''
-            ydl = YoutubeDL(ydl_opts)
-            ydl.add_default_info_extractors()
-            result = ydl.extract_info(url, download=False)
-            # print ("rai result =", result)
-            url = result["url"]
-            # print ("rai final url =", url)
-            self.session.open(Playstream2, name, url)
-        except:
-            self['info'].setText(_('Nothing ...'))
-            pass
-
-class tgrRai(Screen):
-
-    def __init__(self, session):
-        self.session = session
-        skin = skin_dream + 'settings.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('TiVuDream')
-        Screen.__init__(self, session)
-        self.setTitle(desc_plugin)
-        self.list = []
-        self['text'] = OneSetList([])
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.timer = eTimer()
-        self.timer.start(1500, True)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
-        else:
-            self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def _gotPageLoad(self):
-        self.names = []
-        self.urls = []
-        self.pics = []
-        # self.urls.append("http://www.tgr.rai.it/dl/tgr/mhp/home.xml")
-        self.names.append("TG")
-        self.urls.append("http://www.tgr.rai.it/dl/tgr/mhp/regioni/Page-0789394e-ddde-47da-a267-e826b6a73c4b.html?tgr")
-        self.pics.append("http://www.tgr.rai.it/dl/tgr/mhp/immagini/tgr.png")
-        self.names.append("METEO")
-        self.urls.append("http://www.tgr.rai.it/dl/tgr/mhp/regioni/Page-0789394e-ddde-47da-a267-e826b6a73c4b.html?meteo")
-        self.pics.append("http://www.tgr.rai.it/dl/tgr/mhp/immagini/meteo.png")
-        self.names.append("BUONGIORNO ITALIA")
-        self.urls.append("http://www.tgr.rai.it/dl/rai24/tgr/rubriche/mhp/ContentSet-88d248b5-6815-4bed-92a3-60e22ab92df4.html")
-        self.pics.append("http://www.tgr.rai.it/dl/tgr/mhp/immagini/buongiorno%20italia.png")
-        self.names.append("BUONGIORNO REGIONE")
-        self.urls.append("http://www.tgr.rai.it/dl/tgr/mhp/regioni/Page-0789394e-ddde-47da-a267-e826b6a73c4b.html?buongiorno")
-        self.pics.append("http://www.tgr.rai.it/dl/tgr/mhp/immagini/buongiorno%20regione.png")
-        self.names.append("IL SETTIMANALE")
-        self.urls.append("http://www.tgr.rai.it/dl/rai24/tgr/rubriche/mhp/ContentSet-b7213694-9b55-4677-b78b-6904e9720719.html")
-        self.pics.append("http://www.tgr.rai.it/dl/tgr/mhp/immagini/il%20settimanale.png")
-        self.names.append("RUBRICHE")
-        self.urls.append("http://www.tgr.rai.it/dl/rai24/tgr/rubriche/mhp/list.xml")
-        self.pics.append("http://www.tgr.rai.it/dl/tgr/mhp/immagini/rubriche.png")
-        showlist(self.names, self['text'])
-        self['info'].setText(_('Please select ...'))
-
-    def okRun(self):
-        idx = self["text"].getSelectionIndex()
-        name = self.names[idx]
-        url = self.urls[idx]
-        # print('name : ', name)
-        # print('url:  ', url)
-        self.session.open(tgrRai2, name, url)
-
-class tgrRai2(Screen):
-
-    def __init__(self, session, name, url):
-        self.session = session
-        skin = skin_dream + 'settings.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('TiVuDream')
-        Screen.__init__(self, session)
-        self.setTitle(desc_plugin)
-        self.list = []
-        self.name = name
-        self.url = url
-        self['text'] = OneSetList([])
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.timer = eTimer()
-        self.timer.start(1500, True)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
-        else:
-            self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    # def _gotPageLoad(self):
-        # url = self.url
-        # getPage(url).addCallback(self._gotPageLoad2).addErrback(self.errorLoad)
-
-    # def errorLoad(self, error):
-        # print(str(error))
-        # self['info'].setText(_('Try again later ...'))
-
-    def _gotPageLoad(self):
-        self.names = []
-        self.urls = []
-        self.pics = []  
-        name = self.name        
-        url = self.url
-        content = getUrl(url)
-        if PY3:
-            content = six.ensure_str(content)  
-        content = content.replace("\r", "").replace("\t", "").replace("\n", "")
-        pic = " "
-        try:
-            if 'type="video">' in content:
-                # print('content1 : ', content)
-                regexcat = '<label>(.*?)</label>.*?type="video">(.*?)</url>' #relinker
-                self["key_green"].setText('Play')
-            elif 'type="list">' in content:
-                # print('content2 : ', content)
-                regexcat = '<label>(.*?)</label>.*?type="list">(.*?)</url>'
-            else:
-                print('passsss')
-                pass
-            match = re.compile(regexcat, re.DOTALL).findall(content)
-            # print("showContent2 match =", match)
-            # print('name : ', name)
-            for name, url in match:
-                if url.startswith('http'):
-                    url1=url
-                else:
-                    url1 = "http://www.tgr.rai.it" + url
-                # pic = image
-                url = checkStr(url)
-                name = checkStr(name)
-                
-                self.names.append(name)
-                self.urls.append(url1)
-                # self.pics.append(pic)
-            self['info'].setText(_('Please select ...'))
-            showlist(self.names, self['text'])
-        except:
-            pass
-
-    def okRun(self):
-        idx = self["text"].getSelectionIndex()
-        name = self.names[idx]
-        url = self.urls[idx]
-        # print('name : ', name)
-        # print('url:  ', url)
-        if 'relinker' in url:
-            self.session.open(Playstream2, name, url)
-        else:
-            self.session.open(tgrRai3, name, url)
-
-
-class tgrRai3(Screen):
-
-    def __init__(self, session, name, url):
-        self.session = session
-        skin = skin_dream + 'settings.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('TiVuDream')
-        Screen.__init__(self, session)
-        self.setTitle(desc_plugin)
-        self.list = []
-        self.name = name
-        self.url = url
-        self['text'] = OneSetList([])
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.timer = eTimer()
-        self.timer.start(1500, True)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
-        else:
-            self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    # def _gotPageLoad(self):
-        # url = self.url
-        # getPage(url).addCallback(self._gotPageLoad2).addErrback(self.errorLoad)
-
-    # def errorLoad(self, error):
-        # print(str(error))
-        # self['info'].setText(_('Try again later ...'))
-
-    def _gotPageLoad(self):
-        self.names = []
-        self.urls = []
-        self.pics = [] 
-        name = self.name        
-        url = self.url
-        content = getUrl(url)
-        if PY3:
-            content = six.ensure_str(content)
-        content = content.replace("\r", "").replace("\t", "").replace("\n", "")
-        pic = " "
-        try:
-            if 'type="video">' in content:
-                # print('content10 : ', content)
-                regexcat = '<label>(.*?)</label>.*?type="video">(.*?)</url>' #relinker
-                self["key_green"].setText('Play')
-
-            elif 'type="list">' in content:
-                # print('content20 : ', content)
-                regexcat = '<label>(.*?)</label>.*?type="list">(.*?)</url>'
-            else:
-                print('passsss')
-                pass
-            match = re.compile(regexcat, re.DOTALL).findall(content)
-            # print("showContent21 match =", match)
-            for name, url in match:
-                # print('name : ', name)
-                # print('url : ', url)
-                if url.startswith('http'):
-                    url1=url
-                else:
-                    url1 = "http://www.tgr.rai.it" + url
-                # pic = image
-                
-                url = checkStr(url)
-                name = checkStr(name)
-                
-                self.names.append(name)
-                self.urls.append(url1)
-                # self.pics.append(pic)
-            self['info'].setText(_('Please select ...'))
-            showlist(self.names, self['text'])
-        except:
-            pass
-
-    def okRun(self):
-        idx = self["text"].getSelectionIndex()
-        name = self.names[idx]
-        url = self.urls[idx]
-        # print('name : ', name)
-        # print('url:  ', url)
-        try:
-            # print("In playVideo2 url =", url)
-            self.session.open(Playstream2, name, url)
-        except:
-            self['info'].setText(_('Nothing ...'))
-            pass
-
-class La7(Screen):
-
-    def __init__(self, session):
-        self.session = session
-        skin = skin_dream + 'settings.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('TiVuDream')
-        Screen.__init__(self, session)
-        self.setTitle(desc_plugin)
-        self.list = []
-        self['text'] = OneSetList([])
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.timer = eTimer()
-        self.timer.start(1500, True)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
-        else:
-            self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def _gotPageLoad(self):
-        self.names = []
-        self.urls = []
-        self.names.append("Programmi")
-        self.urls.append("http://www.la7.it/programmi")
-        self.names.append("Teche")
-        self.urls.append("http://www.la7.it/i-protagonisti")
-        showlist(self.names, self['text'])
-
-    def okRun(self):
-        idx = self["text"].getSelectionIndex()
-        name = self.names[idx]
-        url = self.urls[idx]
-        # print('name : ', name)
-        # print('url:  ', url)
-        self.session.open(tvLa2, name, url)
-
-class tvLa2(Screen):
-
-    def __init__(self, session, name, url):
-        self.session = session
-        skin = skin_dream + 'settings.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('TiVuDream')
-        Screen.__init__(self, session)
-        self.setTitle(desc_plugin)
-        self.list = []
-        self.name = name
-        self.url = url
-        self['text'] = OneSetList([])
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.timer = eTimer()
-        self.timer.start(1500, True)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
-        else:
-            self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def _gotPageLoad(self):
-        self.names = []
-        self.urls = []
-        self.pics = []    
-        url = self.url
-        name = self.name
-        content = getUrl(url)
-        if PY3:
-            content = six.ensure_str(content)                                         
-        pic = " "
-        regexcat = '"list-item list-item-.*?a href="(.*?)".*?data-background-image="(.*?)".*?class="titolo">(.*?)<'
-        match = re.compile(regexcat, re.DOTALL).findall(content)
-        # print("showContent2 match =", match)
-        # print('name : ', name)
-        for url, pic, name in match:
-            try:
-                url1 = "http://www.la7.it" + url
-                name = decodeHtml(name)
-                pic1 = "http:" + pic
-                url1 = checkStr(url1)
-                name = checkStr(name)
-                self.names.append(name)
-                self.urls.append(url1)
-                self.pics.append(pic1)
-            except:
-                continue
-        self['info'].setText(_('Please select ...'))
-        showlist(self.names, self['text'])
-
-    def okRun(self):
-        idx = self["text"].getSelectionIndex()
-        name = self.names[idx]
-        url = self.urls[idx]
-        # print('name : ', name)
-        # print('url:  ', url)
-        self.session.open(tvLa3, name, url)
-
-class tvLa3(Screen):
-
-    def __init__(self, session, name, url):
-        self.session = session
-        skin = skin_dream + 'settings.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('TiVuDream')
-        Screen.__init__(self, session)
-        self.setTitle(desc_plugin)
-        self.list = []
-        self.name = name
-        self.url = url
-        self['text'] = OneSetList([])
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['key_green'] = Button(_('Play'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.timer = eTimer()
-        self.timer.start(1500, True)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
-        else:
-            self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def _gotPageLoad(self):
-        self.names = []
-        self.urls = []
-        self.pics = []    
-        url = self.url
-        name = self.name
-        content = getUrl(url)
-        if PY3:
-            content = six.ensure_str(content)                                         
-        pic = " "
-        if 'protagonisti' in url:
-            regexcat = '<div class="list.*?a href="/(.*?)/video(.*?)".*?data-background-image="(.*?)".*?class="title">(.*?)<'
-        else:
-            regexcat = '</div><div class="item.*?a href="/(.*?)/video(.*?)".*?data-background-image="(.*?)".*?class="title">(.*?)</'
-        match = re.compile(regexcat, re.DOTALL).findall(content)
-        # print("showContent2 match =", match)
-        # print('name : ', name)
-        for url1, url2, pic, name in match:
-            try:
-                url3 = "http://www.la7.it/" + url1 + "/video" + url2
-                # print("showContent341 url3 =", url3)
-                pic1 = "http:" + pic
-                name = decodeHtml(name)
-                
-                url3 = checkStr(url3)
-                name = checkStr(name)
-                
-                self.names.append(name)
-                self.urls.append(url3)
-                self.pics.append(pic1)
-            except:
-                continue
-        self['info'].setText(_('Please select ...'))
-        showlist(self.names, self['text'])
-
-    def okRun(self):
-        idx = self["text"].getSelectionIndex()
-        name = self.names[idx]
-        url = self.urls[idx]
-        # print('tvLa3 name : ', name)
-        # print('tvLa3 url:  ', url)
-        regex2 = '/content/(.*?).mp4'
-        regex3 = 'm3u8: "(.*?)"'
-        content2 = getUrl(url)
-        if PY3:
-            content2 = six.ensure_str(content2)                                           
-        # print('tvLa3 content2:  ', content2)
-        x1 = 0
-        if x1 == 0:
-            if re.findall(regex2, content2):
-                 link_video = 'http://awsvodpkg.iltrovatore.it/local/hls/,/content/'+re.findall(regex2, content2)[0]+'.mp4.urlset/master.m3u8'
-                 # print('tvLa3 link_video:  ', link_video)
-            elif re.findall(regex3, content2):
-                 link_video = re.findall(regex3, content2)[0]
-                 # print('tvLa3 link_video 2:  ', link_video)
-            # print('tvLa3 link_video 3:  ', link_video)
-            self.session.open(Playstream2, name, link_video)
-
-class Dplay(Screen):
-
-    def __init__(self, session):
-        self.session = session
-        skin = skin_dream + 'settings.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('TiVuDream')
-        Screen.__init__(self, session)
-        self.setTitle(desc_plugin)
-        self.list = []
-        self['text'] = OneSetList([])
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.timer = eTimer()
-        self.timer.start(1500, True)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
-        else:
-            self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-
-    def _gotPageLoad(self):
-        self.names = []
-        self.urls = []    
-        # url = "http://it.dplay.com/generi/"
-        url = "http://www.discoveryplus.it/generi/"
-        content = getUrl(url)
-        if PY3:
-            content = six.ensure_str(content)                                         
-        # print("showContent35 content =", content)
-        regexcat = 'a href="/genere/(.*?)"'
-        match = re.compile(regexcat, re.DOTALL).findall(content)
-        # print("showContent2 match =", match)
-        for url in match:
-            try:
-                # url1 = "http://it.dplay.com/genere/" + url
-                url1 = "http://www.discoveryplus.it/generi" + url
-                name = checkStr(url)
-                url1 = checkStr(url1)
-                
-                self.names.append(name)
-                self.urls.append(url1)
-            except:
-                continue
-        self['info'].setText(_('Please select ...'))
-        showlist(self.names, self['text'])
-
-    def okRun(self):
-        idx = self["text"].getSelectionIndex()
-        name = self.names[idx]
-        url = self.urls[idx]
-        # print('name : ', name)
-        # print('url:  ', url)
-        self.session.open(Dplay2, name, url)
-
-class Dplay2(Screen):
-
-    def __init__(self, session, name, url):
-        self.session = session
-        skin = skin_dream + 'settings.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('TiVuDream')
-        Screen.__init__(self, session)
-        self.setTitle(desc_plugin)
-        self.list = []
-        self.name = name
-        self.url = url
-        self['text'] = OneSetList([])
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.timer = eTimer()
-        self.timer.start(1500, True)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
-        else:
-            self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def _gotPageLoad(self):
-        self.names = []
-        self.urls = []
-        self.pics = []    
-        url = self.url
-        name = self.name
-        content = getUrl(url)
-        if PY3:
-            content = six.ensure_str(content)                                         
-        pic = " "
-        regexcat = '<div class="b-show-list__single-show">.*?<a href="(.*?)".*?lazy-src="(.*?)".*?alt="(.*?)"'
-        match = re.compile(regexcat, re.DOTALL).findall(content)
-        # print("showContent2 match =", match)
-        for url, pic, name in match:
-            try:
-                # url1 = "http://it.dplay.com" + url
-                url1 = "http://www.discoveryplus.it" + url
-                name = decodeHtml(name)
-                # name = name.replace("&#x27;","'").replace("&amp;","&").replace('&quot;','"').replace('&#39;',"'")
-                url1 = checkStr(url1)
-                name = checkStr(name)
-                self.names.append(name)
-                self.urls.append(url1)
-            except:
-                continue
-        self['info'].setText(_('Please select ...'))
-        showlist(self.names, self['text'])
-
-    def okRun(self):
-        idx = self["text"].getSelectionIndex()
-        name = self.names[idx]
-        url = self.urls[idx]
-        # print('name : ', name)
-        # print('url:  ', url)
-        self.session.open(Dplay3, name, url)
-
-class Dplay3(Screen):
-
-    def __init__(self, session, name, url):
-        self.session = session
-        skin = skin_dream + 'settings.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('TiVuDream')
-        Screen.__init__(self, session)
-        self.setTitle(desc_plugin)
-        self.list = []
-        self.name = name
-        self.url = url
-        self['text'] = OneSetList([])
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['key_green'] = Button(_('Play'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.timer = eTimer()
-        self.timer.start(1500, True)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
-        else:
-            self.timer.callback.append(self._gotPageLoad)
-        self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def _gotPageLoad(self):
-        self.names = []
-        self.urls = []    
-        url = self.url
-        name = self.name
-        content = getUrl(url)
-        if PY3:
-            content = six.ensure_str(content)                                         
-        pic = " "
-        regexcat = 'div class="carousel-cell.*?<a href="(.*?)".*?lazyload="(.*?)".*?alt="(.*?)"'
-        match = re.compile(regexcat, re.DOTALL).findall(content)
-        # print("showContent2 match =", match)
-        # print('name : ', name)
-        for url, pic, name in match:
-            try:
-                # url1 = "http://it.dplay.com" + url
-                url1 = "http://www.discoveryplus.it" + url
-                name = decodeHtml(name)
-                # name = name.replace("&#x27;","'").replace("&amp;","&").replace('&quot;','"').replace('&#39;',"'")
-                url1 = checkStr(url1)
-                name = checkStr(name)
-                
-                self.names.append(name)
-                self.urls.append(url1)
-            except:
-                continue
-        self['info'].setText(_('Please select ...'))
-        showlist(self.names, self['text'])
-
-    def okRun(self):
-        idx = self["text"].getSelectionIndex()
-        name = self.names[idx]
-        url = self.urls[idx]
-        # print('name : ', name)
-        # print('url:  ', url)
-        try:
-            # print("In playVideo2 url =", url)
-            from Plugins.Extensions.tvDream.youtube_dl import YoutubeDL
-            '''
-            ydl_opts = {'format': 'best'}
-            '''
-            ydl_opts = {'format': 'bestaudio/best'}
-            ydl = YoutubeDL(ydl_opts)
-            ydl.add_default_info_extractors()
-            result = ydl.extract_info(url, download=False)
-            # print ("rai result =", result)
-            url = result["url"]
-            # print ("rai final url =", url)
-            self.session.open(Playstream2, name, url)
-        except:
-            self['info'].setText(_('Nothing ...'))
-            pass
-'''
-rai end
-'''
+        elif sel == ('TVD Category'):
+            name = 'Category'
+            # regioni = True
+            url = "https://www.tvdream.net/web-tv/categorie/"
+            self.session.open(tvCategory, name, url)
+        elif sel == ('TVD New'):
+            name = 'New'
+            url = "https://www.tvdream.net/web-tv/nuovi/"
+            self.session.open(tvNew, name, url)            
+        # elif sel == ('ITALIAN VOD MOVIE'):
+            # self.session.open(Vod)
 
 class State(Screen):
-
     def __init__(self, session):
         self.session = session
         skin = skin_dream + 'settings.xml'
@@ -1834,7 +279,7 @@ class State(Screen):
         Screen.__init__(self, session)
         self.setTitle(desc_plugin)
         self.list = []
-        self['text'] = OneSetList([])
+        self['text'] = SetList([])
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
@@ -1844,7 +289,7 @@ class State(Screen):
         self['key_blue'].hide()
         self.timer = eTimer()
         self.timer.start(1500, True)
-        if isDreamOS:
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
@@ -1858,35 +303,38 @@ class State(Screen):
         self.names = []
         self.urls = []    
         url = 'http://www.tvdream.net/web-tv/paesi/'
-        datas = getUrl(url)
-        if PY3:
-            datas = six.ensure_str(datas)                                     
-        # print('datas :  ', datas)
-        try:
-            icount = 0
-            start = 0
-            n1 = datas.find('menu-sub">', 0)
-            if n1 < 0:
-                return
-            n2 = datas.find("</ul>", n1)
-            data2 = datas[n1:n2]
-            # print("data A2 =", data2)
-            pic = " "
-            regexcat = 'href="(.*?)">(.*?)<'
-            match = re.compile(regexcat, re.DOTALL).findall(data2)
-            for url, name in match:
-                # print('name : ', name)
-                # print('url:  ', url)
-                url = checkStr(url)
-                name = checkStr(name)
-                self.urls.append(url)
-                self.names.append(name)
-            self['info'].setText(_('Please select ...'))
-            showlist(self.names, self['text'])
-        except:
-            self['info'].setText(_('Nothing ...'))
-            pass
-
+        if check(url):
+            datas = getUrl(url)
+            if PY3:
+                datas = six.ensure_str(datas)                                     
+            print('datas :  ', datas)
+            try:
+                icount = 0
+                start = 0
+                n1 = datas.find('menu-sub">', 0)
+                if n1 < 0:
+                    return
+                n2 = datas.find("</ul>", n1)
+                data2 = datas[n1:n2]
+                # print("data A2 =", data2)
+                pic = " "
+                regexcat = 'href="(.*?)">(.*?)<'
+                match = re.compile(regexcat, re.DOTALL).findall(data2)
+                for url, name in match:
+                    print('name : ', name)
+                    print('url:  ', url)
+                    url = checkStr(url)
+                    name = checkStr(name)
+                    self.urls.append(url)
+                    self.names.append(name)
+                self['info'].setText(_('Please select ...'))
+                showlist(self.names, self['text'])
+            except:
+                self['info'].setText(_('Nothing ...'))
+                pass
+        else:
+            self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
+            
     def okRun(self):
         idx = self["text"].getSelectionIndex()
         name = self.names[idx]
@@ -1896,7 +344,6 @@ class State(Screen):
         self.session.open(tvItalia, name, url)
 
 class tvRegioni(Screen):
-
     def __init__(self, session):
         self.session = session
         skin = skin_dream + 'settings.xml'
@@ -1906,7 +353,7 @@ class tvRegioni(Screen):
         Screen.__init__(self, session)
         self.setTitle(desc_plugin)
         self.list = []
-        self['text'] = OneSetList([])
+        self['text'] = SetList([])
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
@@ -1916,7 +363,7 @@ class tvRegioni(Screen):
         self['key_blue'].hide()
         self.timer = eTimer()
         self.timer.start(1500, True)
-        if isDreamOS:
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
@@ -1930,35 +377,38 @@ class tvRegioni(Screen):
         self.names = []
         self.urls = []    
         url = 'http://www.tvdream.net/web-tv/regioni/'
-        datas = getUrl(url)
-        if PY3:
-            datas = six.ensure_str(datas)                                     
-        # print('datas :  ', datas)
-        try:
-            icount = 0
-            start = 0
-            n1 = datas.find('menu-sub">', 0)
-            if n1 < 0:
-                return
-            n2 = datas.find("</ul>", n1)
-            data2 = datas[n1:n2]
-            # print("data A2 =", data2)
-            pic = " "
-            regexcat = 'href="(.*?)">(.*?)<'
-            match = re.compile(regexcat, re.DOTALL).findall(data2)
-            for url, name in match:
-                # print('name : ', name)
-                # print('url:  ', url)
-                url = checkStr(url)
-                name = checkStr(name)
-                self.urls.append(url)
-                self.names.append(name)
-            self['info'].setText(_('Please select ...'))
-            showlist(self.names, self['text'])
-        except:
-            self['info'].setText(_('Nothing ...'))
-            pass
-
+        if check(url):
+            datas = getUrl(url)
+            if PY3:
+                datas = six.ensure_str(datas)                                     
+            print('datas :  ', datas)
+            try:
+                icount = 0
+                start = 0
+                n1 = datas.find('menu-sub">', 0)
+                if n1 < 0:
+                    return
+                n2 = datas.find("</ul>", n1)
+                data2 = datas[n1:n2]
+                # print("data A2 =", data2)
+                pic = " "
+                regexcat = 'href="(.*?)">(.*?)<'
+                match = re.compile(regexcat, re.DOTALL).findall(data2)
+                for url, name in match:
+                    print('name : ', name)
+                    print('url:  ', url)
+                    url = checkStr(url)
+                    name = checkStr(name)
+                    self.urls.append(url)
+                    self.names.append(name)
+                self['info'].setText(_('Please select ...'))
+                showlist(self.names, self['text'])
+            except:
+                self['info'].setText(_('Nothing ...'))
+                pass
+        else:
+            self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
+            
     def okRun(self):
         idx = self["text"].getSelectionIndex()
         name = self.names[idx]
@@ -1968,7 +418,6 @@ class tvRegioni(Screen):
         self.session.open(tvItalia, name, url)
 
 class tvItalia(Screen):
-
     def __init__(self, session, name, url ):
         self.session = session
         skin = skin_dream + 'settings.xml'
@@ -1978,7 +427,7 @@ class tvItalia(Screen):
         Screen.__init__(self, session)
         self.setTitle(desc_plugin)
         self.list = []
-        self['text'] = OneSetList([])
+        self['text'] = SetList([])
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
@@ -1990,7 +439,7 @@ class tvItalia(Screen):
         self.url = url
         self.timer = eTimer()
         self.timer.start(1500, True)
-        if isDreamOS:
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
@@ -2005,40 +454,37 @@ class tvItalia(Screen):
         self.urls = []    
         name = self.name
         url = self.url
-        datas = getUrl(url)
-        if PY3:
-            datas =six.ensure_str(datas)                                    
-        # print('datas :  ', datas)
-        try:
-            pages = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
-            for page in pages:
-                url1 = url + "page/" + str(page) + "/"
-                name = "Page " + str(page)
-                # print('name it : ', name)
-                # print('url it:  ', url1)
-                self.urls.append(url1)
-                self.names.append(name)
-            self['info'].setText(_('Please select ...'))
-            showlist(self.names, self['text'])
-        except:
-            pass
-
+        if check(url):
+            datas = getUrl(url)
+            if PY3:
+                datas =six.ensure_str(datas)                                    
+            print('datas :  ', datas)
+            try:
+                pages = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ]
+                for page in pages:
+                    url1 = url + "page/" + str(page) + "/"
+                    name = "Page " + str(page)
+                    print('name it : ', name)
+                    print('url it:  ', url1)
+                    self.urls.append(url1)
+                    self.names.append(name)
+                self['info'].setText(_('Please select ...'))
+                showlist(self.names, self['text'])
+            except:
+                self['info'].setText(_('Nothing ...'))
+                pass
+        else:
+            self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
+            
     def okRun(self):
-        try:
             idx = self["text"].getSelectionIndex()
             name = self.names[idx]
             url = self.urls[idx]
             # print('name it3: ', name)
             # print('url it3: ', url)
-            if checkUrl(url):
-                self.session.open(tvCanal, name, url)
-            else:
-                self['info'].setText(_('Nothing ...'))
-        except:
-            pass
+            self.session.open(tvCanal, name, url)
 
-class tvCanal(Screen):
-
+class tvCategory(Screen):
     def __init__(self, session, name, url ):
         self.session = session
         skin = skin_dream + 'settings.xml'
@@ -2048,7 +494,149 @@ class tvCanal(Screen):
         Screen.__init__(self, session)
         self.setTitle(desc_plugin)
         self.list = []
-        self['text'] = OneSetList([])
+        self['text'] = SetList([])
+        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['key_green'] = Button(_('Select'))
+        self['key_red'] = Button(_('Back'))
+        self['key_yellow'] = Button(_(''))
+        self["key_blue"] = Button(_(''))
+        self['key_yellow'].hide()
+        self['key_blue'].hide()
+        self.timer = eTimer()
+        self.timer.start(1500, True)
+        if DreamOS():
+            self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
+        else:
+            self.timer.callback.append(self._gotPageLoad)
+        self['title'] = Label(desc_plugin)
+        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
+         'green': self.okRun,
+         'red': self.close,
+         'cancel': self.close}, -2)
+
+    def _gotPageLoad(self):
+        self.names = []
+        self.urls = []    
+        url = 'https://www.tvdream.net/web-tv/categorie/'
+        if check(url):
+            datas = getUrl(url)
+            if PY3:
+                datas = six.ensure_str(datas)                                     
+            print('datas :  ', datas)
+            try:
+                icount = 0
+                start = 0
+                n1 = datas.find('menu-sub">', 0)
+                if n1 < 0:
+                    return
+                n2 = datas.find("</ul>", n1)
+                data2 = datas[n1:n2]
+                # print("data A2 =", data2)
+                pic = " "
+                regexcat = 'href="(.*?)">(.*?)<'
+                match = re.compile(regexcat, re.DOTALL).findall(data2)
+                for url, name in match:
+                    print('name : ', name)
+                    print('url:  ', url)
+                    url = checkStr(url)
+                    name = checkStr(name)
+                    self.urls.append(url)
+                    self.names.append(name)
+                self['info'].setText(_('Please select ...'))
+                showlist(self.names, self['text'])
+            except:
+                self['info'].setText(_('Nothing ...'))
+                pass
+        else:
+            self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
+        
+    def okRun(self):
+        idx = self["text"].getSelectionIndex()
+        name = self.names[idx]
+        url = self.urls[idx]
+        # print('name : ', name)
+        # print('url:  ', url)
+        self.session.open(subCategory, name, url)
+
+class subCategory(Screen):
+    def __init__(self, session, name, url ):
+        self.session = session
+        skin = skin_dream + 'settings.xml'
+        with open(skin, 'r') as f:
+            self.skin = f.read()
+        self.setup_title = ('TiVuDream')
+        Screen.__init__(self, session)
+        self.setTitle(desc_plugin)
+        self.list = []
+        self['text'] = SetList([])
+        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['key_green'] = Button(_('Select'))
+        self['key_red'] = Button(_('Back'))
+        self['key_yellow'] = Button(_(''))
+        self["key_blue"] = Button(_(''))
+        self['key_yellow'].hide()
+        self['key_blue'].hide()
+        self.name = name
+        self.url = url
+        self.timer = eTimer()
+        self.timer.start(1500, True)
+        if DreamOS():
+            self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
+        else:
+            self.timer.callback.append(self._gotPageLoad)
+        self['title'] = Label(desc_plugin)
+        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
+         'green': self.okRun,
+         'red': self.close,
+         'cancel': self.close}, -2)
+
+    def _gotPageLoad(self):
+        self.names = []
+        self.urls = []    
+        name = self.name
+        url = self.url
+        if check(url):
+            datas = getUrl(url)
+            if PY3:
+                datas =six.ensure_str(datas)                                    
+            print('datas :  ', datas)
+            try:
+                pages = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ]
+                for page in pages:
+                    url1 = url + "page/" + str(page) + "/"
+                    name = "Page " + str(page)
+                    print('name it : ', name)
+                    print('url it:  ', url1)
+                    self.urls.append(url1)
+                    self.names.append(name)
+                self['info'].setText(_('Please select ...'))
+                showlist(self.names, self['text'])
+            except:
+                self['info'].setText(_('Nothing ...'))
+                pass
+        else:
+            self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
+            
+    def okRun(self):
+            idx = self["text"].getSelectionIndex()
+            name = self.names[idx]
+            url = self.urls[idx]
+            # print('name it3: ', name)
+            # print('url it3: ', url)
+            self.session.open(tvCanal, name, url)
+
+            
+class tvCanal(Screen):
+    def __init__(self, session, name, url ):
+        self.session = session
+        skin = skin_dream + 'settings.xml'
+        with open(skin, 'r') as f:
+            self.skin = f.read()
+        self.setup_title = ('TiVuDream')
+        Screen.__init__(self, session)
+        self.setTitle(desc_plugin)
+        self.list = []
+        self['text'] = SetList([])
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['key_green'] = Button(_('Play'))
         self['key_red'] = Button(_('Back'))
@@ -2060,10 +648,167 @@ class tvCanal(Screen):
         self.url = url
         self.timer = eTimer()
         self.timer.start(1500, True)
-        if isDreamOS:
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
+        self['title'] = Label(desc_plugin)
+        global SREF
+        SREF = self.session.nav.getCurrentlyPlayingServiceReference()
+        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
+         'green': self.okRun,
+         'red': self.close,
+         'cancel': self.close}, -2)
+
+    def _gotPageLoad(self):
+        self.names = []
+        self.urls = []    
+        url = self.url
+        name = self.name
+        print('name ch1: ', name)
+        print('url ch1:  ', url)
+
+        if check(url):
+            datas = getUrl(url)
+            if PY3:
+                datas = six.ensure_str(datas)                                     
+            print('datas :  ', datas)
+            try:
+                icount = 0
+                start = 0
+                # print("data A5 =", data2)
+                pic = " "
+                regexcat = '<div class="item__.*?href="(.*?)".*?alt="(.*?)"'
+                '''
+                regexcat   = '<div class="item-head.*?a href="(.*?)".*?bookmark">(.*?)<'
+                '''
+                match = re.compile(regexcat, re.DOTALL).findall(datas)
+                for url, name in match:
+                    print('name match: ', name)
+                    print('url match:  ', url)
+                    
+                    url = checkStr(url)
+                    name = checkStr(name)
+                    self.urls.append(url)
+                    self.names.append(name)
+                self['info'].setText(_('Please select ...'))
+                showlist(self.names, self['text'])
+            except:
+                self['info'].setText(_('Nothing ...'))
+                pass
+        else:
+            self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
+            
+    def okRun(self):
+        idx = self["text"].getSelectionIndex()
+        name = self.names[idx]
+        url = self.urls[idx]
+        
+        print('name okRun: ', name)
+        print('url okRun:  ', url)
+        
+        if check(url):
+            content = getUrl(url)
+            if PY3:
+                content = six.ensure_str(content)  
+            print('content :  ', content)    
+            try:   
+                regexcat = 'item__.*?href="(.*?)"'
+                # regexcat = 'class="player.*?href="(.*?)"'
+                # if content.find('iframe src='):
+                    # regexcat = 'player-video.*?iframe src="(.*?)"'
+                if regioni == True:  
+                    regexcat = '<iframe src="(.*?)"'
+                match = re.compile(regexcat, re.DOTALL).findall(content)
+                print("get regexcat =", regexcat)
+                url2 = match[0]
+                print("get url2 =", url2)
+                content2 = getUrl(url2)
+                if PY3:
+                    content2 = six.ensure_str(content2)                                               
+                print("getVideos2 content2 =", content2)
+                
+                if '<a class="player' in content2:
+                    print("In player url =", url)
+                    regexcat2 = '<a class="player-.*?href="(.*?)"'
+                    match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
+                    url = match2[0]                    
+
+
+                if ("rai" in url.lower()) or ("rai" in name.lower()):
+                    print("In rai url =", url)
+                    regexcat2 = 'liveVideo":{"mediaUrl":"(.*?)"'
+                    match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
+                    url = match2[0]
+                    pic = ""
+                    self.session.open(Playstream2, name, url)
+                if '.m3u8' in content2:
+                    print('content .m3u8')
+                    n1 = content2.find(".m3u8")
+                    n2 = content2.rfind("http", 0, n1)
+                    url = content2[n2:(n1+5)]
+                    pic = ""
+                    self.session.open(Playstream2, name, url)
+                    
+                    
+                if "youtube" in url.lower():   
+                    print("In youtube url =", url)
+                    from Plugins.Extensions.tvDream.youtube_dl import YoutubeDL
+                    ydl_opts = {'format': 'best'}
+                    '''
+                    ydl_opts = {'format': 'bestaudio/best'}
+                    '''
+                    ydl = YoutubeDL(ydl_opts)
+                    ydl.add_default_info_extractors()
+                    result = ydl.extract_info(url, download=False)
+                    # print ("mediaset result =", result)
+                    url = result["url"]
+                    # print ("mediaset final url =", url)
+                    self.session.open(Playstream2, name, url)                
+                    
+                else:
+                    #<a class="player
+                    print("In content2.find .m3u8 url =", url)
+                    n1 = content2.find(".m3u8")
+                    n2 = content2.rfind("http", 0, n1)
+                    url = content2[n2:(n1+5)]
+                    pic = ""
+                    self.session.open(Playstream2, name, url)
+            except:
+                self['info'].setText(_('Nothing ...'))
+                pass                        
+                    
+        else:
+            self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
+
+class tvNew(Screen):
+    def __init__(self, session, name, url ):
+        self.session = session
+        skin = skin_dream + 'settings.xml'
+        with open(skin, 'r') as f:
+            self.skin = f.read()
+        self.setup_title = ('TiVuDream')
+        Screen.__init__(self, session)
+        self.setTitle(desc_plugin)
+        self.list = []
+        self['text'] = SetList([])
+        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['key_green'] = Button(_('Play'))
+        self['key_red'] = Button(_('Back'))
+        self['key_yellow'] = Button(_(''))
+        self["key_blue"] = Button(_(''))
+        self['key_yellow'].hide()
+        self['key_blue'].hide()
+        self.name = name
+        self.url = url
+        self.timer = eTimer()
+        self.timer.start(1500, True)
+        if DreamOS():
+            self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
+        else:
+            self.timer.callback.append(self._gotPageLoad)
+        global SREF
+        SREF = self.session.nav.getCurrentlyPlayingServiceReference()
         self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
@@ -2075,70 +820,93 @@ class tvCanal(Screen):
         self.urls = []    
         url = self.url
         name = self.name
-        datas = getUrl(url)
-        if PY3:
-            datas = six.ensure_str(datas)                                     
-        # print('datas :  ', datas)
-        try:
-            icount = 0
-            start = 0
-            data2 = datas
-            # print("data A5 =", data2)
-            pic = " "
-            regexcat = '<div class="item__.*?href="(.*?)".*?alt="(.*?)"'
-            '''
-            regexcat   = '<div class="item-head.*?a href="(.*?)".*?bookmark">(.*?)<'
-            '''
-            match = re.compile(regexcat, re.DOTALL).findall(data2)
-            for url, name in match:
-                # print('name ch1: ', name)
-                # print('url ch1:  ', url)
-                
-                url = checkStr(url)
-                name = checkStr(name)
-                self.urls.append(url)
-                self.names.append(name)
-            self['info'].setText(_('Please select ...'))
-            showlist(self.names, self['text'])
-        except:
-            self['info'].setText(_('Nothing ...'))
-            pass
-
-
+        if check(url):        
+            datas = getUrl(url)
+            if PY3:
+                datas = six.ensure_str(datas)                                     
+            print('datas :  ', datas)
+            try:
+                icount = 0
+                start = 0
+                # print("data A5 =", data2)
+                pic = " "
+                regexcat = 'item-featured__thumb.*?href="(.*?)".*?alt="(.*?)"'
+                '''
+                regexcat   = '<div class="item-head.*?a href="(.*?)".*?bookmark">(.*?)<'
+                '''
+                match = re.compile(regexcat, re.DOTALL).findall(datas)
+                for url, name in match:
+                    print('name ch1: ', name)
+                    print('url ch1:  ', url)
+                    
+                    url = checkStr(url)
+                    name = checkStr(name)
+                    self.urls.append(url)
+                    self.names.append(name)
+                self['info'].setText(_('Please select ...'))
+                showlist(self.names, self['text'])
+            except:
+                self['info'].setText(_('Nothing ...'))
+                pass
+        else:
+            self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
+            return
+            
     def okRun(self):
-        try:
-            idx = self["text"].getSelectionIndex()
-            name = self.names[idx]
-            url = self.urls[idx]
+        idx = self["text"].getSelectionIndex()
+        name = self.names[idx]
+        url = self.urls[idx]
+        if check(url):
             content = getUrl(url)
             if PY3:
                 content = six.ensure_str(content)                                             
-            # print('content :  ', content)
-            regexcat = '"player".*?href="(.*?)"'
-            if regioni == True:
-                regexcat = '<iframe src="(.*?)"'
-            match = re.compile(regexcat, re.DOTALL).findall(content)
-            # print("getVideos2 match =", match)
-            url2 = match[0]
-            content2 = getUrl(url2)
-            if PY3:
-                content2 = six.ensure_str(content2)                                               
-            # print("getVideos2 content2 =", content2)
-            if ("rai" in url.lower()) or ("rai" in name.lower()):
-                regexcat2 = 'liveVideo":{"mediaUrl":"(.*?)"'
-                match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
-                url = match2[0]
-                pic = ""
-                self.session.open(Playstream2, name, url)
-            else:
-                n1 = content2.find(".m3u8")
-                n2 = content2.rfind("http", 0, n1)
-                url = content2[n2:(n1+5)]
-                pic = ""
-                self.session.open(Playstream2, name, url)
-        except:
-            self['info'].setText(_('Nothing ...'))
-            pass
+            print('content :  ', content)
+            try:
+                regexcat = '"player".*?href="(.*?)"'
+                if regioni == True:
+                    regexcat = '<iframe src="(.*?)"'
+                match = re.compile(regexcat, re.DOTALL).findall(content)
+                # print("getVideos2 match =", match)
+                url2 = match[0]
+                content2 = getUrl(url2)
+                if PY3:
+                    content2 = six.ensure_str(content2)                                               
+                # print("getVideos2 content2 =", content2)
+                if ("rai" in url.lower()) or ("rai" in name.lower()):
+                    regexcat2 = 'liveVideo":{"mediaUrl":"(.*?)"'
+                    match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
+                    url = match2[0]
+                    pic = ""
+                    self.session.open(Playstream2, name, url)
+                if "youtube" in url.lower():   
+                    # print("In playVideo2 url =", url)
+                    from Plugins.Extensions.tvDream.youtube_dl import YoutubeDL
+                    ydl_opts = {'format': 'best'}
+                    '''
+                    ydl_opts = {'format': 'bestaudio/best'}
+                    '''
+                    ydl = YoutubeDL(ydl_opts)
+                    ydl.add_default_info_extractors()
+                    result = ydl.extract_info(url, download=False)
+                    # print ("mediaset result =", result)
+                    url = result["url"]
+                    # print ("mediaset final url =", url)
+                    self.session.open(Playstream2, name, url)   
+
+                else:
+                    n1 = content2.find(".m3u8")
+                    n2 = content2.rfind("http", 0, n1)
+                    url = content2[n2:(n1+5)]
+                    pic = ""
+                    self.session.open(Playstream2, name, url)
+            except:
+                self['info'].setText(_('Nothing ...'))
+                pass                        
+                    
+        else:
+            self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
+                                    
+           
 
 class TvInfoBarShowHide():
     """ InfoBar show/hide control, accepts toggleShow and hide actions, might start
@@ -2147,43 +915,59 @@ class TvInfoBarShowHide():
     STATE_HIDING = 1
     STATE_SHOWING = 2
     STATE_SHOWN = 3
+    skipToggleShow = False
 
     def __init__(self):
-        self["ShowHideActions"] = ActionMap(["InfobarShowHideActions"], {"toggleShow": self.toggleShow,
+        self["ShowHideActions"] = ActionMap(["InfobarShowHideActions"], {"toggleShow": self.OkPressed,
          "hide": self.hide}, 0)
         self.__event_tracker = ServiceEventTracker(screen=self, eventmap={iPlayableService.evStart: self.serviceStarted})
         self.__state = self.STATE_SHOWN
         self.__locked = 0
         self.hideTimer = eTimer()
-        self.hideTimer.start(5000, True)
-
         try:
             self.hideTimer_conn = self.hideTimer.timeout.connect(self.doTimerHide)
-            
         except:
             self.hideTimer.callback.append(self.doTimerHide)
+        self.hideTimer.start(5000, True)
         self.onShow.append(self.__onShow)
         self.onHide.append(self.__onHide)
+
+    def OkPressed(self):
+        self.toggleShow()
+
+    def toggleShow(self):
+        if self.skipToggleShow:
+            self.skipToggleShow = False
+            return
+        if self.__state == self.STATE_HIDDEN:
+            self.show()
+            self.hideTimer.stop()
+        else:
+            self.hide()
+            self.startHideTimer()
 
     def serviceStarted(self):
         if self.execing:
             if config.usage.show_infobar_on_zap.value:
+
                 self.doShow()
 
     def __onShow(self):
         self.__state = self.STATE_SHOWN
         self.startHideTimer()
-                
+
     def startHideTimer(self):
         if self.__state == self.STATE_SHOWN and not self.__locked:
+            self.hideTimer.stop()
             idx = config.usage.infobar_timeout.index
             if idx:
                 self.hideTimer.start(idx * 1500, True)
 
     def __onHide(self):
         self.__state = self.STATE_HIDDEN
-                 
+
     def doShow(self):
+        self.hideTimer.stop()
         self.show()
         self.startHideTimer()
 
@@ -2191,54 +975,69 @@ class TvInfoBarShowHide():
         self.hideTimer.stop()
         if self.__state == self.STATE_SHOWN:
             self.hide()
-
-    def toggleShow(self):
-        if self.__state == self.STATE_SHOWN:
-            self.hide()
-            self.hideTimer.stop()
-        elif self.__state == self.STATE_HIDDEN:
-            self.show()
-
     def lockShow(self):
-        self.__locked = self.__locked + 1
+        try:
+            self.__locked += 1
+        except:
+            self.__locked = 0
         if self.execing:
             self.show()
             self.hideTimer.stop()
+            self.skipToggleShow = False
 
     def unlockShow(self):
-        self.__locked = self.__locked - 1
+        try:
+            self.__locked -= 1
+        except:
+            self.__locked = 0
+        if self.__locked < 0:
+            self.__locked = 0
         if self.execing:
             self.startHideTimer()
 
     def debug(obj, text = ""):
         print(text + " %s\n" % obj)
-                                           
-class Playstream2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifications, InfoBarAudioSelection, TvInfoBarShowHide): #,InfoBarSubtitleSupport
+
+class Playstream2(
+    InfoBarBase,
+    InfoBarMenu,
+    InfoBarSeek,
+    InfoBarAudioSelection,
+    InfoBarSubtitleSupport,
+    InfoBarNotifications,
+    TvInfoBarShowHide,
+    Screen
+):
     STATE_IDLE = 0
     STATE_PLAYING = 1
     STATE_PAUSED = 2
     ENABLE_RESUME_SUPPORT = True
     ALLOW_SUSPEND = True
-    screen_timeout = 5000                          
+    screen_timeout = 5000
 
     def __init__(self, session, name, url):
+        global SREF, streaml
         Screen.__init__(self, session)
+        self.session = session
+        global _session
+        _session = session
         self.skinName = 'MoviePlayer'
-        title = 'Play'
-        # InfoBarBase.__init__(self)
-        # InfoBarShowHide.__init__(self)
-        InfoBarMenu.__init__(self)
-        InfoBarNotifications.__init__(self)
-        InfoBarBase.__init__(self, steal_current_service=True)
-        TvInfoBarShowHide.__init__(self)
-        InfoBarAudioSelection.__init__(self)
+        title = name
+        streaml = False
+        for x in InfoBarBase, \
+                InfoBarMenu, \
+                InfoBarSeek, \
+                InfoBarAudioSelection, \
+                InfoBarSubtitleSupport, \
+                InfoBarNotifications, \
+                TvInfoBarShowHide:
+            x.__init__(self)
         try:
             self.init_aspect = int(self.getAspect())
         except:
-            self.init_aspect = 0     
+            self.init_aspect = 0
         self.new_aspect = self.init_aspect
-        self['actions'] = ActionMap(['WizardActions',
-         'MoviePlayerActions',
+        self['actions'] = ActionMap(['MoviePlayerActions',
          'MovieSelectionActions',
          'MediaPlayerActions',
          'EPGSelectActions',
@@ -2250,27 +1049,28 @@ class Playstream2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifica
          'InfobarSeekActions'], {'leavePlayer': self.cancel,
          'epg': self.showIMDB,
          'info': self.showinfo,
+         # 'info': self.cicleStreamType,
          'tv': self.cicleStreamType,
          'stop': self.leavePlayer,
          'cancel': self.cancel,
          'back': self.cancel}, -1)
         self.allowPiP = False
-        InfoBarSeek.__init__(self, actionmap='InfobarSeekActions')                      
+        # InfoBarSeek.__init__(self, ActionMap='InfobarSeekActions')
         self.service = None
-        service = None                      
-        # InfoBarSeek.__init__(self, actionmap='MediaPlayerSeekActions')
-        url = url.replace(':', '%3a')
-        url = url.replace(' ','%20')
+        service = None
         self.url = url
         self.pcip = 'None'
         self.name = decodeHtml(name)
-        self.state = self.STATE_PLAYING                                 
-        self.srefOld = self.session.nav.getCurrentlyPlayingServiceReference()
-        # self.onLayoutFinish.append(self.openTest)
-        self.onLayoutFinish.append(self.cicleStreamType)
+        self.state = self.STATE_PLAYING
+        SREF = self.session.nav.getCurrentlyPlayingServiceReference()
+        if '8088' in str(self.url):
+            # self.onLayoutFinish.append(self.slinkPlay)
+            self.onFirstExecBegin.append(self.slinkPlay)
+        else:
+            # self.onLayoutFinish.append(self.cicleStreamType)
+            self.onFirstExecBegin.append(self.cicleStreamType)
         self.onClose.append(self.cancel)
-        return
-        
+
     def getAspect(self):
         return AVSwitch().getAspectRatioSetting()
 
@@ -2303,18 +1103,19 @@ class Playstream2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifica
         if temp > 6:
             temp = 0
         self.new_aspect = temp
-        self.setAspect(temp)        
-        
+        self.setAspect(temp)
+
     def showinfo(self):
+        debug = True
         sTitle = ''
         sServiceref = ''
         try:
             servicename, serviceurl = getserviceinfo(sref)
-            if servicename is not None:
+            if servicename != None:
                 sTitle = servicename
             else:
                 sTitle = ''
-            if serviceurl is not None:
+            if serviceurl != None:
                 sServiceref = serviceurl
             else:
                 sServiceref = ''
@@ -2322,45 +1123,69 @@ class Playstream2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifica
             sTagCodec = currPlay.info().getInfoString(iServiceInformation.sTagCodec)
             sTagVideoCodec = currPlay.info().getInfoString(iServiceInformation.sTagVideoCodec)
             sTagAudioCodec = currPlay.info().getInfoString(iServiceInformation.sTagAudioCodec)
-            message = 'stitle:' + str(sTitle) + '\n' + 'sServiceref:' + str(sServiceref) + '\n' + 'sTagCodec:' + str(sTagCodec) + '\n' + 'sTagVideoCodec:' + str(sTagVideoCodec) + '\n' + 'sTagAudioCodec :' + str(sTagAudioCodec)
+            message = 'stitle:' + str(sTitle) + '\n' + 'sServiceref:' + str(sServiceref) + '\n' + 'sTagCodec:' + str(sTagCodec) + '\n' + 'sTagVideoCodec:' + str(sTagVideoCodec) + '\n' + 'sTagAudioCodec : ' + str(sTagAudioCodec)
             self.mbox = self.session.open(MessageBox, message, MessageBox.TYPE_INFO)
         except:
             pass
-
         return
-        
+
     def showIMDB(self):
-        if fileExists("/usr/lib/enigma2/python/Plugins/Extensions/TMBD/plugin.pyo"):
+        TMDB = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('TMDB'))
+        IMDb = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('IMDb'))
+        if os.path.exists(TMDB):
             from Plugins.Extensions.TMBD.plugin import TMBD
             text_clear = self.name
             text = charRemove(text_clear)
             self.session.open(TMBD, text, False)
-        elif os.path.exists("/usr/lib/enigma2/python/Plugins/Extensions/IMDb/plugin.pyo"):
+        elif os.path.exists(IMDb):
             from Plugins.Extensions.IMDb.plugin import IMDB
             text_clear = self.name
             text = charRemove(text_clear)
             HHHHH = text
             self.session.open(IMDB, HHHHH)
+
         else:
             text_clear = self.name
-            self.session.open(MessageBox, text_clear, MessageBox.TYPE_INFO)  
-            
-    def openTest(self,servicetype, url):
-        url = url
-        ref = str(servicetype) +':0:1:0:0:0:0:0:0:0:' + str(url)
-        print('final reference :   ', ref)
+            self.session.open(MessageBox, text_clear, MessageBox.TYPE_INFO)
+
+    def slinkPlay(self, url):
+        name = self.name
+        ref = "{0}:{1}".format(url.replace(":", "%3A"), name.replace(":", "%3A"))
+        print('final reference:   ', ref)
         sref = eServiceReference(ref)
-        sref.setName(self.name)
+        sref.setName(name)
         self.session.nav.stopService()
         self.session.nav.playService(sref)
-        
+
+    def openTest(self, servicetype, url):
+        name = self.name
+        ref = "{0}:0:0:0:0:0:0:0:0:0:{1}:{2}".format(servicetype, url.replace(":", "%3A"), name.replace(":", "%3A"))
+        print('reference:   ', ref)
+        if streaml == True:
+            url = 'http://127.0.0.1:8088/' + str(url)
+            ref = "{0}:0:1:0:0:0:0:0:0:0:{1}:{2}".format(servicetype, url.replace(":", "%3A"), name.replace(":", "%3A"))
+            print('streaml reference:   ', ref)
+        print('final reference:   ', ref)
+        sref = eServiceReference(ref)
+        sref.setName(name)
+        self.session.nav.stopService()
+        self.session.nav.playService(sref)
+
     def cicleStreamType(self):
+        global streml
+        streaml = False
         from itertools import cycle, islice
-        self.servicetype ='4097'#str(config.plugins.exodus.services.value)# 
+        self.servicetype = '4097'
         print('servicetype1: ', self.servicetype)
         url = str(self.url)
         currentindex = 0
         streamtypelist = ["4097"]
+        # if "youtube" in str(self.url):
+            # self.mbox = self.session.open(MessageBox, _('For Stream Youtube coming soon!'), MessageBox.TYPE_INFO, timeout=5)
+            # return
+        if isStreamlinkAvailable():
+            streamtypelist.append("5002") #ref = '5002:0:1:0:0:0:0:0:0:0:http%3a//127.0.0.1%3a8088/' + url
+            streaml = True
         if os.path.exists("/usr/bin/gstplayer"):
             streamtypelist.append("5001")
         if os.path.exists("/usr/bin/exteplayer3"):
@@ -2372,39 +1197,66 @@ class Playstream2(Screen, InfoBarMenu, InfoBarBase, InfoBarSeek, InfoBarNotifica
                 currentindex = index
                 break
         nextStreamType = islice(cycle(streamtypelist), currentindex + 1, None)
-        self.servicetype = int(next(nextStreamType))
+        self.servicetype = str(next(nextStreamType))
         print('servicetype2: ', self.servicetype)
         self.openTest(self.servicetype, url)
-
-    def keyNumberGlobal(self, number):
-        self['text'].number(number)     
         
+    def up(self):
+        pass
+
+    def down(self):
+        self.up()
+
+    def doEofInternal(self, playing):
+        self.close()
+
+    def __evEOF(self):
+        self.end = True
+
+    def showVideoInfo(self):
+        if self.shown:
+            self.hideInfobar()
+        if self.infoCallback != None:
+            self.infoCallback()
+        return
+
+    def showAfterSeek(self):
+        if isinstance(self, TvInfoBarShowHide):
+            self.doShow()
+
     def cancel(self):
-        if os.path.exists('/tmp/hls.avi'):
+        if os.path.isfile('/tmp/hls.avi'):
             os.remove('/tmp/hls.avi')
         self.session.nav.stopService()
-        self.session.nav.playService(self.srefOld)
-        if self.pcip != 'None':
-            url2 = 'http://' + self.pcip + ':8080/requests/status.xml?command=pl_stop'
-            resp = urlopen(url2)
+        self.session.nav.playService(SREF)
         if not self.new_aspect == self.init_aspect:
             try:
                 self.setAspect(self.init_aspect)
             except:
                 pass
+        streaml = False
         self.close()
 
-    def showVideoInfo(self):
-        if self.shown:
-            self.hideInfobar()
-        if self.infoCallback is not None:
-            self.infoCallback()
-        return
-
     def leavePlayer(self):
-        self.close() 
+        self.close()
+
+def checks():
+    from Plugins.Extensions.tvDream.Utils import checkInternet
+    checkInternet()
+    chekin= False
+    if checkInternet():
+        chekin = True
+    return chekin
 
 def main(session, **kwargs):
+    if checks:
+        try:
+            from Plugins.Extensions.tvDream.Update import upd_done
+            upd_done()
+        except:
+            pass
+            
+# def main(session, **kwargs):
     session.open(MainSetting)
 
 def StartSetup(menuid, **kwargs):
@@ -2415,7 +1267,7 @@ def StartSetup(menuid, **kwargs):
 
 def Plugins(**kwargs):
     ico_path = 'logo.png'
-    if not isDreamOS:
+    if not os.path.exists('/var/lib/dpkg/status'):
         ico_path = plugin_path + '/res/pics/logo.png'
     # main_menu = PluginDescriptor(name = name_plugin, description = desc_plugin, where = PluginDescriptor.WHERE_MENU, fnc = StartSetup, needsRestart = True)
     extensions_menu = PluginDescriptor(name = name_plugin, description = desc_plugin, where = PluginDescriptor.WHERE_EXTENSIONSMENU, fnc = main, needsRestart = True)
@@ -2423,117 +1275,3 @@ def Plugins(**kwargs):
     result.append(extensions_menu)
     # result.append(main_menu)
     return result
-
-
-def decodeUrl(text):
-	text = text.replace('%20',' ')
-	text = text.replace('%21','!')
-	text = text.replace('%22','"')
-	text = text.replace('%23','&')
-	text = text.replace('%24','$')
-	text = text.replace('%25','%')
-	text = text.replace('%26','&')
-	text = text.replace('%2B','+')
-	text = text.replace('%2F','/')
-	text = text.replace('%3A',':')
-	text = text.replace('%3B',';')
-	text = text.replace('%3D','=')
-	text = text.replace('&#x3D;','=')
-	text = text.replace('%3F','?')
-	text = text.replace('%40','@')
-	return text
-
-def decodeHtml(text):
-	text = text.replace('&auml;','ä')
-	text = text.replace('\u00e4','ä')
-	text = text.replace('&#228;','ä')
-	text = text.replace('&oacute;','ó')
-	text = text.replace('&eacute;','e')
-	text = text.replace('&aacute;','a')
-	text = text.replace('&ntilde;','n')
-
-	text = text.replace('&Auml;','Ä')
-	text = text.replace('\u00c4','Ä')
-	text = text.replace('&#196;','Ä')
-	
-	text = text.replace('&ouml;','ö')
-	text = text.replace('\u00f6','ö')
-	text = text.replace('&#246;','ö')
-	
-	text = text.replace('&ouml;','Ö')
-	text = text.replace('\u00d6','Ö')
-	text = text.replace('&#214;','Ö')
-	
-	text = text.replace('&uuml;','ü')
-	text = text.replace('\u00fc','ü')
-	text = text.replace('&#252;','ü')
-	
-	text = text.replace('&Uuml;','Ü')
-	text = text.replace('\u00dc','Ü')
-	text = text.replace('&#220;','Ü')
-	
-	text = text.replace('&szlig;','ß')
-	text = text.replace('\u00df','ß')
-	text = text.replace('&#223;','ß')
-	
-	text = text.replace('&amp;','&')
-	text = text.replace('&quot;','\"')
-	text = text.replace('&quot_','\"')
-
-	text = text.replace('&gt;','>')
-	text = text.replace('&apos;',"'")
-	text = text.replace('&acute;','\'')
-	text = text.replace('&ndash;','-')
-	text = text.replace('&bdquo;','"')
-	text = text.replace('&rdquo;','"')
-	text = text.replace('&ldquo;','"')
-	text = text.replace('&lsquo;','\'')
-	text = text.replace('&rsquo;','\'')
-	text = text.replace('&#034;','\'')
-	text = text.replace('&#038;','&')
-	text = text.replace('&#039;','\'')
-	text = text.replace('&#39;','\'')
-	text = text.replace('&#160;',' ')
-	text = text.replace('\u00a0',' ')
-	text = text.replace('&#174;','')
-	text = text.replace('&#225;','a')
-	text = text.replace('&#233;','e')
-	text = text.replace('&#243;','o')
-	text = text.replace('&#8211;',"-")
-	text = text.replace('\u2013',"-")
-	text = text.replace('&#8216;',"'")
-	text = text.replace('&#8217;',"'")
-	text = text.replace('#8217;',"'")
-	text = text.replace('&#8220;',"'")
-	text = text.replace('&#8221;','"')
-	text = text.replace('&#8222;',',')
-	text = text.replace('&#x27;',"'")
-	text = text.replace('&#8230;','...')
-	text = text.replace('\u2026','...')
-	text = text.replace('&#41;',')')
-	text = text.replace('&lowbar;','_')
-	text = text.replace('&rsquo;','\'')
-	text = text.replace('&lpar;','(')
-	text = text.replace('&rpar;',')')
-	text = text.replace('&comma;',',')
-	text = text.replace('&period;','.')
-	text = text.replace('&plus;','+')
-	text = text.replace('&num;','#')
-	text = text.replace('&excl;','!')
-	text = text.replace('&#039','\'')
-	text = text.replace('&semi;','')
-	text = text.replace('&lbrack;','[')
-	text = text.replace('&rsqb;',']')
-	text = text.replace('&nbsp;','')
-	text = text.replace('&#133;','')
-	text = text.replace('&#4','')
-	text = text.replace('&#40;','')
-
-	text = text.replace('&atilde;',"'")
-	text = text.replace('&colon;',':')
-	text = text.replace('&sol;','/')
-	text = text.replace('&percnt;','%')
-	text = text.replace('&commmat;',' ')
-	text = text.replace('&#58;',':')
-
-	return text	
