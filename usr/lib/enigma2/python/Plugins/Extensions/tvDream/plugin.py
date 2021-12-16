@@ -1,17 +1,22 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
 '''
 ****************************************
 *        coded by Lululla & PCD        *
 *             skin by MMark            *
-*             15/07/2021               *
+*             15/12/2021               *
 *       Skin by MMark                  *
 ****************************************
+#--------------------#
+#Info http://t.me/tivustream
 '''
 from __future__ import print_function#, unicode_literals
+
+# from Screens.InfoBarGenerics import *
+from Components.AVSwitch import AVSwitch
 from Components.ActionMap import ActionMap
 from Components.Button import Button
+from Components.config import ConfigSubsection, config, configfile, ConfigText, ConfigDirectory, ConfigSelection,ConfigYesNo, ConfigEnableDisable
 from Components.Label import Label
 from Components.MenuList import MenuList
 from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaTest
@@ -19,47 +24,53 @@ from Components.Pixmap import Pixmap
 from Components.PluginComponent import plugins
 from Components.PluginList import *
 from Components.ScrollLabel import ScrollLabel
-from Components.Sources.List import List
-from Components.Sources.StaticText import StaticText
-from Components.AVSwitch import AVSwitch
-from Components.config import ConfigSubsection, config, configfile, ConfigText, ConfigDirectory, ConfigSelection,ConfigYesNo, ConfigEnableDisable
+from Components.SelectionList import SelectionList, SelectionEntryComponent
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
+from Components.Sources.List import List
+from Components.Sources.Source import Source
+from Components.Sources.StaticText import StaticText
 from Plugins.Plugin import PluginDescriptor
 from Screens.Console import Console
+from Screens.InfoBar import MoviePlayer, InfoBar
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
-# from Screens.InfoBarGenerics import *
-from Screens.InfoBar import MoviePlayer, InfoBar
-from Screens.InfoBarGenerics import InfoBarMenu, InfoBarSeek, InfoBarAudioSelection, InfoBarMoviePlayerSummarySupport, \
-    InfoBarSubtitleSupport, InfoBarSummarySupport, InfoBarServiceErrorPopupSupport, InfoBarNotifications
-
+from Screens.InfoBarGenerics import InfoBarShowHide, InfoBarSubtitleSupport, InfoBarSummarySupport, \
+	InfoBarNumberZap, InfoBarMenu, InfoBarEPG, InfoBarSeek, InfoBarMoviePlayerSummarySupport, \
+	InfoBarAudioSelection, InfoBarNotifications, InfoBarServiceNotifications
+from ServiceReference import ServiceReference
+from Tools.Directories import  SCOPE_PLUGINS
 from Tools.Directories import *
-from Tools.Directories import resolveFilename, SCOPE_LANGUAGE, fileExists
-
-from ServiceReference import ServiceReference                                           
-from Tools.Directories import SCOPE_PLUGINS
-from enigma import RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER#, getDesktop
-from enigma import eTimer, eListboxPythonMultiContent, eListbox, eConsoleAppContainer, gFont
+from Tools.Directories import pathExists, fileExists
+from Tools.Directories import resolveFilename
+from Tools.LoadPixmap import LoadPixmap
+from Tools.Notifications import AddPopup
 from enigma import *
+from enigma import RT_HALIGN_CENTER, RT_VALIGN_CENTER
+from enigma import RT_HALIGN_LEFT, RT_HALIGN_RIGHT
+from enigma import eListbox, eTimer
+from enigma import eListboxPythonMultiContent, eConsoleAppContainer
 from enigma import eServiceCenter
 from enigma import eServiceReference
 from enigma import eSize, ePicLoad
+from enigma import iPlayableService
+from enigma import gFont
 from enigma import iServiceInformation
-from enigma import loadPNG 
+from enigma import loadPNG
 from enigma import quitMainloop
-from enigma import iPlayableService 
 from os import path, listdir, remove, mkdir, chmod
 from twisted.web.client import downloadPage, getPage
 from xml.dom import Node, minidom
 import base64
+import glob
+import hashlib
+import json
 import os
 import re
-import sys
 import shutil
+import six
 import ssl
-import glob
-import json
-import six          
+import sys
+import time
 try:
     from Plugins.Extensions.tvDream.Utils import *
 except:
@@ -131,8 +142,8 @@ Panel_Dlist = [
  ('TVD Regions'),
  ('TVD State'),
  ('TVD Italia'),
- ('TVD Category'), 
- ('TVD New'),  
+ ('TVD Category'),
+ ('TVD New'),
 # ('ITALIAN VOD MOVIE')
  ]
 
@@ -206,6 +217,15 @@ class MainSetting(Screen):
         self.setup_title = ('MainSetting')
         Screen.__init__(self, session)
         self.setTitle(desc_plugin)
+
+
+
+
+
+
+
+
+
         self['text'] = SetList([])
         self.working = False
         self.selection = 'all'
@@ -225,8 +245,17 @@ class MainSetting(Screen):
          'cancel': self.closerm}, -1)
         self.onLayoutFinish.append(self.updateMenuList)
 
+
+
     def closerm(self):
+
+
+
+
         self.close()
+
+
+
 
     def updateMenuList(self):
         self.menu_list = []
@@ -243,6 +272,14 @@ class MainSetting(Screen):
 
     def okRun(self):
         self.keyNumberGlobalCB(self['text'].getSelectedIndex())
+
+
+
+
+
+
+
+
 
     def keyNumberGlobalCB(self, idx):
         global regioni
@@ -265,7 +302,7 @@ class MainSetting(Screen):
         elif sel == ('TVD New'):
             name = 'New'
             url = "https://www.tvdream.net/web-tv/nuovi/"
-            self.session.open(tvNew, name, url)            
+            self.session.open(tvNew, name, url)
         # elif sel == ('ITALIAN VOD MOVIE'):
             # self.session.open(Vod)
 
@@ -301,12 +338,12 @@ class State(Screen):
 
     def _gotPageLoad(self):
         self.names = []
-        self.urls = []    
+        self.urls = []
         url = 'http://www.tvdream.net/web-tv/paesi/'
         if check(url):
             datas = getUrl(url)
             if PY3:
-                datas = six.ensure_str(datas)                                     
+                datas = six.ensure_str(datas)
             print('datas :  ', datas)
             try:
                 icount = 0
@@ -334,7 +371,7 @@ class State(Screen):
                 pass
         else:
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
-            
+
     def okRun(self):
         idx = self["text"].getSelectionIndex()
         name = self.names[idx]
@@ -375,12 +412,12 @@ class tvRegioni(Screen):
 
     def _gotPageLoad(self):
         self.names = []
-        self.urls = []    
+        self.urls = []
         url = 'http://www.tvdream.net/web-tv/regioni/'
         if check(url):
             datas = getUrl(url)
             if PY3:
-                datas = six.ensure_str(datas)                                     
+                datas = six.ensure_str(datas)
             print('datas :  ', datas)
             try:
                 icount = 0
@@ -394,7 +431,11 @@ class tvRegioni(Screen):
                 pic = " "
                 regexcat = 'href="(.*?)">(.*?)<'
                 match = re.compile(regexcat, re.DOTALL).findall(data2)
+
                 for url, name in match:
+
+
+
                     print('name : ', name)
                     print('url:  ', url)
                     url = checkStr(url)
@@ -408,7 +449,7 @@ class tvRegioni(Screen):
                 pass
         else:
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
-            
+
     def okRun(self):
         idx = self["text"].getSelectionIndex()
         name = self.names[idx]
@@ -451,13 +492,13 @@ class tvItalia(Screen):
 
     def _gotPageLoad(self):
         self.names = []
-        self.urls = []    
+        self.urls = []
         name = self.name
         url = self.url
         if check(url):
             datas = getUrl(url)
             if PY3:
-                datas =six.ensure_str(datas)                                    
+                datas =six.ensure_str(datas)
             print('datas :  ', datas)
             try:
                 pages = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ]
@@ -475,7 +516,7 @@ class tvItalia(Screen):
                 pass
         else:
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
-            
+
     def okRun(self):
             idx = self["text"].getSelectionIndex()
             name = self.names[idx]
@@ -516,12 +557,12 @@ class tvCategory(Screen):
 
     def _gotPageLoad(self):
         self.names = []
-        self.urls = []    
+        self.urls = []
         url = 'https://www.tvdream.net/web-tv/categorie/'
         if check(url):
             datas = getUrl(url)
             if PY3:
-                datas = six.ensure_str(datas)                                     
+                datas = six.ensure_str(datas)
             print('datas :  ', datas)
             try:
                 icount = 0
@@ -549,7 +590,7 @@ class tvCategory(Screen):
                 pass
         else:
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
-        
+
     def okRun(self):
         idx = self["text"].getSelectionIndex()
         name = self.names[idx]
@@ -592,13 +633,13 @@ class subCategory(Screen):
 
     def _gotPageLoad(self):
         self.names = []
-        self.urls = []    
+        self.urls = []
         name = self.name
         url = self.url
         if check(url):
             datas = getUrl(url)
             if PY3:
-                datas =six.ensure_str(datas)                                    
+                datas =six.ensure_str(datas)
             print('datas :  ', datas)
             try:
                 pages = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ]
@@ -616,7 +657,7 @@ class subCategory(Screen):
                 pass
         else:
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
-            
+
     def okRun(self):
             idx = self["text"].getSelectionIndex()
             name = self.names[idx]
@@ -625,7 +666,7 @@ class subCategory(Screen):
             # print('url it3: ', url)
             self.session.open(tvCanal, name, url)
 
-            
+
 class tvCanal(Screen):
     def __init__(self, session, name, url ):
         self.session = session
@@ -662,7 +703,7 @@ class tvCanal(Screen):
 
     def _gotPageLoad(self):
         self.names = []
-        self.urls = []    
+        self.urls = []
         url = self.url
         name = self.name
         print('name ch1: ', name)
@@ -671,7 +712,7 @@ class tvCanal(Screen):
         if check(url):
             datas = getUrl(url)
             if PY3:
-                datas = six.ensure_str(datas)                                     
+                datas = six.ensure_str(datas)
             print('datas :  ', datas)
             try:
                 icount = 0
@@ -686,7 +727,7 @@ class tvCanal(Screen):
                 for url, name in match:
                     print('name match: ', name)
                     print('url match:  ', url)
-                    
+
                     url = checkStr(url)
                     name = checkStr(name)
                     self.urls.append(url)
@@ -698,26 +739,26 @@ class tvCanal(Screen):
                 pass
         else:
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
-            
+
     def okRun(self):
         idx = self["text"].getSelectionIndex()
         name = self.names[idx]
         url = self.urls[idx]
-        
+
         print('name okRun: ', name)
         print('url okRun:  ', url)
-        
+
         if check(url):
             content = getUrl(url)
             if PY3:
-                content = six.ensure_str(content)  
-            print('content :  ', content)    
-            try:   
+                content = six.ensure_str(content)
+            print('content :  ', content)
+            try:
                 regexcat = 'item__.*?href="(.*?)"'
                 # regexcat = 'class="player.*?href="(.*?)"'
                 # if content.find('iframe src='):
                     # regexcat = 'player-video.*?iframe src="(.*?)"'
-                if regioni == True:  
+                if regioni == True:
                     regexcat = '<iframe src="(.*?)"'
                 match = re.compile(regexcat, re.DOTALL).findall(content)
                 print("get regexcat =", regexcat)
@@ -725,14 +766,14 @@ class tvCanal(Screen):
                 print("get url2 =", url2)
                 content2 = getUrl(url2)
                 if PY3:
-                    content2 = six.ensure_str(content2)                                               
+                    content2 = six.ensure_str(content2)
                 print("getVideos2 content2 =", content2)
-                
+
                 if '<a class="player' in content2:
                     print("In player url =", url)
                     regexcat2 = '<a class="player-.*?href="(.*?)"'
                     match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
-                    url = match2[0]                    
+                    url = match2[0]
 
 
                 if ("rai" in url.lower()) or ("rai" in name.lower()):
@@ -749,9 +790,9 @@ class tvCanal(Screen):
                     url = content2[n2:(n1+5)]
                     pic = ""
                     self.session.open(Playstream2, name, url)
-                    
-                    
-                if "youtube" in url.lower():   
+
+
+                if "youtube" in url.lower():
                     print("In youtube url =", url)
                     from Plugins.Extensions.tvDream.youtube_dl import YoutubeDL
                     ydl_opts = {'format': 'best'}
@@ -764,8 +805,8 @@ class tvCanal(Screen):
                     # print ("mediaset result =", result)
                     url = result["url"]
                     # print ("mediaset final url =", url)
-                    self.session.open(Playstream2, name, url)                
-                    
+                    self.session.open(Playstream2, name, url)
+
                 else:
                     #<a class="player
                     print("In content2.find .m3u8 url =", url)
@@ -776,8 +817,8 @@ class tvCanal(Screen):
                     self.session.open(Playstream2, name, url)
             except:
                 self['info'].setText(_('Nothing ...'))
-                pass                        
-                    
+                pass
+
         else:
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
 
@@ -817,13 +858,13 @@ class tvNew(Screen):
 
     def _gotPageLoad(self):
         self.names = []
-        self.urls = []    
+        self.urls = []
         url = self.url
         name = self.name
-        if check(url):        
+        if check(url):
             datas = getUrl(url)
             if PY3:
-                datas = six.ensure_str(datas)                                     
+                datas = six.ensure_str(datas)
             print('datas :  ', datas)
             try:
                 icount = 0
@@ -838,7 +879,7 @@ class tvNew(Screen):
                 for url, name in match:
                     print('name ch1: ', name)
                     print('url ch1:  ', url)
-                    
+
                     url = checkStr(url)
                     name = checkStr(name)
                     self.urls.append(url)
@@ -851,7 +892,7 @@ class tvNew(Screen):
         else:
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
             return
-            
+
     def okRun(self):
         idx = self["text"].getSelectionIndex()
         name = self.names[idx]
@@ -859,7 +900,7 @@ class tvNew(Screen):
         if check(url):
             content = getUrl(url)
             if PY3:
-                content = six.ensure_str(content)                                             
+                content = six.ensure_str(content)
             print('content :  ', content)
             try:
                 regexcat = '"player".*?href="(.*?)"'
@@ -870,7 +911,7 @@ class tvNew(Screen):
                 url2 = match[0]
                 content2 = getUrl(url2)
                 if PY3:
-                    content2 = six.ensure_str(content2)                                               
+                    content2 = six.ensure_str(content2)
                 # print("getVideos2 content2 =", content2)
                 if ("rai" in url.lower()) or ("rai" in name.lower()):
                     regexcat2 = 'liveVideo":{"mediaUrl":"(.*?)"'
@@ -878,7 +919,7 @@ class tvNew(Screen):
                     url = match2[0]
                     pic = ""
                     self.session.open(Playstream2, name, url)
-                if "youtube" in url.lower():   
+                if "youtube" in url.lower():
                     # print("In playVideo2 url =", url)
                     from Plugins.Extensions.tvDream.youtube_dl import YoutubeDL
                     ydl_opts = {'format': 'best'}
@@ -891,7 +932,7 @@ class tvNew(Screen):
                     # print ("mediaset result =", result)
                     url = result["url"]
                     # print ("mediaset final url =", url)
-                    self.session.open(Playstream2, name, url)   
+                    self.session.open(Playstream2, name, url)
 
                 else:
                     n1 = content2.find(".m3u8")
@@ -901,12 +942,12 @@ class tvNew(Screen):
                     self.session.open(Playstream2, name, url)
             except:
                 self['info'].setText(_('Nothing ...'))
-                pass                        
-                    
+                pass
+
         else:
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
-                                    
-           
+
+
 
 class TvInfoBarShowHide():
     """ InfoBar show/hide control, accepts toggleShow and hide actions, might start
@@ -949,7 +990,6 @@ class TvInfoBarShowHide():
     def serviceStarted(self):
         if self.execing:
             if config.usage.show_infobar_on_zap.value:
-
                 self.doShow()
 
     def __onShow(self):
@@ -1016,7 +1056,7 @@ class Playstream2(
     screen_timeout = 5000
 
     def __init__(self, session, name, url):
-        global SREF, streaml
+        global streaml
         Screen.__init__(self, session)
         self.session = session
         global _session
@@ -1055,7 +1095,6 @@ class Playstream2(
          'cancel': self.cancel,
          'back': self.cancel}, -1)
         self.allowPiP = False
-        # InfoBarSeek.__init__(self, ActionMap='InfobarSeekActions')
         self.service = None
         service = None
         self.url = url
@@ -1200,7 +1239,7 @@ class Playstream2(
         self.servicetype = str(next(nextStreamType))
         print('servicetype2: ', self.servicetype)
         self.openTest(self.servicetype, url)
-        
+
     def up(self):
         pass
 
@@ -1255,21 +1294,13 @@ def main(session, **kwargs):
             upd_done()
         except:
             pass
-            
-# def main(session, **kwargs):
     session.open(MainSetting)
 
-def StartSetup(menuid, **kwargs):
-    if menuid == 'mainmenu':
-        return [(_('TiVuDream'), main, 'TiVuDream', 15)]
-    else:
-        return []
 
 def Plugins(**kwargs):
     ico_path = 'logo.png'
     if not os.path.exists('/var/lib/dpkg/status'):
         ico_path = plugin_path + '/res/pics/logo.png'
-    # main_menu = PluginDescriptor(name = name_plugin, description = desc_plugin, where = PluginDescriptor.WHERE_MENU, fnc = StartSetup, needsRestart = True)
     extensions_menu = PluginDescriptor(name = name_plugin, description = desc_plugin, where = PluginDescriptor.WHERE_EXTENSIONSMENU, fnc = main, needsRestart = True)
     result = [PluginDescriptor(name = name_plugin, description = desc_plugin, where = PluginDescriptor.WHERE_PLUGINMENU, icon = ico_path, fnc = main)]
     result.append(extensions_menu)
