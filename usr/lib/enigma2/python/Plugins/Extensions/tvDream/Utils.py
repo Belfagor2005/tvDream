@@ -15,9 +15,7 @@ PY3 = sys.version_info.major >= 3
 if PY3:
     # Python 3
     PY3 = True
-    # unicode = str; unichr = chr; long = int
-    # # str = unicode = basestring = str
-    # unichr = chr; long = int
+    unicode = str; unichr = chr; long = int; xrange = range
     from urllib.parse import quote
     from urllib.request import urlopen
     from urllib.request import Request
