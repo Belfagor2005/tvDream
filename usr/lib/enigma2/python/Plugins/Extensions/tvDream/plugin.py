@@ -39,7 +39,7 @@ from Screens.InfoBarGenerics import InfoBarShowHide, InfoBarSubtitleSupport, Inf
 	InfoBarNumberZap, InfoBarMenu, InfoBarEPG, InfoBarSeek, InfoBarMoviePlayerSummarySupport, \
 	InfoBarAudioSelection, InfoBarNotifications, InfoBarServiceNotifications
 from ServiceReference import ServiceReference
-from Tools.Directories import  SCOPE_PLUGINS
+from Tools.Directories import SCOPE_PLUGINS
 from Tools.Directories import *
 from Tools.Directories import pathExists, fileExists
 from Tools.Directories import resolveFilename
@@ -145,31 +145,26 @@ Panel_Dlist = [
 
 class SetList(MenuList):
     def __init__(self, list):
-        MenuList.__init__(self, list, False, eListboxPythonMultiContent)
-        self.l.setFont(0, gFont('Regular', 20))
-        self.l.setFont(1, gFont('Regular', 22))
-        self.l.setFont(2, gFont('Regular', 24))
-        self.l.setFont(3, gFont('Regular', 26))
-        self.l.setFont(4, gFont('Regular', 28))
-        self.l.setFont(5, gFont('Regular', 30))
-        self.l.setFont(6, gFont('Regular', 32))
-        self.l.setFont(7, gFont('Regular', 34))
-        self.l.setFont(8, gFont('Regular', 36))
-        self.l.setFont(9, gFont('Regular', 40))
+        MenuList.__init__(self, list, True, eListboxPythonMultiContent)
         if isFHD():
             self.l.setItemHeight(50)
+            textfont = int(34)
+            self.l.setFont(0, gFont('Regular', textfont))
         else:
             self.l.setItemHeight(50)
+            textfont = int(24)
+            self.l.setFont(0, gFont('Regular', textfont))
+
 
 def DListEntry(name, idx):
     res = [name]
     pngs = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('tvDream'))
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos = (10, 12), size = (34, 25), png = loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos = (60, 0), size = (1900, 50), font = 7, text = name, color = 0xa6d1fe, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryText(pos = (60, 0), size = (1900, 50), font = 0, text = name, color = 0xa6d1fe, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 6), size=(34, 25), png=loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos = (60, 0), size = (1000, 50), font = 2, text = name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryText(pos = (60, 0), size = (1000, 50), font = 0, text = name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
 
 def OneSetListEntry(name):
@@ -180,7 +175,7 @@ def OneSetListEntry(name):
         res.append(MultiContentEntryText(pos = (60, 0), size = (1200, 50), font = 0, text = name, color = 0xa6d1fe, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
         res.append(MultiContentEntryPixmapAlphaTest(pos = (10, 6), size = (34, 25), png = loadPNG(pngx)))
-        res.append(MultiContentEntryText(pos = (60, 2), size = (1000, 50), font = 2, text = name, color = 0xa6d1fe, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryText(pos = (60, 2), size = (1000, 50), font = 0, text = name, color = 0xa6d1fe, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
 
 def showlist(data, list):
@@ -316,7 +311,7 @@ class State(Screen):
                 for url, name in match:
                     print('name : ', name)
                     print('url:  ', url)
-                    url = checkStr(url)
+                    url = url
                     name = checkStr(name)
                     self.urls.append(url)
                     self.names.append(name)
@@ -389,7 +384,7 @@ class tvRegioni(Screen):
                 for url, name in match:
                     print('name : ', name)
                     print('url:  ', url)
-                    url = checkStr(url)
+                    url = url
                     name = checkStr(name)
                     self.urls.append(url)
                     self.names.append(name)
@@ -841,7 +836,7 @@ class tvCategory(Screen):
                 for url, name in match:
                     print('name : ', name)
                     print('url:  ', url)
-                    url = checkStr(url)
+                    url = url
                     name = checkStr(name)
                     self.urls.append(url)
                     self.names.append(name)
@@ -984,7 +979,7 @@ class tvNew(Screen):
                     print('name ch1: ', name)
                     print('url ch1:  ', url)
 
-                    url = checkStr(url)
+                    url = url
                     name = checkStr(name)
                     self.urls.append(url)
                     self.names.append(name)
@@ -1582,6 +1577,8 @@ class Playstream2(
         self.close()
 
     def leavePlayer(self):
+        self.session.nav.stopService()
+        self.session.nav.playService(srefInit)
         self.close()
 
 def checks():

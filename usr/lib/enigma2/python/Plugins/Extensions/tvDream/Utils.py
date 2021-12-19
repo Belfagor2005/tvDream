@@ -60,6 +60,13 @@ def mySkin():
     currentSkin = config.skin.primary_skin.value.replace('/skin.xml', '')
     return currentSkin
 
+if os.path.exists('/usr/lib/enigma2/python/Plugins/Extensions/MediaPlayer'):
+    from Plugins.Extensions.MediaPlayer import *
+    MediaPlayerInstalled = True
+else:
+    MediaPlayerInstalled = False
+
+
 def listDir(what):
     f = None
     try:
@@ -132,7 +139,7 @@ def check(url):
     try:
         from urllib.error import HTTPError, URLError
     except:
-        from urllib2 import HTTPError, URLError    
+        from urllib2 import HTTPError, URLError
     try:
         response = checkStr(urlopen(url, None, 5))
         response.close()
