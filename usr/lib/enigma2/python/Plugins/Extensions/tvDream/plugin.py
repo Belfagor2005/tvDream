@@ -4,7 +4,7 @@
 ****************************************
 *        coded by Lululla & PCD        *
 *             skin by MMark            *
-*             15/12/2021               *
+*             06/01/2022               *
 *       Skin by MMark                  *
 ****************************************
 #--------------------#
@@ -121,15 +121,13 @@ if sslverify:
 
 currversion = '1.2'
 plugin_path = os.path.dirname(sys.modules[__name__].__file__)
-skin_dream = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/fhd/".format('tvDream'))
 res_plugin_path = plugin_path + '/res/'
 # host_b7 = 'https://feed.entertainment.tv.theplatform.eu/f/PR1GhC/mediaset-prod-all-stations'
 desc_plugin = '..:: TiVu Dream Net Player by Lululla %s ::.. ' % currversion
 name_plugin = 'TiVuDream Player'
+skin_dream = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/hd/".format('tvDream'))
 if isFHD():
     skin_dream = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/fhd/".format('tvDream'))
-else:
-    skin_dream = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/hd/".format('tvDream'))
 if DreamOS():
     skin_dream = skin_dream + 'dreamOs/'
 twxtv = 'aHR0cH+M6Ly9+wYXRidXdlY+i5oZXJva3V+hcHAuY29tL2Fw+aS9wbGF5+P3VybD0='
@@ -215,6 +213,7 @@ class MainSetting(Screen):
         self.onLayoutFinish.append(self.updateMenuList)
 
     def closerm(self):
+        deletetmp()
         self.close()
 
     def updateMenuList(self):
