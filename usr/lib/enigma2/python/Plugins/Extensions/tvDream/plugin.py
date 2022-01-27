@@ -4,7 +4,7 @@
 ****************************************
 *        coded by Lululla & PCD        *
 *             skin by MMark            *
-*             13/01/2022               *
+*             25/01/2022               *
 *       Skin by MMark                  *
 ****************************************
 #--------------------#
@@ -143,36 +143,32 @@ Panel_Dlist = [
 class SetList(MenuList):
     def __init__(self, list):
         MenuList.__init__(self, list, True, eListboxPythonMultiContent)
+        self.l.setItemHeight(50)
+        textfont = int(24)
+        self.l.setFont(0, gFont('Regular', textfont))        
         if isFHD():
             self.l.setItemHeight(50)
             textfont = int(34)
             self.l.setFont(0, gFont('Regular', textfont))
-        else:
-            self.l.setItemHeight(50)
-            textfont = int(24)
-            self.l.setFont(0, gFont('Regular', textfont))
-
 
 def DListEntry(name, idx):
     res = [name]
     pngs = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('tvDream'))
+    res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png=loadPNG(pngs)))
+    res.append(MultiContentEntryText(pos = (60, 0), size = (1000, 50), font = 0, text = name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))    
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos = (10, 12), size = (34, 25), png = loadPNG(pngs)))
         res.append(MultiContentEntryText(pos = (60, 0), size = (1900, 50), font = 0, text = name, color = 0xa6d1fe, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER))
-    else:
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 6), size=(34, 25), png=loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos = (60, 0), size = (1000, 50), font = 0, text = name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
 
 def OneSetListEntry(name):
     res = [name]
     pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/plugins.png".format('tvDream'))
+    res.append(MultiContentEntryPixmapAlphaTest(pos = (10, 12), size = (34, 25), png = loadPNG(pngx)))
+    res.append(MultiContentEntryText(pos = (60, 2), size = (1000, 50), font = 0, text = name, color = 0xa6d1fe, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER))    
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos = (10, 12), size = (34, 25), png = loadPNG(pngx)))
         res.append(MultiContentEntryText(pos = (60, 0), size = (1200, 50), font = 0, text = name, color = 0xa6d1fe, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER))
-    else:
-        res.append(MultiContentEntryPixmapAlphaTest(pos = (10, 6), size = (34, 25), png = loadPNG(pngx)))
-        res.append(MultiContentEntryText(pos = (60, 2), size = (1000, 50), font = 0, text = name, color = 0xa6d1fe, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
 
 def showlist(data, list):
@@ -274,11 +270,11 @@ class State(Screen):
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self.timer = eTimer()
-        self.timer.start(1500, True)
         if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
+        self.timer.start(1500, True)    
         self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
@@ -347,11 +343,11 @@ class tvRegioni(Screen):
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self.timer = eTimer()
-        self.timer.start(1500, True)
         if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
+        self.timer.start(1500, True)    
         self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
@@ -422,11 +418,11 @@ class tvItalia(Screen):
         self.name = name
         self.url = url
         self.timer = eTimer()
-        self.timer.start(1500, True)
         if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
+        self.timer.start(1500, True)            
         self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
@@ -488,11 +484,11 @@ class tvCanal(Screen):
         self.name = name
         self.url = url
         self.timer = eTimer()
-        self.timer.start(1500, True)
         if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
+        self.timer.start(1500, True)            
         self['title'] = Label(desc_plugin)
         global SREF
         SREF = self.session.nav.getCurrentlyPlayingServiceReference()
@@ -772,13 +768,10 @@ class tvCanal(Screen):
                 url = result["url"]
                 # print ("mediaset final url =", url)
                 self.session.open(Playstream2, name, url) 
-
             return
-
         except:
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
             self['info'].setText(_('Nothing ... Retry'))
-
 
 class tvCategory(Screen):
     def __init__(self, session, name, url ):
@@ -799,11 +792,11 @@ class tvCategory(Screen):
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self.timer = eTimer()
-        self.timer.start(1500, True)
         if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
+        self.timer.start(1500, True)            
         self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
@@ -874,11 +867,11 @@ class subCategory(Screen):
         self.name = name
         self.url = url
         self.timer = eTimer()
-        self.timer.start(1500, True)
         if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
+        self.timer.start(1500, True)            
         self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
@@ -940,11 +933,11 @@ class tvNew(Screen):
         self.name = name
         self.url = url
         self.timer = eTimer()
-        self.timer.start(1500, True)
         if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
+        self.timer.start(1500, True)            
         global SREF
         SREF = self.session.nav.getCurrentlyPlayingServiceReference()
         self['title'] = Label(desc_plugin)
@@ -1003,7 +996,6 @@ class tvNew(Screen):
                 # yt = content.find('youtube')
                 # if yt:
                     # regexcat = 'player-video.*?src="(.*?)"'
-                
                 match = re.compile(regexcat, re.DOTALL).findall(content)
                 print("getVideos2 match =", match)
                 url2 = match[0]
@@ -1029,14 +1021,12 @@ class tvNew(Screen):
         else:
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
 
-
     def testinpl(self, name, url2):
         try:
             content2 = getUrl(url2)
             if PY3:
                 content2 = six.ensure_str(content2)                                               
             print("getVideos2 content2 =", content2)
-
             if '.m3u8' in content2:
                 print('content .m3u8')
                 n1 = content2.find(".m3u8")
