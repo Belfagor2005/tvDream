@@ -4,7 +4,7 @@
 ****************************************
 *        coded by Lululla & PCD        *
 *             skin by MMark            *
-*             25/01/2022               *
+*             25/02/2022               *
 *       Skin by MMark                  *
 ****************************************
 #--------------------#
@@ -159,16 +159,22 @@ def DListEntry(name, idx):
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos = (10, 12), size = (34, 25), png = loadPNG(pngs)))
         res.append(MultiContentEntryText(pos = (60, 0), size = (1900, 50), font = 0, text = name, color = 0xa6d1fe, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+    else:    
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png=loadPNG(pngs)))
+        res.append(MultiContentEntryText(pos = (60, 0), size = (1000, 50), font = 0, text = name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))           
     return res
 
 def OneSetListEntry(name):
     res = [name]
     pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/plugins.png".format('tvDream'))
-    res.append(MultiContentEntryPixmapAlphaTest(pos = (10, 12), size = (34, 25), png = loadPNG(pngx)))
-    res.append(MultiContentEntryText(pos = (60, 2), size = (1000, 50), font = 0, text = name, color = 0xa6d1fe, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER))    
+  
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos = (10, 12), size = (34, 25), png = loadPNG(pngx)))
         res.append(MultiContentEntryText(pos = (60, 0), size = (1200, 50), font = 0, text = name, color = 0xa6d1fe, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+    else:
+        res.append(MultiContentEntryPixmapAlphaTest(pos = (10, 12), size = (34, 25), png = loadPNG(pngx)))
+        res.append(MultiContentEntryText(pos = (60, 2), size = (1000, 50), font = 0, text = name, color = 0xa6d1fe, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER))      
+        
     return res
 
 def showlist(data, list):
@@ -378,6 +384,8 @@ class tvRegioni(Screen):
                 for url, name in match:
                     print('name : ', name)
                     print('url:  ', url)
+                    if 'Logo di TVdream' in name:
+                        continue
                     url = url
                     name = checkStr(name)
                     self.urls.append(url)
@@ -515,6 +523,8 @@ class tvCanal(Screen):
             for url, name in match:
                 # print('name ch1: ', name)
                 # print('url ch1:  ', url)
+                if 'Logo di TVdream' in name:
+                    continue                
                 self.urls.append(url)
                 self.names.append(name)
             self['info'].setText(_('Please select ...'))
@@ -825,6 +835,8 @@ class tvCategory(Screen):
                 regexcat = 'href="(.*?)">(.*?)<'
                 match = re.compile(regexcat, re.DOTALL).findall(data2)
                 for url, name in match:
+                    if 'Logo di TVdream' in name:
+                        continue                
                     print('name : ', name)
                     print('url:  ', url)
                     url = url
@@ -969,7 +981,8 @@ class tvNew(Screen):
                 for url, name in match:
                     print('name ch1: ', name)
                     print('url ch1:  ', url)
-
+                    if 'Logo di TVdream' in name:
+                        continue
                     url = url
                     name = checkStr(name)
                     self.urls.append(url)
