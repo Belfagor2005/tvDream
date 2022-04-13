@@ -323,11 +323,13 @@ class State(Screen):
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
 
     def okRun(self):
+        i = len(self.names)
+        print('iiiiii= ',i)
+        if i < 1:
+            return
         idx = self["text"].getSelectionIndex()
         name = self.names[idx]
         url = self.urls[idx]
-        # print('name : ', name)
-        # print('url:  ', url)
         self.session.open(tvItalia, name, url)
 
 class tvRegioni(Screen):
@@ -398,11 +400,13 @@ class tvRegioni(Screen):
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
 
     def okRun(self):
+        i = len(self.names)
+        print('iiiiii= ',i)
+        if i < 1:
+            return
         idx = self["text"].getSelectionIndex()
         name = self.names[idx]
         url = self.urls[idx]
-        # print('name : ', name)
-        # print('url:  ', url)
         self.session.open(tvItalia, name, url)
 
 class tvItalia(Screen):
@@ -464,12 +468,14 @@ class tvItalia(Screen):
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
 
     def okRun(self):
-            idx = self["text"].getSelectionIndex()
-            name = self.names[idx]
-            url = self.urls[idx]
-            # print('name it3: ', name)
-            # print('url it3: ', url)
-            self.session.open(tvCanal, name, url)
+        i = len(self.names)
+        print('iiiiii= ',i)
+        if i < 1:
+            return
+        idx = self["text"].getSelectionIndex()
+        name = self.names[idx]
+        url = self.urls[idx]
+        self.session.open(tvCanal, name, url)
 
 class tvCanal(Screen):
     def __init__(self, session, name, url ):
@@ -533,6 +539,10 @@ class tvCanal(Screen):
             self['info'].setText(_('Nothing ... Retry'))
             
     def okRun(self):
+        i = len(self.names)
+        print('iiiiii= ',i)
+        if i < 1:
+            return
         idx = self["text"].getSelectionIndex()
         name = self.names[idx]
         url = self.urls[idx]
@@ -851,11 +861,13 @@ class tvCategory(Screen):
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
 
     def okRun(self):
+        i = len(self.names)
+        print('iiiiii= ',i)
+        if i < 1:
+            return
         idx = self["text"].getSelectionIndex()
         name = self.names[idx]
         url = self.urls[idx]
-        # print('name : ', name)
-        # print('url:  ', url)
         self.session.open(subCategory, name, url)
 
 class subCategory(Screen):
@@ -917,12 +929,14 @@ class subCategory(Screen):
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
 
     def okRun(self):
-            idx = self["text"].getSelectionIndex()
-            name = self.names[idx]
-            url = self.urls[idx]
-            # print('name it3: ', name)
-            # print('url it3: ', url)
-            self.session.open(tvCanal, name, url)
+        i = len(self.names)
+        print('iiiiii= ',i)
+        if i < 1:
+            return
+        idx = self["text"].getSelectionIndex()
+        name = self.names[idx]
+        url = self.urls[idx]
+        self.session.open(tvCanal, name, url)
 
 class tvNew(Screen):
     def __init__(self, session, name, url ):
@@ -996,6 +1010,10 @@ class tvNew(Screen):
 
 
     def okRun(self):
+        i = len(self.names)
+        print('iiiiii= ',i)
+        if i < 1:
+            return
         idx = self["text"].getSelectionIndex()
         name = self.names[idx]
         url = self.urls[idx]
