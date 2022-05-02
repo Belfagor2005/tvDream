@@ -4,7 +4,7 @@
 ****************************************
 *        coded by Lululla & PCD        *
 *             skin by MMark            *
-*             25/02/2022               *
+*             02/05/2022               *
 *       Skin by MMark                  *
 ****************************************
 #--------------------#
@@ -72,6 +72,7 @@ import ssl
 import sys
 from sys import version_info                                 
 import time
+
 try:
     from Plugins.Extensions.tvDream.Utils import *
 except:
@@ -112,7 +113,6 @@ if sslverify:
     class SNIFactory(ssl.ClientContextFactory):
         def __init__(self, hostname=None):
             self.hostname = hostname
-
         def getContext(self):
             ctx = self._contextFactory(self.method)
             if self.hostname:
@@ -125,12 +125,13 @@ res_plugin_path = plugin_path + '/res/'
 # host_b7 = 'https://feed.entertainment.tv.theplatform.eu/f/PR1GhC/mediaset-prod-all-stations'
 desc_plugin = '..:: TiVu Dream Net Player by Lululla %s ::.. ' % currversion
 name_plugin = 'TiVuDream Player'
+twxtv = 'aHR0cH+M6Ly9+wYXRidXdlY+i5oZXJva3V+hcHAuY29tL2Fw+aS9wbGF5+P3VybD0='
 skin_dream = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/hd/".format('tvDream'))
 if isFHD():
     skin_dream = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/fhd/".format('tvDream'))
 if DreamOS():
     skin_dream = skin_dream + 'dreamOs/'
-twxtv = 'aHR0cH+M6Ly9+wYXRidXdlY+i5oZXJva3V+hcHAuY29tL2Fw+aS9wbGF5+P3VybD0='
+
 
 Panel_Dlist = [
  ('TVD Regions'),
@@ -143,19 +144,18 @@ Panel_Dlist = [
 class SetList(MenuList):
     def __init__(self, list):
         MenuList.__init__(self, list, True, eListboxPythonMultiContent)
-        self.l.setItemHeight(50)
-        textfont = int(24)
-        self.l.setFont(0, gFont('Regular', textfont))        
         if isFHD():
             self.l.setItemHeight(50)
             textfont = int(34)
-            self.l.setFont(0, gFont('Regular', textfont))
+            # self.l.setFont(0, gFont('Regular', textfont))
+        else:             
+            self.l.setItemHeight(50)
+            textfont = int(24)
+            self.l.setFont(0, gFont('Regular', textfont))            
 
 def DListEntry(name, idx):
     res = [name]
     pngs = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('tvDream'))
-    res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png=loadPNG(pngs)))
-    res.append(MultiContentEntryText(pos = (60, 0), size = (1000, 50), font = 0, text = name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))    
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos = (10, 12), size = (34, 25), png = loadPNG(pngs)))
         res.append(MultiContentEntryText(pos = (60, 0), size = (1900, 50), font = 0, text = name, color = 0xa6d1fe, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER))
@@ -167,7 +167,6 @@ def DListEntry(name, idx):
 def OneSetListEntry(name):
     res = [name]
     pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/plugins.png".format('tvDream'))
-  
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos = (10, 12), size = (34, 25), png = loadPNG(pngx)))
         res.append(MultiContentEntryText(pos = (60, 0), size = (1200, 50), font = 0, text = name, color = 0xa6d1fe, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER))
@@ -207,6 +206,7 @@ class MainSetting(Screen):
         self['key_red'] = Button(_('Exit'))
         self["key_blue"] = Button(_(''))
         self['key_blue'].hide()
+        self['key_green'].hide() 
         self['actions'] = ActionMap(['SetupActions', 'ColorActions', ], {'ok': self.okRun,
          'green': self.okRun,
          'back': self.closerm,
@@ -229,6 +229,7 @@ class MainSetting(Screen):
             self.menu_list.append(x)
             idx += 1
         self['text'].setList(list)
+        self['key_green'].show() 
         self['info'].setText(_('Please select ...'))
 
     def okRun(self):
@@ -275,6 +276,7 @@ class State(Screen):
         self["key_blue"] = Button(_(''))
         self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide() 
         self.timer = eTimer()
         if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
@@ -318,6 +320,7 @@ class State(Screen):
             except:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
+            self['key_green'].show() 
             showlist(self.names, self['text'])
         else:
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
@@ -350,6 +353,7 @@ class tvRegioni(Screen):
         self["key_blue"] = Button(_(''))
         self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide() 
         self.timer = eTimer()
         if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
@@ -395,6 +399,7 @@ class tvRegioni(Screen):
             except:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
+            self['key_green'].show() 
             showlist(self.names, self['text'])
         else:
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
@@ -427,6 +432,7 @@ class tvItalia(Screen):
         self["key_blue"] = Button(_(''))
         self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide() 
         self.name = name
         self.url = url
         self.timer = eTimer()
@@ -463,6 +469,7 @@ class tvItalia(Screen):
             except:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
+            self['key_green'].show() 
             showlist(self.names, self['text'])
         else:
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
@@ -495,6 +502,7 @@ class tvCanal(Screen):
         self["key_blue"] = Button(_(''))
         self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide() 
         self.name = name
         self.url = url
         self.timer = eTimer()
@@ -534,6 +542,7 @@ class tvCanal(Screen):
                 self.urls.append(url)
                 self.names.append(name)
             self['info'].setText(_('Please select ...'))
+            self['key_green'].show() 
             showlist(self.names, self['text'])
         except:
             self['info'].setText(_('Nothing ... Retry'))
@@ -811,6 +820,7 @@ class tvCategory(Screen):
         self["key_blue"] = Button(_(''))
         self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide() 
         self.timer = eTimer()
         if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
@@ -856,6 +866,7 @@ class tvCategory(Screen):
             except:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
+            self['key_green'].show() 
             showlist(self.names, self['text'])
         else:
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
@@ -888,6 +899,7 @@ class subCategory(Screen):
         self["key_blue"] = Button(_(''))
         self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide() 
         self.name = name
         self.url = url
         self.timer = eTimer()
@@ -924,6 +936,7 @@ class subCategory(Screen):
             except:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
+            self['key_green'].show() 
             showlist(self.names, self['text'])
         else:
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
@@ -956,6 +969,7 @@ class tvNew(Screen):
         self["key_blue"] = Button(_(''))
         self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide() 
         self.name = name
         self.url = url
         self.timer = eTimer()
@@ -1004,6 +1018,7 @@ class tvNew(Screen):
             except:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
+            self['key_green'].show() 
             showlist(self.names, self['text'])                
         else:
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
@@ -1256,9 +1271,8 @@ class Playstream1(Screen):
         self.name1 = name
         self.url = url
         print('In Playstream2 self.url =', url)
-        global srefInit
-        self.initialservice = self.session.nav.getCurrentlyPlayingServiceReference()
-        srefInit = self.initialservice
+        global SREF
+        SREF = self.session.nav.getCurrentlyPlayingServiceReference()
         self.onLayoutFinish.append(self.openTest)
 
     def openTest(self):
@@ -1351,7 +1365,7 @@ class Playstream1(Screen):
 
     def cancel(self):
         self.session.nav.stopService()
-        self.session.nav.playService(srefInit)
+        self.session.nav.playService(SREF)
         self.close()
 
 class Playstream2(
@@ -1461,7 +1475,6 @@ class Playstream2(
         self.setAspect(temp)
 
     def showinfo(self):
-        # debug = True
         sTitle = ''
         sServiceref = ''
         try:
@@ -1496,9 +1509,7 @@ class Playstream2(
             from Plugins.Extensions.IMDb.plugin import IMDB
             text_clear = self.name
             text = charRemove(text_clear)
-            HHHHH = text
-            self.session.open(IMDB, HHHHH)
-
+            self.session.open(IMDB, text)
         else:
             text_clear = self.name
             self.session.open(MessageBox, text_clear, MessageBox.TYPE_INFO)
@@ -1600,19 +1611,12 @@ class Playstream2(
         self.session.nav.playService(srefInit)
         self.close()
 
-def checks():
-    from Plugins.Extensions.tvDream.Utils import checkInternet
-    checkInternet()
-    chekin= False
-    if checkInternet():
-        chekin = True
-    return chekin
-
 def main(session, **kwargs):
-    if checks:
+    from . import Utils
+    if Utils.checkInternet():
         try:
-            from Plugins.Extensions.tvDream.Update import upd_done
-            upd_done()
+            from . import Update 
+            Update.upd_done()
         except:
             pass
     session.open(MainSetting)
