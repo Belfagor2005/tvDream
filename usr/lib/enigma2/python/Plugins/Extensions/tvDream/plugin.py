@@ -4,7 +4,7 @@
 ****************************************
 *        coded by Lululla & PCD        *
 *             skin by MMark            *
-*             15/12/2021               *
+*             01/05/2021               *
 *       Skin by MMark                  *
 ****************************************
 #--------------------#
@@ -72,17 +72,15 @@ import ssl
 import sys
 from sys import version_info
 import time
-# try:
-    # from Plugins.Extensions.tvDream.Utils import *
-# except:
-    # from . import Utils
+
 from . import Utils
+
 global regioni, skin_dream
 regioni = False
-
 PY3 = False
 PY3 = sys.version_info.major >= 3
 print('Py3: ',PY3)
+
 if PY3:
     from urllib.request import urlopen
     from urllib.request import Request
@@ -110,6 +108,7 @@ try:
     sslverify = True
 except:
     sslverify = False
+
 if sslverify:
     class SNIFactory(ssl.ClientContextFactory):
         def __init__(self, hostname=None):
@@ -307,7 +306,6 @@ class State(Screen):
                     return
                 n2 = datas.find("</ul>", n1)
                 data2 = datas[n1:n2]
-                # print("data A2 =", data2)
                 pic = " "
                 regexcat = 'href="(.*?)">(.*?)<'
                 match = re.compile(regexcat, re.DOTALL).findall(data2)
@@ -382,7 +380,6 @@ class tvRegioni(Screen):
                     return
                 n2 = datas.find("</ul>", n1)
                 data2 = datas[n1:n2]
-                # print("data A2 =", data2)
                 pic = " "
                 regexcat = 'href="(.*?)">(.*?)<'
                 match = re.compile(regexcat, re.DOTALL).findall(data2)
@@ -520,20 +517,16 @@ class tvCanal(Screen):
         url = self.url
         name = self.name
         datas = Utils.getUrl(url)
-        # print('datas :  ', datas)
         self.names = []
         self.urls = []
         try:
             icount = 0
             start = 0
             data2 = datas
-            # print("data A5 =", data2)
             pic = " "
             regexcat = '<div class="item__.*?href="(.*?)".*?alt="(.*?)"'
             match = re.compile(regexcat, re.DOTALL).findall(data2)
             for url, name in match:
-                # print('name ch1: ', name)
-                # print('url ch1:  ', url)
                 if 'Logo di TVdream' in name:
                     continue
                 self.urls.append(url)
@@ -584,7 +577,6 @@ class tvCanal(Screen):
                 if content.find('iframe src='):
                     regexcat = 'player-video.*?iframe.*?src="(.*?)"'
 
-
             match = re.compile(regexcat, re.DOTALL).findall(content)
             print("get regexcat =", regexcat)
             url = match[0]
@@ -604,9 +596,7 @@ class tvCanal(Screen):
                 ydl = YoutubeDL(ydl_opts)
                 ydl.add_default_info_extractors()
                 result = ydl.extract_info(url, download=False)
-                # print ("mediaset result =", result)
                 url = result["url"]
-                # print ("mediaset final url =", url)
                 print('YoutubeDL name: ', name)
                 print('YoutubeDL url: ', url)
                 self.session.open(Playstream2, name, url)
@@ -645,7 +635,6 @@ class tvCanal(Screen):
                     n2 = content3.rfind("http", 0, n1)
                     url = content3[n2:(n1+5)]
                     pic = ""
-                    # self.session.open(Playstream2, name, url)
                     print('content3 name: ', name)
                     print('content3 url: ', url)
                     self.session.open(Playstream2, name, url)
@@ -680,7 +669,6 @@ class tvCanal(Screen):
                 print('content2 rai url: ', url)
                 self.session.open(Playstream2, name, url)
 
-
             else:
                 regexcat = '<iframe.*?src="(.*?)"'
                 match = re.compile(regexcat, re.DOTALL).findall(content)
@@ -689,7 +677,6 @@ class tvCanal(Screen):
                 print("<iframe.*?src= url2 =", url2)
                 # twitch = url2.find('twitch.tv')
                 # twitch = url2.find('player.twitch')
-
                 if not 'player.twitch' in content:
                     print('go testinpl')
                     self.testinpl(name,url2)
@@ -713,9 +700,6 @@ class tvCanal(Screen):
         except:
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
             self['info'].setText(_('Nothing ... Retry'))
-            # return
-        # else:
-            # self.session.open(MessageBox, _("Sorry no found!!!"), MessageBox.TYPE_INFO, timeout = 5)
 
     def testinpl(self, name, url):
         try:
@@ -758,7 +742,6 @@ class tvCanal(Screen):
                     n2 = content3.rfind("http", 0, n1)
                     url = content3[n2:(n1+5)]
                     pic = ""
-                    # self.session.open(Playstream2, name, url)
                     self.session.open(Playstream2, name, url)
 
             elif '<a class="player_' in content2:
@@ -857,7 +840,6 @@ class tvCategory(Screen):
                     return
                 n2 = datas.find("</ul>", n1)
                 data2 = datas[n1:n2]
-                # print("data A2 =", data2)
                 pic = " "
                 regexcat = 'href="(.*?)">(.*?)<'
                 match = re.compile(regexcat, re.DOTALL).findall(data2)
@@ -1004,7 +986,6 @@ class tvNew(Screen):
             try:
                 icount = 0
                 start = 0
-                # print("data A5 =", data2)
                 pic = " "
                 regexcat = 'item-featured__thumb.*?href="(.*?)".*?alt="(.*?)"'
                 '''
@@ -1045,7 +1026,6 @@ class tvNew(Screen):
                 # yt = content.find('youtube')
                 # if yt:
                     # regexcat = 'player-video.*?src="(.*?)"'
-
                 match = re.compile(regexcat, re.DOTALL).findall(content)
                 print("getVideos2 match =", match)
                 url2 = match[0]
@@ -1061,8 +1041,6 @@ class tvNew(Screen):
                     self.session.open(Playstream2, name, url)
                 else:
                     self.testinpl(name,url2)
-                # return
-
             except:
                 # self.testinpl(name,url2)
                 self['info'].setText(_('Nothing ... Retry'))
@@ -1163,8 +1141,6 @@ class tvNew(Screen):
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
             self['info'].setText(_('Nothing ... Retry'))
 
-
-
 class TvInfoBarShowHide():
     """ InfoBar show/hide control, accepts toggleShow and hide actions, might start
     fancy animations. """
@@ -1253,7 +1229,6 @@ class TvInfoBarShowHide():
 
     def debug(obj, text = ""):
         print(text + " %s\n" % obj)
-
 
 class Playstream1(Screen):
     def __init__(self, session, name, url):
