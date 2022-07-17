@@ -4,7 +4,7 @@
 ****************************************
 *        coded by Lululla & PCD        *
 *             skin by MMark            *
-*             01/05/2021               *
+*             15/07/2022               *
 *       Skin by MMark                  *
 ****************************************
 #--------------------#
@@ -72,15 +72,17 @@ import ssl
 import sys
 from sys import version_info
 import time
-
-from . import Utils
+try:
+    from Plugins.Extensions.tvDream.Utils import *
+except:
+    from . import Utils
 
 global regioni, skin_dream
 regioni = False
+
 PY3 = False
 PY3 = sys.version_info.major >= 3
 print('Py3: ',PY3)
-
 if PY3:
     from urllib.request import urlopen
     from urllib.request import Request
@@ -108,7 +110,6 @@ try:
     sslverify = True
 except:
     sslverify = False
-
 if sslverify:
     class SNIFactory(ssl.ClientContextFactory):
         def __init__(self, hostname=None):
@@ -122,16 +123,18 @@ if sslverify:
 
 currversion = '1.2'
 plugin_path = os.path.dirname(sys.modules[__name__].__file__)
+
 res_plugin_path = plugin_path + '/res/'
 # host_b7 = 'https://feed.entertainment.tv.theplatform.eu/f/PR1GhC/mediaset-prod-all-stations'
 desc_plugin = '..:: TiVu Dream Net Player by Lululla %s ::.. ' % currversion
 name_plugin = 'TiVuDream Player'
 twxtv = 'aHR0cH+M6Ly9+wYXRidXdlY+i5oZXJva3V+hcHAuY29tL2Fw+aS9wbGF5+P3VybD0='
 skin_dream = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/hd/".format('tvDream'))
-if Utils.isFHD():
+if isFHD():
     skin_dream = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/fhd/".format('tvDream'))
-if Utils.DreamOS():
+if DreamOS():
     skin_dream = skin_dream + 'dreamOs/'
+
 
 Panel_Dlist = [
  ('TVD Regions'),
@@ -144,7 +147,7 @@ Panel_Dlist = [
 class SetList(MenuList):
     def __init__(self, list):
         MenuList.__init__(self, list, True, eListboxPythonMultiContent)
-        if Utils.isFHD():
+        if isFHD():
             # self.l.setItemHeight(50)
             textfont = int(34)
             # self.l.setFont(0, gFont('Regular', textfont))
@@ -158,7 +161,7 @@ class SetList(MenuList):
 def DListEntry(name, idx):
     res = [name]
     pngs = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('tvDream'))
-    if Utils.isFHD():
+    if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos = (10, 12), size = (34, 25), png = loadPNG(pngs)))
         res.append(MultiContentEntryText(pos = (60, 0), size = (1900, 50), font = 0, text = name, color = 0xa6d1fe, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
@@ -169,7 +172,7 @@ def DListEntry(name, idx):
 def OneSetListEntry(name):
     res = [name]
     pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/plugins.png".format('tvDream'))
-    if Utils.isFHD():
+    if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos = (10, 12), size = (34, 25), png = loadPNG(pngx)))
         res.append(MultiContentEntryText(pos = (60, 0), size = (1200, 50), font = 0, text = name, color = 0xa6d1fe, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
@@ -278,7 +281,7 @@ class State(Screen):
         self['key_blue'].hide()
         self['key_green'].hide()
         self.timer = eTimer()
-        if Utils.DreamOS():
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
@@ -293,8 +296,8 @@ class State(Screen):
         self.names = []
         self.urls = []
         url = 'http://www.tvdream.net/web-tv/paesi/'
-        if Utils.check(url):
-            datas = Utils.getUrl(url)
+        if check(url):
+            datas = getUrl(url)
             if PY3:
                 datas = six.ensure_str(datas)
             print('datas :  ', datas)
@@ -306,14 +309,15 @@ class State(Screen):
                     return
                 n2 = datas.find("</ul>", n1)
                 data2 = datas[n1:n2]
+                # print("data A2 =", data2)
                 pic = " "
                 regexcat = 'href="(.*?)">(.*?)<'
                 match = re.compile(regexcat, re.DOTALL).findall(data2)
                 for url, name in match:
                     print('name : ', name)
                     print('url:  ', url)
-                    self.urls.append(Utils.checkStr(url))
-                    self.names.append(Utils.checkStr(name))
+                    self.urls.append(url)
+                    self.names.append(checkStr(name))
             except:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
@@ -352,7 +356,7 @@ class tvRegioni(Screen):
         self['key_blue'].hide()
         self['key_green'].hide()
         self.timer = eTimer()
-        if Utils.DreamOS():
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
@@ -367,8 +371,8 @@ class tvRegioni(Screen):
         self.names = []
         self.urls = []
         url = 'http://www.tvdream.net/web-tv/regioni/'
-        if Utils.check(url):
-            datas = Utils.getUrl(url)
+        if check(url):
+            datas = getUrl(url)
             if PY3:
                 datas = six.ensure_str(datas)
             print('datas :  ', datas)
@@ -380,6 +384,7 @@ class tvRegioni(Screen):
                     return
                 n2 = datas.find("</ul>", n1)
                 data2 = datas[n1:n2]
+                # print("data A2 =", data2)
                 pic = " "
                 regexcat = 'href="(.*?)">(.*?)<'
                 match = re.compile(regexcat, re.DOTALL).findall(data2)
@@ -388,8 +393,8 @@ class tvRegioni(Screen):
                     print('url:  ', url)
                     if 'Logo di TVdream' in name:
                         continue
-                    self.urls.append(Utils.checkStr(url))
-                    self.names.append(Utils.checkStr(name))
+                    self.urls.append(url)
+                    self.names.append(checkStr(name))
             except:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
@@ -430,7 +435,7 @@ class tvItalia(Screen):
         self.name = name
         self.url = url
         self.timer = eTimer()
-        if Utils.DreamOS():
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
@@ -446,8 +451,8 @@ class tvItalia(Screen):
         self.urls = []
         name = self.name
         url = self.url
-        if Utils.check(url):
-            datas = Utils.getUrl(url)
+        if check(url):
+            datas = getUrl(url)
             if PY3:
                 datas =six.ensure_str(datas)
             print('datas :  ', datas)
@@ -458,8 +463,8 @@ class tvItalia(Screen):
                     name = "Page " + str(page)
                     print('name it : ', name)
                     print('url it:  ', url1)
-                    self.urls.append(Utils.checkStr(url1))
-                    self.names.append(Utils.checkStr(name))
+                    self.urls.append(url1)
+                    self.names.append(checkStr(name))
             except:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
@@ -500,7 +505,7 @@ class tvCanal(Screen):
         self.name = name
         self.url = url
         self.timer = eTimer()
-        if Utils.DreamOS():
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
@@ -516,21 +521,25 @@ class tvCanal(Screen):
     def _gotPageLoad(self):
         url = self.url
         name = self.name
-        datas = Utils.getUrl(url)
+        datas = getUrl(url)
+        # print('datas :  ', datas)
         self.names = []
         self.urls = []
         try:
             icount = 0
             start = 0
             data2 = datas
+            # print("data A5 =", data2)
             pic = " "
             regexcat = '<div class="item__.*?href="(.*?)".*?alt="(.*?)"'
             match = re.compile(regexcat, re.DOTALL).findall(data2)
             for url, name in match:
+                # print('name ch1: ', name)
+                # print('url ch1:  ', url)
                 if 'Logo di TVdream' in name:
                     continue
                 self.urls.append(url)
-                self.names.append(Utils.checkStr(name))
+                self.names.append(checkStr(name))
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
             showlist(self.names, self['text'])
@@ -547,163 +556,175 @@ class tvCanal(Screen):
         url = self.urls[idx]
         print('name okRun: ', name)
         print('url okRun:  ', url)
-        # if Utils.check(url):
-        try:
-            content = Utils.getUrl(url)
+        if check(url):
+            content = getUrl(url)
             if PY3:
                 content = six.ensure_str(content)
             print('content okRun ====================:  ', content)
-            regexcat = 'item__.*?href="(.*?)"'
-            # regexcat = 'class="player.*?href="(.*?)"'
-            # if content.find('iframe src='):
-                # regexcat = 'player-video.*?iframe src="(.*?)"'
-
-            if regioni == True:
-                regexcat = '<iframe src="(.*?)"'
-                print('iframe src=')
-            else:
+            try:
                 regexcat = 'item__.*?href="(.*?)"'
-                print('item__.*?href=')
-            if '"btn-site"' in content:
-                print('content btn-site')
-                regexcat = '"btn-site".*?href="(.*?)"'
+                # regexcat = 'class="player.*?href="(.*?)"'
+                # if content.find('iframe src='):
+                    # regexcat = 'player-video.*?iframe src="(.*?)"'
 
-            if 'player-ext" href="' in content:
-                print('content player-ex')
-                regexcat = '"btn-site".*?href="(.*?)"'
-
-            if 'player-video"' in content:
-                print('content player-video')
-                if content.find('iframe src='):
-                    regexcat = 'player-video.*?iframe.*?src="(.*?)"'
-
-            match = re.compile(regexcat, re.DOTALL).findall(content)
-            print("get regexcat =", regexcat)
-            url = match[0]
-            print("get url2 =", url)
-            content2 = Utils.getUrl(url)
-            if PY3:
-                content2 = six.ensure_str(content2)
-            print("getVideos2 content2 =", content2)
-
-            if "youtube" in url.lower():
-                print("In youtube url =", content2)
-                from Plugins.Extensions.tvDream.youtube_dl import YoutubeDL
-                ydl_opts = {'format': 'best'}
-                '''
-                ydl_opts = {'format': 'bestaudio/best'}
-                '''
-                ydl = YoutubeDL(ydl_opts)
-                ydl.add_default_info_extractors()
-                result = ydl.extract_info(url, download=False)
-                url = result["url"]
-                print('YoutubeDL name: ', name)
-                print('YoutubeDL url: ', url)
-                self.session.open(Playstream2, name, url)
-            elif '.m3u8' in content2:
-                print('content .m3u8')
-                n1 = content2.find(".m3u8")
-                n2 = content2.rfind("http", 0, n1)
-                url = content2[n2:(n1+5)]
-                pic = ""
-                self.session.open(Playstream2, name, url)
-
-            elif 'source src="' in content2:
-                print('content source src= .mp4')
-                regexcat2 = 'source src="(.*?)"'
-                match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
-                url = match2[0]
-                n1 = url.find(".mp4")
-                n2 = url.rfind("http", 0, n1)
-                url = url[n2:(n1+5)]
-                pic = ""
-                self.session.open(Playstream2, name, url)
-
-            elif '<a class="player-' in content2:
-                print("In <a class=player- =")
-                regexcat2 = '<a class="player-.*?href="(.*?)"'
-                match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
-                url = match2[0]
-                pic = ""
-                content3 = Utils.getUrl(url)
-                if PY3:
-                    content3 = six.ensure_str(content3)
-                print("getVideos2 content2 =", content3)
-                if '.m3u8' in content3:
-                    print('content .m3u8')
-                    n1 = content3.find(".m3u8")
-                    n2 = content3.rfind("http", 0, n1)
-                    url = content3[n2:(n1+5)]
-                    pic = ""
-                    print('content3 name: ', name)
-                    print('content3 url: ', url)
-                    self.session.open(Playstream2, name, url)
-
-            elif '<a class="player_' in content2:
-                print("In player url =", url)
-                regexcat2 = '<a class="player_.*?href="(.*?)"'
-                match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
-                url = match2[0]
-                pic = ""
-                content3 = Utils.getUrl(url)
-                if PY3:
-                    content3 = six.ensure_str(content3)
-                print("getVideos2 content3 =", content3)
-                if '.m3u8' in content3:
-                    print('content3 .m3u8')
-                    n1 = content3.find(".m3u8")
-                    n2 = content3.rfind("http", 0, n1)
-                    url = content3[n2:(n1+5)]
-                    pic = ""
-                    print('content3 name: ', name)
-                    print('content3 url: ', url)
-                    self.session.open(Playstream2, name, url)
-
-            elif ("rai" in url.lower()) or ("rai" in name.lower()):
-                print("In rai url =", url)
-                regexcat2 = 'liveVideo":{"mediaUrl":"(.*?)"'
-                match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
-                url = match2[0]
-                pic = ""
-                print('content2 rai name: ', name)
-                print('content2 rai url: ', url)
-                self.session.open(Playstream2, name, url)
-
-            else:
-                regexcat = '<iframe.*?src="(.*?)"'
-                match = re.compile(regexcat, re.DOTALL).findall(content)
-                print("<iframe.*?src= match =", match)
-                url2 = match[0]
-                print("<iframe.*?src= url2 =", url2)
-                # twitch = url2.find('twitch.tv')
-                # twitch = url2.find('player.twitch')
-                if not 'player.twitch' in content:
-                    print('go testinpl')
-                    self.testinpl(name,url2)
-
-                elif content.find('player.twitch'):
-                # if twitch:
-                    match = re.compile(regexcat, re.DOTALL).findall(content)
-                    print("get player.twitch =", regexcat)
-                    url2 = match[0]
-                    print("get url2 =", url2)
-                # twitch = url2.find('player.twitch')
-                # if twitch:
-                    url3 = url2.replace('https://player.twitch.tv/?channel=','').replace('&parent=www.tvdream.net','')
-                    urlx = twxtv.replace('+','')
-                    url = Utils.b64decoder(urlx) + 'https://www.twitch.tv/' + url3
-                    self.session.open(Playstream2, name, url)
+                if regioni == True:
+                    regexcat = '<iframe src="(.*?)"'
+                    print('iframe src=')
                 else:
-                    self.testinpl(name, url)
+                    regexcat = 'item__.*?href="(.*?)"'
+                    print('item__.*?href=')
+                if '"btn-site"' in content:
+                    print('content btn-site')
+                    regexcat = '"btn-site".*?href="(.*?)"'
+
+                if 'player-ext" href="' in content:
+                    print('content player-ex')
+                    regexcat = '"btn-site".*?href="(.*?)"'
+
+                if 'player-video"' in content:
+                    print('content player-video')
+                    if content.find('iframe src='):
+                        regexcat = 'player-video.*?iframe.*?src="(.*?)"'
+
+
+                match = re.compile(regexcat, re.DOTALL).findall(content)
+                print("get regexcat =", regexcat)
+                url = match[0]
+                print("get url2 =", url)
+                content2 = getUrl(url)
+                if PY3:
+                    content2 = six.ensure_str(content2)
+                print("getVideos2 content2 =", content2)
+
+                if "youtube" in url.lower():
+                    print("In youtube url =", content2)
+                    from Plugins.Extensions.tvDream.youtube_dl import YoutubeDL
+                    ydl_opts = {'format': 'best'}
+                    '''
+                    ydl_opts = {'format': 'bestaudio/best'}
+                    '''
+                    ydl = YoutubeDL(ydl_opts)
+                    ydl.add_default_info_extractors()
+                    result = ydl.extract_info(url, download=False)
+                    # print ("mediaset result =", result)
+                    url = result["url"]
+                    # print ("mediaset final url =", url)
+                    print('YoutubeDL name: ', name)
+                    print('YoutubeDL url: ', url)
+                    self.session.open(Playstream2, name, url)
+                elif '.m3u8' in content2:
+                    print('content .m3u8')
+                    n1 = content2.find(".m3u8")
+                    n2 = content2.rfind("http", 0, n1)
+                    url = content2[n2:(n1+5)]
+                    pic = ""
+                    self.session.open(Playstream2, name, url)
+
+                elif 'source src="' in content2:
+                    print('content source src= .mp4')
+                    regexcat2 = 'source src="(.*?)"'
+                    match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
+                    url = match2[0]
+                    n1 = url.find(".mp4")
+                    n2 = url.rfind("http", 0, n1)
+                    url = url[n2:(n1+5)]
+                    pic = ""
+                    self.session.open(Playstream2, name, url)
+
+                elif '<a class="player-' in content2:
+                    print("In <a class=player- =")
+                    regexcat2 = '<a class="player-.*?href="(.*?)"'
+                    match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
+                    url = match2[0]
+                    pic = ""
+                    content3 = getUrl(url)
+                    if PY3:
+                        content3 = six.ensure_str(content3)
+                    print("getVideos2 content2 =", content3)
+                    if '.m3u8' in content3:
+                        print('content .m3u8')
+                        n1 = content3.find(".m3u8")
+                        n2 = content3.rfind("http", 0, n1)
+                        url = content3[n2:(n1+5)]
+                        pic = ""
+                        # self.session.open(Playstream2, name, url)
+                        print('content3 name: ', name)
+                        print('content3 url: ', url)
+                        self.session.open(Playstream2, name, url)
+
+                elif '<a class="player_' in content2:
+                    print("In player url =", url)
+                    regexcat2 = '<a class="player_.*?href="(.*?)"'
+                    match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
+                    url = match2[0]
+                    pic = ""
+                    content4 = Utils.getUrl(url)
+                    if PY3:
+                        content4 = six.ensure_str(content4)
+                    print("getVideos2 content4 =", content4)
+                    if '.m3u8' in content4:
+                        print('content4 .m3u8')
+                        n1 = content4.find(".m3u8")
+                        n2 = content4.rfind("http", 0, n1)
+                        url = content4[n2:(n1+5)]
+                        pic = ""
+                        print('content4 name: ', name)
+                        print('content4 url: ', url)
+                        self.session.open(Playstream2, name, url)
+
+                elif ("rai" in url.lower()) or ("rai" in name.lower()):
+                    print("In rai url =", url)
+                    regexcat2 = 'liveVideo":{"mediaUrl":"(.*?)"'
+                    match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
+                    url = match2[0]
+                    pic = ""
+                    print('content2 rai name: ', name)
+                    print('content2 rai url: ', url)
+                    self.session.open(Playstream2, name, url)
+
+
+                else:
+                    regexcat = '<iframe.*?src="(.*?)"'
+                    match = re.compile(regexcat, re.DOTALL).findall(content)
+                    print("<iframe.*?src= match =", match)
+                    url2 = match[0]
+                    print("<iframe.*?src= url2 =", url2)
+                    # twitch = url2.find('twitch.tv')
+                    # twitch = url2.find('player.twitch')
+
+                    if not 'player.twitch' in content:
+                        print('go testinpl')
+                        self.testinpl(name,url2)
+
+                    elif content.find('player.twitch'):
+                    # if twitch:
+                        match = re.compile(regexcat, re.DOTALL).findall(content)
+                        print("get player.twitch =", regexcat)
+                        url2 = match[0]
+                        print("get url2 =", url2)
+                    # twitch = url2.find('player.twitch')
+                    # if twitch:
+                        url3 = url2.replace('https://player.twitch.tv/?channel=','').replace('&parent=www.tvdream.net','')
+                        urlx = twxtv.replace('+','')
+                        url = b64decoder(urlx) + 'https://www.twitch.tv/' + url3
+                        self.session.open(Playstream2, name, url)
+                    else:
+                        self.testinpl(name, url)
+                    return
+
                 return
 
-        except:
-            self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
-            self['info'].setText(_('Nothing ... Retry'))
+
+            except:
+                self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
+                self['info'].setText(_('Nothing ... Retry'))
+            return
+        else:
+            self.session.open(MessageBox, _("Sorry no found!!!"), MessageBox.TYPE_INFO, timeout = 5)
 
     def testinpl(self, name, url):
         try:
-            content2 = Utils.getUrl(url)
+            content2 = getUrl(url)
             if PY3:
                 content2 = six.ensure_str(content2)
             print("testinpl content2 =", content2)
@@ -732,7 +753,7 @@ class tvCanal(Screen):
                 match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
                 url = match2[0]
                 pic = ""
-                content3 = Utils.getUrl(url)
+                content3 = getUrl(url)
                 if PY3:
                     content3 = six.ensure_str(content3)
                 print("getVideos3 content2 =", content3)
@@ -742,6 +763,7 @@ class tvCanal(Screen):
                     n2 = content3.rfind("http", 0, n1)
                     url = content3[n2:(n1+5)]
                     pic = ""
+                    # self.session.open(Playstream2, name, url)
                     self.session.open(Playstream2, name, url)
 
             elif '<a class="player_' in content2:
@@ -750,12 +772,12 @@ class tvCanal(Screen):
                 match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
                 url = match2[0]
                 pic = ""
-                content3 = Utils.getUrl(url)
+                content3 = getUrl(url)
                 if PY3:
                     content3 = six.ensure_str(content3)
                 print("getVideos4 content2 =", content3)
                 if '.m3u8' in content3:
-                    print('content3 .m3u8')
+                    print('content4 .m3u8')
                     n1 = content3.find(".m3u8")
                     n2 = content3.rfind("http", 0, n1)
                     url = content3[n2:(n1+5)]
@@ -812,7 +834,7 @@ class tvCategory(Screen):
         self['key_blue'].hide()
         self['key_green'].hide()
         self.timer = eTimer()
-        if Utils.DreamOS():
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
@@ -827,8 +849,8 @@ class tvCategory(Screen):
         self.names = []
         self.urls = []
         url = 'https://www.tvdream.net/web-tv/categorie/'
-        if Utils.check(url):
-            datas = Utils.getUrl(url)
+        if check(url):
+            datas = getUrl(url)
             if PY3:
                 datas = six.ensure_str(datas)
             print('datas :  ', datas)
@@ -840,6 +862,7 @@ class tvCategory(Screen):
                     return
                 n2 = datas.find("</ul>", n1)
                 data2 = datas[n1:n2]
+                # print("data A2 =", data2)
                 pic = " "
                 regexcat = 'href="(.*?)">(.*?)<'
                 match = re.compile(regexcat, re.DOTALL).findall(data2)
@@ -890,7 +913,7 @@ class subCategory(Screen):
         self.name = name
         self.url = url
         self.timer = eTimer()
-        if Utils.DreamOS():
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
@@ -906,8 +929,8 @@ class subCategory(Screen):
         self.urls = []
         name = self.name
         url = self.url
-        if Utils.check(url):
-            datas = Utils.getUrl(url)
+        if check(url):
+            datas = getUrl(url)
             if PY3:
                 datas =six.ensure_str(datas)
             print('datas :  ', datas)
@@ -960,7 +983,7 @@ class tvNew(Screen):
         self.name = name
         self.url = url
         self.timer = eTimer()
-        if Utils.DreamOS():
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
@@ -978,14 +1001,15 @@ class tvNew(Screen):
         self.urls = []
         url = self.url
         name = self.name
-        if Utils.check(url):
-            datas = Utils.getUrl(url)
+        if check(url):
+            datas = getUrl(url)
             if PY3:
                 datas = six.ensure_str(datas)
             print('datas :  ', datas)
             try:
                 icount = 0
                 start = 0
+                # print("data A5 =", data2)
                 pic = " "
                 regexcat = 'item-featured__thumb.*?href="(.*?)".*?alt="(.*?)"'
                 '''
@@ -997,8 +1021,8 @@ class tvNew(Screen):
                     print('url ch1:  ', url)
                     if 'Logo di TVdream' in name:
                         continue
-                    self.urls.append(Utils.checkStr(url))
-                    self.names.append(Utils.checkStr(name))
+                    self.urls.append(url)
+                    self.names.append(checkStr(name))
             except:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
@@ -1016,8 +1040,8 @@ class tvNew(Screen):
         idx = self["text"].getSelectionIndex()
         name = self.names[idx]
         url = self.urls[idx]
-        if Utils.check(url):
-            content = Utils.getUrl(url)
+        if check(url):
+            content = getUrl(url)
             if PY3:
                 content = six.ensure_str(content)
             print('content :  ', content)
@@ -1026,6 +1050,7 @@ class tvNew(Screen):
                 # yt = content.find('youtube')
                 # if yt:
                     # regexcat = 'player-video.*?src="(.*?)"'
+
                 match = re.compile(regexcat, re.DOTALL).findall(content)
                 print("getVideos2 match =", match)
                 url2 = match[0]
@@ -1037,10 +1062,12 @@ class tvNew(Screen):
                 elif content.find('player.twitch'):
                     url3 = url2.replace('https://player.twitch.tv/?channel=','').replace('&parent=www.tvdream.net','')
                     urlx = twxtv.replace('+','')
-                    url = Utils.b64decoder(urlx) + 'https://www.twitch.tv/' + url3
+                    url = b64decoder(urlx) + 'https://www.twitch.tv/' + url3
                     self.session.open(Playstream2, name, url)
                 else:
                     self.testinpl(name,url2)
+                # return
+
             except:
                 # self.testinpl(name,url2)
                 self['info'].setText(_('Nothing ... Retry'))
@@ -1052,7 +1079,7 @@ class tvNew(Screen):
 
     def testinpl(self, name, url2):
         try:
-            content2 = Utils.getUrl(url2)
+            content2 = getUrl(url2)
             if PY3:
                 content2 = six.ensure_str(content2)
             print("getVideos2 content2 =", content2)
@@ -1097,7 +1124,7 @@ class tvNew(Screen):
                 match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
                 url = match2[0]
                 pic = ""
-                content3 = Utils.getUrl(url)
+                content3 = getUrl(url)
                 if PY3:
                     content3 = six.ensure_str(content3)
                 print("getVideos2 content2 =", content3)
@@ -1115,7 +1142,7 @@ class tvNew(Screen):
                 match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
                 url = match2[0]
                 pic = ""
-                content3 = Utils.getUrl(url)
+                content3 = getUrl(url)
                 if PY3:
                     content3 = six.ensure_str(content3)
                 print("getVideos2 content2 =", content3)
@@ -1140,6 +1167,8 @@ class tvNew(Screen):
         except:
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
             self['info'].setText(_('Nothing ... Retry'))
+
+
 
 class TvInfoBarShowHide():
     """ InfoBar show/hide control, accepts toggleShow and hide actions, might start
@@ -1229,6 +1258,7 @@ class TvInfoBarShowHide():
 
     def debug(obj, text = ""):
         print(text + " %s\n" % obj)
+
 
 class Playstream1(Screen):
     def __init__(self, session, name, url):
@@ -1403,13 +1433,14 @@ class Playstream2(
          # 'info': self.cicleStreamType,
          'tv': self.cicleStreamType,
          # 'stop': self.leavePlayer,
-         'cancel': self.cancel}, -1)
+         'cancel': self.cancel,
+         'back': self.cancel}, -1)
         self.allowPiP = False
         self.service = None
         service = None
         self.url = url
         self.pcip = 'None'
-        self.name = Utils.decodeHtml(name)
+        self.name = decodeHtml(name)
         self.state = self.STATE_PLAYING
         SREF = self.session.nav.getCurrentlyPlayingServiceReference()
         if '8088' in str(self.url):
@@ -1532,7 +1563,7 @@ class Playstream2(
         # if "youtube" in str(self.url):
             # self.mbox = self.session.open(MessageBox, _('For Stream Youtube coming soon!'), MessageBox.TYPE_INFO, timeout=5)
             # return
-        if Utils.isStreamlinkAvailable():
+        if isStreamlinkAvailable():
             streamtypelist.append("5002")
             streaml = True
         if os.path.exists("/usr/bin/gstplayer"):
@@ -1591,15 +1622,39 @@ class Playstream2(
         self.session.nav.playService(srefInit)
         self.close()
 
+def intCheck():
+    import socket
+    try:
+        socket.setdefaulttimeout(1)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("8.8.8.8", 53))
+        return True
+    except:
+        return False
+
 def main(session, **kwargs):
-    from . import Utils
-    if Utils.checkInternet():
-        try:
-            from . import Update
-            Update.upd_done()
-        except:
-            pass
-    session.open(MainSetting)
+    try:
+        if intCheck():
+                from . import Update
+                Update.upd_done()
+                session.open(MainSetting)
+        else:
+            from Screens.MessageBox import MessageBox
+            from Tools.Notifications import AddPopup
+            AddPopup(_("Sorry but No Internet :("),MessageBox.TYPE_INFO, 10, 'Sorry')  
+    except:
+        import traceback
+        traceback.print_exc() 
+        pass
+
+# def main(session, **kwargs):
+    # from . import Utils
+    # if Utils.checkInternet():
+        # try:
+            # from . import Update
+            # Update.upd_done()
+        # except:
+            # pass
+    # session.open(MainSetting)
 
 def Plugins(**kwargs):
     ico_path = 'logo.png'
