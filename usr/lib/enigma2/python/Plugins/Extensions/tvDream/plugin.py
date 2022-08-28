@@ -4,7 +4,7 @@
 ****************************************
 *        coded by Lululla & PCD        *
 *             skin by MMark            *
-*             15/07/2022               *
+*             15/08/2022               *
 *       Skin by MMark                  *
 ****************************************
 #--------------------#
@@ -123,7 +123,6 @@ if sslverify:
 
 currversion = '1.2'
 plugin_path = os.path.dirname(sys.modules[__name__].__file__)
-
 res_plugin_path = plugin_path + '/res/'
 # host_b7 = 'https://feed.entertainment.tv.theplatform.eu/f/PR1GhC/mediaset-prod-all-stations'
 desc_plugin = '..:: TiVu Dream Net Player by Lululla %s ::.. ' % currversion
@@ -1622,18 +1621,9 @@ class Playstream2(
         self.session.nav.playService(srefInit)
         self.close()
 
-def intCheck():
-    import socket
-    try:
-        socket.setdefaulttimeout(1)
-        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("8.8.8.8", 53))
-        return True
-    except:
-        return False
-
 def main(session, **kwargs):
     try:
-        if intCheck():
+        if Utils.zCheckInternet(0):
                 from . import Update
                 Update.upd_done()
                 session.open(MainSetting)
@@ -1645,16 +1635,6 @@ def main(session, **kwargs):
         import traceback
         traceback.print_exc() 
         pass
-
-# def main(session, **kwargs):
-    # from . import Utils
-    # if Utils.checkInternet():
-        # try:
-            # from . import Update
-            # Update.upd_done()
-        # except:
-            # pass
-    # session.open(MainSetting)
 
 def Plugins(**kwargs):
     ico_path = 'logo.png'
