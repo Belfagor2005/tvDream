@@ -129,7 +129,7 @@ desc_plugin = '..:: TiVu Dream Net Player by Lululla %s ::.. ' % currversion
 name_plugin = 'TiVuDream Player'
 twxtv = 'aHR0cH+M6Ly9+wYXRidXdlY+i5oZXJva3V+hcHAuY29tL2Fw+aS9wbGF5+P3VybD0='
 skin_dream = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/hd/".format('tvDream'))
-if isFHD():
+if Utils.isFHD():
     skin_dream = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/fhd/".format('tvDream'))
 if DreamOS():
     skin_dream = skin_dream + 'dreamOs/'
@@ -146,7 +146,7 @@ Panel_Dlist = [
 class SetList(MenuList):
     def __init__(self, list):
         MenuList.__init__(self, list, True, eListboxPythonMultiContent)
-        if isFHD():
+        if Utils.isFHD():
             # self.l.setItemHeight(50)
             textfont = int(34)
             # self.l.setFont(0, gFont('Regular', textfont))
@@ -160,7 +160,7 @@ class SetList(MenuList):
 def DListEntry(name, idx):
     res = [name]
     pngs = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('tvDream'))
-    if isFHD():
+    if Utils.isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos = (10, 12), size = (34, 25), png = loadPNG(pngs)))
         res.append(MultiContentEntryText(pos = (60, 0), size = (1900, 50), font = 0, text = name, color = 0xa6d1fe, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
@@ -171,7 +171,7 @@ def DListEntry(name, idx):
 def OneSetListEntry(name):
     res = [name]
     pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/plugins.png".format('tvDream'))
-    if isFHD():
+    if Utils.isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos = (10, 12), size = (34, 25), png = loadPNG(pngx)))
         res.append(MultiContentEntryText(pos = (60, 0), size = (1200, 50), font = 0, text = name, color = 0xa6d1fe, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
@@ -295,8 +295,8 @@ class State(Screen):
         self.names = []
         self.urls = []
         url = 'http://www.tvdream.net/web-tv/paesi/'
-        if check(url):
-            datas = getUrl(url)
+        if Utils.check(url):
+            datas = Utils.getUrl(url)
             if PY3:
                 datas = six.ensure_str(datas)
             print('datas :  ', datas)
@@ -316,7 +316,7 @@ class State(Screen):
                     print('name : ', name)
                     print('url:  ', url)
                     self.urls.append(url)
-                    self.names.append(checkStr(name))
+                    self.names.append(Utils.checkStr(name))
             except:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
@@ -370,8 +370,8 @@ class tvRegioni(Screen):
         self.names = []
         self.urls = []
         url = 'http://www.tvdream.net/web-tv/regioni/'
-        if check(url):
-            datas = getUrl(url)
+        if Utils.check(url):
+            datas = Utils.getUrl(url)
             if PY3:
                 datas = six.ensure_str(datas)
             print('datas :  ', datas)
@@ -393,7 +393,7 @@ class tvRegioni(Screen):
                     if 'Logo di TVdream' in name:
                         continue
                     self.urls.append(url)
-                    self.names.append(checkStr(name))
+                    self.names.append(Utils.checkStr(name))
             except:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
@@ -450,8 +450,8 @@ class tvItalia(Screen):
         self.urls = []
         name = self.name
         url = self.url
-        if check(url):
-            datas = getUrl(url)
+        if Utils.check(url):
+            datas = Utils.getUrl(url)
             if PY3:
                 datas =six.ensure_str(datas)
             print('datas :  ', datas)
@@ -463,7 +463,7 @@ class tvItalia(Screen):
                     print('name it : ', name)
                     print('url it:  ', url1)
                     self.urls.append(url1)
-                    self.names.append(checkStr(name))
+                    self.names.append(Utils.checkStr(name))
             except:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
@@ -520,7 +520,7 @@ class tvCanal(Screen):
     def _gotPageLoad(self):
         url = self.url
         name = self.name
-        datas = getUrl(url)
+        datas = Utils.getUrl(url)
         # print('datas :  ', datas)
         self.names = []
         self.urls = []
@@ -538,7 +538,7 @@ class tvCanal(Screen):
                 if 'Logo di TVdream' in name:
                     continue
                 self.urls.append(url)
-                self.names.append(checkStr(name))
+                self.names.append(Utils.checkStr(name))
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
             showlist(self.names, self['text'])
@@ -555,8 +555,8 @@ class tvCanal(Screen):
         url = self.urls[idx]
         print('name okRun: ', name)
         print('url okRun:  ', url)
-        if check(url):
-            content = getUrl(url)
+        if Utils.check(url):
+            content = Utils.getUrl(url)
             if PY3:
                 content = six.ensure_str(content)
             print('content okRun ====================:  ', content)
@@ -590,7 +590,7 @@ class tvCanal(Screen):
                 print("get regexcat =", regexcat)
                 url = match[0]
                 print("get url2 =", url)
-                content2 = getUrl(url)
+                content2 = Utils.getUrl(url)
                 if PY3:
                     content2 = six.ensure_str(content2)
                 print("getVideos2 content2 =", content2)
@@ -636,7 +636,7 @@ class tvCanal(Screen):
                     match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
                     url = match2[0]
                     pic = ""
-                    content3 = getUrl(url)
+                    content3 = Utils.getUrl(url)
                     if PY3:
                         content3 = six.ensure_str(content3)
                     print("getVideos2 content2 =", content3)
@@ -723,7 +723,7 @@ class tvCanal(Screen):
 
     def testinpl(self, name, url):
         try:
-            content2 = getUrl(url)
+            content2 = Utils.getUrl(url)
             if PY3:
                 content2 = six.ensure_str(content2)
             print("testinpl content2 =", content2)
@@ -752,7 +752,7 @@ class tvCanal(Screen):
                 match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
                 url = match2[0]
                 pic = ""
-                content3 = getUrl(url)
+                content3 = Utils.getUrl(url)
                 if PY3:
                     content3 = six.ensure_str(content3)
                 print("getVideos3 content2 =", content3)
@@ -771,7 +771,7 @@ class tvCanal(Screen):
                 match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
                 url = match2[0]
                 pic = ""
-                content3 = getUrl(url)
+                content3 = Utils.getUrl(url)
                 if PY3:
                     content3 = six.ensure_str(content3)
                 print("getVideos4 content2 =", content3)
@@ -848,8 +848,8 @@ class tvCategory(Screen):
         self.names = []
         self.urls = []
         url = 'https://www.tvdream.net/web-tv/categorie/'
-        if check(url):
-            datas = getUrl(url)
+        if Utils.check(url):
+            datas = Utils.getUrl(url)
             if PY3:
                 datas = six.ensure_str(datas)
             print('datas :  ', datas)
@@ -928,8 +928,8 @@ class subCategory(Screen):
         self.urls = []
         name = self.name
         url = self.url
-        if check(url):
-            datas = getUrl(url)
+        if Utils.check(url):
+            datas = Utils.getUrl(url)
             if PY3:
                 datas =six.ensure_str(datas)
             print('datas :  ', datas)
@@ -1000,8 +1000,8 @@ class tvNew(Screen):
         self.urls = []
         url = self.url
         name = self.name
-        if check(url):
-            datas = getUrl(url)
+        if Utils.check(url):
+            datas = Utils.getUrl(url)
             if PY3:
                 datas = six.ensure_str(datas)
             print('datas :  ', datas)
@@ -1021,7 +1021,7 @@ class tvNew(Screen):
                     if 'Logo di TVdream' in name:
                         continue
                     self.urls.append(url)
-                    self.names.append(checkStr(name))
+                    self.names.append(Utils.checkStr(name))
             except:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
@@ -1039,8 +1039,8 @@ class tvNew(Screen):
         idx = self["text"].getSelectionIndex()
         name = self.names[idx]
         url = self.urls[idx]
-        if check(url):
-            content = getUrl(url)
+        if Utils.check(url):
+            content = Utils.getUrl(url)
             if PY3:
                 content = six.ensure_str(content)
             print('content :  ', content)
@@ -1078,7 +1078,7 @@ class tvNew(Screen):
 
     def testinpl(self, name, url2):
         try:
-            content2 = getUrl(url2)
+            content2 = Utils.getUrl(url2)
             if PY3:
                 content2 = six.ensure_str(content2)
             print("getVideos2 content2 =", content2)
@@ -1123,7 +1123,7 @@ class tvNew(Screen):
                 match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
                 url = match2[0]
                 pic = ""
-                content3 = getUrl(url)
+                content3 = Utils.getUrl(url)
                 if PY3:
                     content3 = six.ensure_str(content3)
                 print("getVideos2 content2 =", content3)
@@ -1141,7 +1141,7 @@ class tvNew(Screen):
                 match2 = re.compile(regexcat2,re.DOTALL).findall(content2)
                 url = match2[0]
                 pic = ""
-                content3 = getUrl(url)
+                content3 = Utils.getUrl(url)
                 if PY3:
                     content3 = six.ensure_str(content3)
                 print("getVideos2 content2 =", content3)
@@ -1623,7 +1623,7 @@ class Playstream2(
 
 def main(session, **kwargs):
     try:
-        if Utils.zCheckInternet(0):
+        if Utils.zCheckInternet(1):
                 from . import Update
                 Update.upd_done()
                 session.open(MainSetting)
