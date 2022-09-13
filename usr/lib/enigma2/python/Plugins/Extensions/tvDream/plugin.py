@@ -4,7 +4,7 @@
 ****************************************
 *        coded by Lululla & PCD        *
 *             skin by MMark            *
-*             15/08/2022               *
+*             15/09/2022               *
 *       Skin by MMark                  *
 ****************************************
 #--------------------#
@@ -72,10 +72,7 @@ import ssl
 import sys
 from sys import version_info
 import time
-try:
-    from Plugins.Extensions.tvDream.Utils import *
-except:
-    from . import Utils
+from . import Utils
 
 global regioni, skin_dream
 regioni = False
@@ -131,7 +128,7 @@ twxtv = 'aHR0cH+M6Ly9+wYXRidXdlY+i5oZXJva3V+hcHAuY29tL2Fw+aS9wbGF5+P3VybD0='
 skin_dream = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/hd/".format('tvDream'))
 if Utils.isFHD():
     skin_dream = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/fhd/".format('tvDream'))
-if DreamOS():
+if Utils.DreamOS():
     skin_dream = skin_dream + 'dreamOs/'
 
 
@@ -280,7 +277,7 @@ class State(Screen):
         self['key_blue'].hide()
         self['key_green'].hide()
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
@@ -355,7 +352,7 @@ class tvRegioni(Screen):
         self['key_blue'].hide()
         self['key_green'].hide()
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
@@ -434,7 +431,7 @@ class tvItalia(Screen):
         self.name = name
         self.url = url
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
@@ -504,7 +501,7 @@ class tvCanal(Screen):
         self.name = name
         self.url = url
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
@@ -681,7 +678,6 @@ class tvCanal(Screen):
                     print('content2 rai url: ', url)
                     self.session.open(Playstream2, name, url)
 
-
                 else:
                     regexcat = '<iframe.*?src="(.*?)"'
                     match = re.compile(regexcat, re.DOTALL).findall(content)
@@ -710,10 +706,7 @@ class tvCanal(Screen):
                     else:
                         self.testinpl(name, url)
                     return
-
                 return
-
-
             except:
                 self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
                 self['info'].setText(_('Nothing ... Retry'))
@@ -805,7 +798,6 @@ class tvCanal(Screen):
                 url = result["url"]
                 # print ("mediaset final url =", url)
                 self.session.open(Playstream2, name, url)
-
             return
 
         except:
@@ -833,7 +825,7 @@ class tvCategory(Screen):
         self['key_blue'].hide()
         self['key_green'].hide()
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
@@ -912,7 +904,7 @@ class subCategory(Screen):
         self.name = name
         self.url = url
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
@@ -982,7 +974,7 @@ class tvNew(Screen):
         self.name = name
         self.url = url
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
@@ -1030,7 +1022,6 @@ class tvNew(Screen):
         else:
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
 
-
     def okRun(self):
         i = len(self.names)
         print('iiiiii= ',i)
@@ -1074,7 +1065,6 @@ class tvNew(Screen):
 
         else:
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
-
 
     def testinpl(self, name, url2):
         try:
@@ -1167,8 +1157,6 @@ class tvNew(Screen):
             self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout = 5)
             self['info'].setText(_('Nothing ... Retry'))
 
-
-
 class TvInfoBarShowHide():
     """ InfoBar show/hide control, accepts toggleShow and hide actions, might start
     fancy animations. """
@@ -1235,6 +1223,7 @@ class TvInfoBarShowHide():
         self.hideTimer.stop()
         if self.__state == self.STATE_SHOWN:
             self.hide()
+
     def lockShow(self):
         try:
             self.__locked += 1
@@ -1439,7 +1428,7 @@ class Playstream2(
         service = None
         self.url = url
         self.pcip = 'None'
-        self.name = decodeHtml(name)
+        self.name = Utils.decodeHtml(name)
         self.state = self.STATE_PLAYING
         SREF = self.session.nav.getCurrentlyPlayingServiceReference()
         if '8088' in str(self.url):
@@ -1513,12 +1502,12 @@ class Playstream2(
         if os.path.exists(TMDB):
             from Plugins.Extensions.TMBD.plugin import TMBD
             text_clear = self.name
-            text = charRemove(text_clear)
+            text = Utils.charRemove(text_clear)
             self.session.open(TMBD, text, False)
         elif os.path.exists(IMDb):
             from Plugins.Extensions.IMDb.plugin import IMDB
             text_clear = self.name
-            text = charRemove(text_clear)
+            text = Utils.charRemove(text_clear)
             self.session.open(IMDB, text)
         else:
             text_clear = self.name
@@ -1562,7 +1551,7 @@ class Playstream2(
         # if "youtube" in str(self.url):
             # self.mbox = self.session.open(MessageBox, _('For Stream Youtube coming soon!'), MessageBox.TYPE_INFO, timeout=5)
             # return
-        if isStreamlinkAvailable():
+        if Utils.isStreamlinkAvailable():
             streamtypelist.append("5002")
             streaml = True
         if os.path.exists("/usr/bin/gstplayer"):
