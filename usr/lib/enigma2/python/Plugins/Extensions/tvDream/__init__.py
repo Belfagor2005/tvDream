@@ -9,6 +9,7 @@ import os
 PluginLanguageDomain = 'tvdream'
 PluginLanguagePath = 'Extensions/tvDream/res/locale'
 
+
 isDreamOS = False
 if os.path.exists("/var/lib/dpkg/status"):
     isDreamOS = True
@@ -16,8 +17,8 @@ if os.path.exists("/var/lib/dpkg/status"):
 
 def localeInit():
     if isDreamOS:  # check if opendreambox image
-        lang = language.getLanguage()[:2]  # getLanguage returns e.g. "fi_FI" for "language_country"
-        os.environ["LANGUAGE"] = lang  # Enigma doesn't set this (or LC_ALL, LC_MESSAGES, LANG). gettext needs it!
+        lang = language.getLanguage()[:2]
+        os.environ["LANGUAGE"] = lang
     gettext.bindtextdomain(PluginLanguageDomain, resolveFilename(SCOPE_PLUGINS, PluginLanguagePath))
 
 
@@ -32,4 +33,3 @@ else:
             return gettext.gettext(txt)
 localeInit()
 language.addCallback(localeInit)
-    

