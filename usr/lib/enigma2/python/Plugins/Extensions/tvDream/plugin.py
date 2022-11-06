@@ -170,6 +170,31 @@ def showlist(data, list):
         icount = icount+1
         list.setList(plist)
 
+def returnIMDB(text_clear):
+    TMDB = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('TMDB'))
+    IMDb = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('IMDb'))
+    if TMDB:
+        try:
+            from Plugins.Extensions.TMBD.plugin import TMBD
+            text = decodeHtml(text_clear)
+            _session.open(TMBD.tmdbScreen, text, 0)
+        except Exception as ex:
+            print("[XCF] Tmdb: ", str(ex))
+        return True
+    elif IMDb:
+        try:
+            from Plugins.Extensions.IMDb.plugin import main as imdb
+            text = decodeHtml(text_clear)
+            imdb(_session, text)
+        except Exception as ex:
+            print("[XCF] imdb: ", str(ex))
+        return True
+    else:
+        text_clear = decodeHtml(text_clear)
+        _session.open(MessageBox, text_clear, MessageBox.TYPE_INFO)
+        return True
+    return
+
 
 class MainSetting(Screen):
     def __init__(self, session):
@@ -1412,22 +1437,8 @@ class Playstream2(
 
     def showIMDB(self):
         text_clear = self.name
-        if Utils.is_tmdb:
-            try:
-                from Plugins.Extensions.TMBD.plugin import TMBD
-                text = Utils.badcar(text_clear)
-                text = Utils.charRemove(text_clear)
-                _session.open(TMBD.tmdbScreen, text, 0)
-            except Exception as ex:
-                print("[XCF] Tmdb: ", str(ex))
-        elif Utils.is_imdb:
-            try:
-                from Plugins.Extensions.IMDb.plugin import main as imdb
-                text = Utils.badcar(text_clear)
-                text = Utils.charRemove(text_clear)
-                imdb(_session, text)
-            except Exception as ex:
-                print("[XCF] imdb: ", str(ex))
+        if returnIMDB(text_clear):
+            print('show imdb/tmdb')
 
     def slinkPlay(self, url):
         name = self.name
