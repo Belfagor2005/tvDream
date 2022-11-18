@@ -18,12 +18,10 @@ from Components.Button import Button
 from Components.config import config
 from Components.Label import Label
 from Components.MenuList import MenuList
-from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaTest
+from Components.MultiContent import MultiContentEntryText
+from Components.MultiContent import MultiContentEntryPixmapAlphaTest
 from Components.Pixmap import Pixmap
-from Components.PluginComponent import plugins
-from Components.SelectionList import SelectionList, SelectionEntryComponent
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
-from Components.Sources.Source import Source
 from Plugins.Plugin import PluginDescriptor
 from Screens.InfoBar import InfoBar
 from Screens.InfoBar import MoviePlayer
@@ -170,13 +168,14 @@ def showlist(data, list):
         icount = icount+1
         list.setList(plist)
 
+
 def returnIMDB(text_clear):
     TMDB = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('TMDB'))
     IMDb = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('IMDb'))
     if TMDB:
         try:
             from Plugins.Extensions.TMBD.plugin import TMBD
-            text = decodeHtml(text_clear)
+            text = Utils.decodeHtml(text_clear)
             _session.open(TMBD.tmdbScreen, text, 0)
         except Exception as ex:
             print("[XCF] Tmdb: ", str(ex))
@@ -184,13 +183,13 @@ def returnIMDB(text_clear):
     elif IMDb:
         try:
             from Plugins.Extensions.IMDb.plugin import main as imdb
-            text = decodeHtml(text_clear)
+            text = Utils.decodeHtml(text_clear)
             imdb(_session, text)
         except Exception as ex:
             print("[XCF] imdb: ", str(ex))
         return True
     else:
-        text_clear = decodeHtml(text_clear)
+        text_clear = Utils.decodeHtml(text_clear)
         _session.open(MessageBox, text_clear, MessageBox.TYPE_INFO)
         return True
     return
@@ -570,7 +569,6 @@ class tvCanal(Screen):
                     if content.find('iframe src='):
                         regexcat = 'player-video.*?iframe.*?src="(.*?)"'
 
-
                 match = re.compile(regexcat, re.DOTALL).findall(content)
                 print("get regexcat =", regexcat)
                 url = match[0]
@@ -672,11 +670,9 @@ class tvCanal(Screen):
                     print("<iframe.*?src= url2 =", url2)
                     # twitch = url2.find('twitch.tv')
                     # twitch = url2.find('player.twitch')
-
                     if 'player.twitch' not in content:
                         print('go testinpl')
                         self.testinpl(name, url2)
-
                     elif content.find('player.twitch'):
                     # if twitch:
                         match = re.compile(regexcat, re.DOTALL).findall(content)
@@ -1540,17 +1536,12 @@ class Playstream2(
 
 def main(session, **kwargs):
     try:
-        # if Utils.zCheckInternet(1):
         try:
             from . import Update
             Update.upd_done()
         except Exception as e:
             print('error ', str(e))
         session.open(MainSetting)
-        # else:
-            # from Screens.MessageBox import MessageBox
-            # from Tools.Notifications import AddPopup
-            # AddPopup(_("Sorry but No Internet :("),MessageBox.TYPE_INFO, 10, 'Sorry')
     except:
         import traceback
         traceback.print_exc()
