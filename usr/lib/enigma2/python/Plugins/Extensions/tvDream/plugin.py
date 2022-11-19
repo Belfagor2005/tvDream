@@ -215,11 +215,13 @@ class MainSetting(Screen):
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Exit'))
         self['key_green'].hide()
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions', ], {'ok': self.okRun,
-                                                                         'green': self.okRun,
-                                                                         'back': self.closerm,
-                                                                         'red': self.closerm,
-                                                                         'cancel': self.closerm}, -1)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions',
+                                     'DirectionActions'], {'ok': self.okRun,
+                                                           'green': self.okRun,
+                                                           'back': self.closerm,
+                                                           'red': self.closerm,
+                                                           'cancel': self.closerm}, -1)
         self.onLayoutFinish.append(self.updateMenuList)
 
     def closerm(self):
@@ -1223,11 +1225,13 @@ class Playstream1(Screen):
         self['info'] = Label('Select Player')
         self['key_red'] = Button(_('Exit'))
         self['key_green'] = Button(_('Select'))
-        self['setupActions'] = ActionMap(['SetupActions', 'ColorActions', 'TimerEditActions'], {'red': self.cancel,
-                                                                                                'green': self.okClicked,
-                                                                                                'back': self.cancel,
-                                                                                                'cancel': self.cancel,
-                                                                                                'ok': self.okClicked}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions',
+                                     'DirectionActions'],{'red': self.cancel,
+                                                          'green': self.okClicked,
+                                                          'back': self.cancel,
+                                                          'cancel': self.cancel,
+                                                          'ok': self.okClicked}, -2)
         self.name1 = name
         self.url = url
         print('In Playstream2 self.url =', url)
@@ -1370,7 +1374,6 @@ class Playstream2(
                                      'MediaPlayerActions',
                                      'EPGSelectActions',
                                      'MediaPlayerSeekActions',
-                                     'SetupActions',
                                      'ColorActions',
                                      'InfobarShowHideActions',
                                      'InfobarActions',
