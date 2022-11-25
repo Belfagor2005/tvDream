@@ -45,7 +45,7 @@ import six
 import ssl
 import sys
 from . import Utils
-
+from . import html_conv
 global regioni, skin_dream
 regioni = False
 
@@ -103,7 +103,7 @@ currversion = '1.2'
 plugin_path = os.path.dirname(sys.modules[__name__].__file__)
 res_plugin_path = plugin_path + '/res/'
 # host_b7 = 'https://feed.entertainment.tv.theplatform.eu/f/PR1GhC/mediaset-prod-all-stations'
-desc_plugin = '..:: TiVu Dream Net Player by Lululla %s ::.. ' % currversion
+desc_plugin = '..:: TiVu Dream Player by Lululla %s ::.. ' % currversion
 name_plugin = 'TiVuDream Player'
 twxtv = 'aHR0cH+M6Ly9+wYXRidXdlY+i5oZXJva3V+hcHAuY29tL2Fw+aS9wbGF5+P3VybD0='
 skin_dream = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/hd/".format('tvDream'))
@@ -175,7 +175,7 @@ def returnIMDB(text_clear):
     if TMDB:
         try:
             from Plugins.Extensions.TMBD.plugin import TMBD
-            text = Utils.decodeHtml(text_clear)
+            text = html_conv.html_unescape(text_clear)
             _session.open(TMBD.tmdbScreen, text, 0)
         except Exception as ex:
             print("[XCF] Tmdb: ", str(ex))
@@ -183,13 +183,13 @@ def returnIMDB(text_clear):
     elif IMDb:
         try:
             from Plugins.Extensions.IMDb.plugin import main as imdb
-            text = Utils.decodeHtml(text_clear)
+            text = html_conv.html_unescape(text_clear)
             imdb(_session, text)
         except Exception as ex:
             print("[XCF] imdb: ", str(ex))
         return True
     else:
-        text_clear = Utils.decodeHtml(text_clear)
+        text_clear = html_conv.html_unescape(text_clear)
         _session.open(MessageBox, text_clear, MessageBox.TYPE_INFO)
         return True
     return
@@ -217,6 +217,7 @@ class MainSetting(Screen):
         self['key_green'].hide()
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions',
+                                     'ButtonSetupActions',
                                      'DirectionActions'], {'ok': self.okRun,
                                                            'green': self.okRun,
                                                            'back': self.closerm,
@@ -290,7 +291,7 @@ class State(Screen):
             self.timer.callback.append(self._gotPageLoad)
         self.timer.start(1500, True)
         self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
+        self['actions'] = ActionMap(['ButtonSetupActions', 'ColorActions'], {'ok': self.okRun,
                                                                        'green': self.okRun,
                                                                        'red': self.close,
                                                                        'cancel': self.close}, -2)
@@ -359,7 +360,7 @@ class tvRegioni(Screen):
             self.timer.callback.append(self._gotPageLoad)
         self.timer.start(1500, True)
         self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
+        self['actions'] = ActionMap(['ButtonSetupActions', 'ColorActions'], {'ok': self.okRun,
                                                                        'green': self.okRun,
                                                                        'red': self.close,
                                                                        'cancel': self.close}, -2)
@@ -432,7 +433,7 @@ class tvItalia(Screen):
             self.timer.callback.append(self._gotPageLoad)
         self.timer.start(1500, True)
         self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
+        self['actions'] = ActionMap(['ButtonSetupActions', 'ColorActions'], {'ok': self.okRun,
                                                                        'green': self.okRun,
                                                                        'red': self.close,
                                                                        'cancel': self.close}, -2)
@@ -501,7 +502,7 @@ class tvCanal(Screen):
         self['title'] = Label(desc_plugin)
         global SREF
         SREF = self.session.nav.getCurrentlyPlayingServiceReference()
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
+        self['actions'] = ActionMap(['ButtonSetupActions', 'ColorActions'], {'ok': self.okRun,
                                                                        'green': self.okRun,
                                                                        'red': self.close,
                                                                        'cancel': self.close}, -2)
@@ -809,7 +810,7 @@ class tvCategory(Screen):
             self.timer.callback.append(self._gotPageLoad)
         self.timer.start(1500, True)
         self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
+        self['actions'] = ActionMap(['ButtonSetupActions', 'ColorActions'], {'ok': self.okRun,
                                                                        'green': self.okRun,
                                                                        'red': self.close,
                                                                        'cancel': self.close}, -2)
@@ -882,7 +883,7 @@ class subCategory(Screen):
             self.timer.callback.append(self._gotPageLoad)
         self.timer.start(1500, True)
         self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
+        self['actions'] = ActionMap(['ButtonSetupActions', 'ColorActions'], {'ok': self.okRun,
                                                                        'green': self.okRun,
                                                                        'red': self.close,
                                                                        'cancel': self.close}, -2)
@@ -951,7 +952,7 @@ class tvNew(Screen):
         global SREF
         SREF = self.session.nav.getCurrentlyPlayingServiceReference()
         self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
+        self['actions'] = ActionMap(['ButtonSetupActions', 'ColorActions'], {'ok': self.okRun,
                                                                        'green': self.okRun,
                                                                        'red': self.close,
                                                                        'cancel': self.close}, -2)
@@ -1375,6 +1376,7 @@ class Playstream2(
                                      'EPGSelectActions',
                                      'MediaPlayerSeekActions',
                                      'ColorActions',
+                                     'ButtonSetupActions',
                                      'InfobarShowHideActions',
                                      'InfobarActions',
                                      'InfobarSeekActions'], {'stop': self.leavePlayer,
@@ -1389,7 +1391,7 @@ class Playstream2(
         self.service = None
         self.url = url
         self.pcip = 'None'
-        self.name = Utils.decodeHtml(name)
+        self.name = html_conv.html_unescape(name)
         self.state = self.STATE_PLAYING
         self.srefInit = self.session.nav.getCurrentlyPlayingServiceReference()
         if '8088' in str(self.url):
