@@ -15,29 +15,29 @@ from __future__ import print_function
 from Components.AVSwitch import AVSwitch
 from Components.ActionMap import ActionMap
 from Components.Button import Button
-from Components.config import config
 from Components.Label import Label
 from Components.MenuList import MenuList
-from Components.MultiContent import MultiContentEntryText
 from Components.MultiContent import MultiContentEntryPixmapAlphaTest
-from Components.Pixmap import Pixmap
+from Components.MultiContent import MultiContentEntryText
+# from Components.Pixmap import Pixmap
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
+from Components.config import config
 from Plugins.Plugin import PluginDescriptor
 from Screens.InfoBar import InfoBar
 from Screens.InfoBar import MoviePlayer
+from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarNotifications
+from Screens.InfoBarGenerics import InfoBarSubtitleSupport, InfoBarMenu
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
-from Screens.InfoBarGenerics import InfoBarSubtitleSupport, InfoBarMenu
-from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarNotifications
 from Tools.Directories import SCOPE_PLUGINS
 from Tools.Directories import resolveFilename
-from enigma import RT_VALIGN_CENTER
 from enigma import RT_HALIGN_LEFT
-from enigma import eTimer
+from enigma import RT_VALIGN_CENTER
 from enigma import eListboxPythonMultiContent
 from enigma import eServiceReference
-from enigma import iPlayableService
+from enigma import eTimer
 from enigma import gFont
+from enigma import iPlayableService
 from enigma import loadPNG
 import os
 import re
@@ -56,14 +56,14 @@ print('Py3: ', PY3)
 
 if PY3:
     from urllib.request import urlopen
-    from urllib.request import Request
+    # from urllib.request import Request
     PY3 = True
-    unicode = str
-    unichr = chr
-    long = int
-    xrange = range
+    # unicode = str
+    # unichr = chr
+    # long = int
+    # xrange = range
 else:
-    from urllib2 import Request
+    # from urllib2 import Request
     from urllib2 import urlopen
 
 
@@ -284,6 +284,8 @@ class State(Screen):
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_green'].hide()
+        self['key_yellow'] = Button(_(''))
+        self['key_yellow'].hide()
         self.timer = eTimer()
         if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
@@ -291,10 +293,12 @@ class State(Screen):
             self.timer.callback.append(self._gotPageLoad)
         self.timer.start(1500, True)
         self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['ButtonSetupActions', 'ColorActions'], {'ok': self.okRun,
-                                                                       'green': self.okRun,
-                                                                       'red': self.close,
-                                                                       'cancel': self.close}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions',
+                                     'DirectionActions'], {'ok': self.okRun,
+                                                           'green': self.okRun,
+                                                           'red': self.exit,
+                                                           'cancel': self.exit}, -2)
 
     def _gotPageLoad(self):
         self.names = []
@@ -336,6 +340,9 @@ class State(Screen):
         name = self.names[idx]
         url = self.urls[idx]
         self.session.open(tvItalia, name, url)
+    def exit(self):
+        Utils.deletetmp()
+        self.close()
 
 
 class tvRegioni(Screen):
@@ -353,6 +360,8 @@ class tvRegioni(Screen):
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_green'].hide()
+        self['key_yellow'] = Button(_(''))
+        self['key_yellow'].hide()
         self.timer = eTimer()
         if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
@@ -360,10 +369,12 @@ class tvRegioni(Screen):
             self.timer.callback.append(self._gotPageLoad)
         self.timer.start(1500, True)
         self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['ButtonSetupActions', 'ColorActions'], {'ok': self.okRun,
-                                                                       'green': self.okRun,
-                                                                       'red': self.close,
-                                                                       'cancel': self.close}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions',
+                                     'DirectionActions'], {'green': self.okRun,
+                                                           'red': self.close,
+                                                           'ok': self.okRun,
+                                                           'cancel': self.close}, -2)
 
     def _gotPageLoad(self):
         self.names = []
@@ -419,13 +430,15 @@ class tvItalia(Screen):
         Screen.__init__(self, session)
         self.setTitle(desc_plugin)
         self.list = []
+        self.name = name
+        self.url = url
         self['text'] = SetList([])
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_green'].hide()
-        self.name = name
-        self.url = url
+        self['key_yellow'] = Button(_(''))
+        self['key_yellow'].hide()
         self.timer = eTimer()
         if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
@@ -433,10 +446,12 @@ class tvItalia(Screen):
             self.timer.callback.append(self._gotPageLoad)
         self.timer.start(1500, True)
         self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['ButtonSetupActions', 'ColorActions'], {'ok': self.okRun,
-                                                                       'green': self.okRun,
-                                                                       'red': self.close,
-                                                                       'cancel': self.close}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions',
+                                     'DirectionActions'], {'green': self.okRun,
+                                                           'red': self.close,
+                                                           'ok': self.okRun,
+                                                           'cancel': self.close}, -2)
 
     def _gotPageLoad(self):
         self.names = []
@@ -486,13 +501,15 @@ class tvCanal(Screen):
         Screen.__init__(self, session)
         self.setTitle(desc_plugin)
         self.list = []
+        self.name = name
+        self.url = url
         self['text'] = SetList([])
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['key_green'] = Button(_('Play'))
         self['key_red'] = Button(_('Back'))
         self['key_green'].hide()
-        self.name = name
-        self.url = url
+        self['key_yellow'] = Button(_(''))
+        self['key_yellow'].hide()
         self.timer = eTimer()
         if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
@@ -502,10 +519,12 @@ class tvCanal(Screen):
         self['title'] = Label(desc_plugin)
         global SREF
         SREF = self.session.nav.getCurrentlyPlayingServiceReference()
-        self['actions'] = ActionMap(['ButtonSetupActions', 'ColorActions'], {'ok': self.okRun,
-                                                                       'green': self.okRun,
-                                                                       'red': self.close,
-                                                                       'cancel': self.close}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions',
+                                     'DirectionActions'], {'green': self.okRun,
+                                                           'red': self.close,
+                                                           'ok': self.okRun,
+                                                           'cancel': self.close}, -2)
 
     def _gotPageLoad(self):
         url = self.url
@@ -686,7 +705,7 @@ class tvCanal(Screen):
                     # if twitch:
                         url3 = url2.replace('https://player.twitch.tv/?channel=', '').replace('&parent=www.tvdream.net', '')
                         urlx = twxtv.replace('+', '')
-                        url = b64decoder(urlx) + 'https://www.twitch.tv/' + url3
+                        url = Utils.b64decoder(urlx) + 'https://www.twitch.tv/' + url3
                         self.session.open(Playstream2, name, url)
                     else:
                         self.testinpl(name, url)
@@ -803,6 +822,8 @@ class tvCategory(Screen):
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_green'].hide()
+        self['key_yellow'] = Button(_(''))
+        self['key_yellow'].hide()
         self.timer = eTimer()
         if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
@@ -810,10 +831,12 @@ class tvCategory(Screen):
             self.timer.callback.append(self._gotPageLoad)
         self.timer.start(1500, True)
         self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['ButtonSetupActions', 'ColorActions'], {'ok': self.okRun,
-                                                                       'green': self.okRun,
-                                                                       'red': self.close,
-                                                                       'cancel': self.close}, -2)
+        self['actions'] = ActionMap(['ButtonSetupActions',
+                                     'OkCancelActions',
+                                     'ColorActions'], {'ok': self.okRun,
+                                                       'green': self.okRun,
+                                                       'red': self.close,
+                                                       'cancel': self.close}, -2)
 
     def _gotPageLoad(self):
         self.names = []
@@ -869,13 +892,15 @@ class subCategory(Screen):
         Screen.__init__(self, session)
         self.setTitle(desc_plugin)
         self.list = []
+        self.name = name
+        self.url = url
         self['text'] = SetList([])
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_green'].hide()
-        self.name = name
-        self.url = url
+        self['key_yellow'] = Button(_(''))
+        self['key_yellow'].hide()
         self.timer = eTimer()
         if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
@@ -883,10 +908,12 @@ class subCategory(Screen):
             self.timer.callback.append(self._gotPageLoad)
         self.timer.start(1500, True)
         self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['ButtonSetupActions', 'ColorActions'], {'ok': self.okRun,
-                                                                       'green': self.okRun,
-                                                                       'red': self.close,
-                                                                       'cancel': self.close}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions',
+                                     'DirectionActions'], {'green': self.okRun,
+                                                           'red': self.close,
+                                                           'ok': self.okRun,
+                                                           'cancel': self.close}, -2)
 
     def _gotPageLoad(self):
         self.names = []
@@ -936,13 +963,16 @@ class tvNew(Screen):
         Screen.__init__(self, session)
         self.setTitle(desc_plugin)
         self.list = []
+        self.name = name
+        self.url = url
         self['text'] = SetList([])
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['key_green'] = Button(_('Play'))
         self['key_red'] = Button(_('Back'))
         self['key_green'].hide()
-        self.name = name
-        self.url = url
+        self['key_yellow'] = Button(_(''))
+        self['key_yellow'].hide()
+
         self.timer = eTimer()
         if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
@@ -952,10 +982,12 @@ class tvNew(Screen):
         global SREF
         SREF = self.session.nav.getCurrentlyPlayingServiceReference()
         self['title'] = Label(desc_plugin)
-        self['actions'] = ActionMap(['ButtonSetupActions', 'ColorActions'], {'ok': self.okRun,
-                                                                       'green': self.okRun,
-                                                                       'red': self.close,
-                                                                       'cancel': self.close}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions',
+                                     'DirectionActions'], {'green': self.okRun,
+                                                           'red': self.close,
+                                                           'ok': self.okRun,
+                                                           'cancel': self.close}, -2)
 
     def _gotPageLoad(self):
         self.names = []
@@ -1018,7 +1050,7 @@ class tvNew(Screen):
                 elif content.find('player.twitch'):
                     url3 = url2.replace('https://player.twitch.tv/?channel=', '').replace('&parent=www.tvdream.net', '')
                     urlx = twxtv.replace('+', '')
-                    url = b64decoder(urlx) + 'https://www.twitch.tv/' + url3
+                    url = Utils.b64decoder(urlx) + 'https://www.twitch.tv/' + url3
                     self.session.open(Playstream2, name, url)
                 else:
                     self.testinpl(name, url2)
@@ -1228,11 +1260,11 @@ class Playstream1(Screen):
         self['key_green'] = Button(_('Select'))
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions',
-                                     'DirectionActions'],{'red': self.cancel,
-                                                          'green': self.okClicked,
-                                                          'back': self.cancel,
-                                                          'cancel': self.cancel,
-                                                          'ok': self.okClicked}, -2)
+                                     'DirectionActions'], {'red': self.cancel,
+                                                           'green': self.okClicked,
+                                                           'back': self.cancel,
+                                                           'cancel': self.cancel,
+                                                           'ok': self.okClicked}, -2)
         self.name1 = name
         self.url = url
         print('In Playstream2 self.url =', url)
@@ -1250,7 +1282,7 @@ class Playstream1(Screen):
         self.urls.append(url)
         self.names.append('Play Ts')
         self.urls.append(url)
-        showlist(self.names, self['text'])
+        showlist(self.names, self['list'])
 
     def okClicked(self):
         idx = self['list'].getSelectionIndex()
@@ -1482,10 +1514,10 @@ class Playstream2(
         if Utils.isStreamlinkAvailable():
             streamtypelist.append("5002")
             streaml = True
-        if os.path.exists("/usr/bin/gstplayer"):
-            streamtypelist.append("5001")
-        if os.path.exists("/usr/bin/exteplayer3"):
-            streamtypelist.append("5002")
+        # if os.path.exists("/usr/bin/gstplayer"):
+            # streamtypelist.append("5001")
+        # if os.path.exists("/usr/bin/exteplayer3"):
+            # streamtypelist.append("5002")
         if os.path.exists("/usr/bin/apt-get"):
             streamtypelist.append("8193")
         for index, item in enumerate(streamtypelist, start=0):
@@ -1541,16 +1573,12 @@ class Playstream2(
 
 def main(session, **kwargs):
     try:
-        try:
-            from . import Update
-            Update.upd_done()
-        except Exception as e:
-            print('error ', str(e))
-        session.open(MainSetting)
+        from . import Update
+        Update.upd_done()
     except:
         import traceback
         traceback.print_exc()
-        pass
+    session.open(MainSetting)
 
 
 def Plugins(**kwargs):
