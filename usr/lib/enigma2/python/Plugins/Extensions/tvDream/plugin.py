@@ -1511,9 +1511,9 @@ class Playstream2(
         # if "youtube" in str(self.url):
             # self.mbox = self.session.open(MessageBox, _('For Stream Youtube coming soon!'), MessageBox.TYPE_INFO, timeout=5)
             # return
-        if Utils.isStreamlinkAvailable():
-            streamtypelist.append("5002")
-            streaml = True
+        # if Utils.isStreamlinkAvailable():
+            # streamtypelist.append("5002")
+            # streaml = True
         # if os.path.exists("/usr/bin/gstplayer"):
             # streamtypelist.append("5001")
         # if os.path.exists("/usr/bin/exteplayer3"):
