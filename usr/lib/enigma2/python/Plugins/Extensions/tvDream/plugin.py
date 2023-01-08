@@ -125,13 +125,11 @@ class SetList(MenuList):
     def __init__(self, list):
         MenuList.__init__(self, list, True, eListboxPythonMultiContent)
         if Utils.isFHD():
-            # self.l.setItemHeight(50)
-            textfont = int(34)
-            # self.l.setFont(0, gFont('Regular', textfont))
+            self.l.setItemHeight(50)
+            textfont = int(30)
         else:
-            # self.l.setItemHeight(50)
+            self.l.setItemHeight(30)
             textfont = int(24)
-        self.l.setItemHeight(50)
         self.l.setFont(0, gFont('Regular', textfont))
 
 
@@ -139,23 +137,11 @@ def DListEntry(name, idx):
     res = [name]
     pngs = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('tvDream'))
     if Utils.isFHD():
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png=loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngs)))
+        res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png=loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
-    return res
-
-
-def OneSetListEntry(name):
-    res = [name]
-    pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/plugins.png".format('tvDream'))
-    if Utils.isFHD():
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png=loadPNG(pngx)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1200, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
-    else:
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png=loadPNG(pngx)))
-        res.append(MultiContentEntryText(pos=(60, 2), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(3, 3), size=(30, 30), png=loadPNG(pngs)))
+        res.append(MultiContentEntryText(pos=(50, 0), size=(500, 30), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
 
 
@@ -164,8 +150,8 @@ def showlist(data, list):
     plist = []
     for line in data:
         name = data[icount]
-        plist.append(OneSetListEntry(name))
-        icount = icount+1
+        plist.append(DListEntry(name, icount))
+        icount = icount + 1
         list.setList(plist)
 
 
@@ -1409,6 +1395,7 @@ class Playstream2(
                                      'MediaPlayerSeekActions',
                                      'ColorActions',
                                      'ButtonSetupActions',
+                                     'OkCancelActions',
                                      'InfobarShowHideActions',
                                      'InfobarActions',
                                      'InfobarSeekActions'], {'stop': self.leavePlayer,
@@ -1418,6 +1405,8 @@ class Playstream2(
                                                              'tv': self.cicleStreamType,
                                                              # 'stop': self.leavePlayer,
                                                              'cancel': self.cancel,
+                                                             'leavePlayer': self.cancel,
+                                                             'down': self.av,
                                                              'back': self.cancel}, -1)
         self.allowPiP = False
         self.service = None
