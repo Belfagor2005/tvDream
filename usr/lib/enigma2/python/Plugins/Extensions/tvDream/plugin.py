@@ -12,6 +12,8 @@
 #Info http://t.me/tivustream
 '''
 from __future__ import print_function
+from . import Utils
+from . import html_conv
 from Components.AVSwitch import AVSwitch
 from Components.ActionMap import ActionMap
 from Components.Button import Button
@@ -25,7 +27,8 @@ from Components.config import config
 from Plugins.Plugin import PluginDescriptor
 from Screens.InfoBar import InfoBar
 from Screens.InfoBar import MoviePlayer
-from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarNotifications
+from Screens.InfoBarGenerics import InfoBarNotifications
+from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection
 from Screens.InfoBarGenerics import InfoBarSubtitleSupport, InfoBarMenu
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
@@ -44,8 +47,6 @@ import re
 import six
 import ssl
 import sys
-from . import Utils
-from . import html_conv
 global regioni, skin_dream
 regioni = False
 
@@ -58,10 +59,6 @@ if PY3:
     from urllib.request import urlopen
     # from urllib.request import Request
     PY3 = True
-    # unicode = str
-    # unichr = chr
-    # long = int
-    # xrange = range
 else:
     # from urllib2 import Request
     from urllib2 import urlopen
@@ -100,17 +97,17 @@ if sslverify:
             return ctx
 
 currversion = '1.2'
-plugin_path = os.path.dirname(sys.modules[__name__].__file__)
-res_plugin_path = plugin_path + '/res/'
+plugin_path = '/usr/lib/enigma2/python/Plugins/Extensions/tvDream'
+res_plugin_path = os.path.join(plugin_path, 'res/')
 # host_b7 = 'https://feed.entertainment.tv.theplatform.eu/f/PR1GhC/mediaset-prod-all-stations'
 desc_plugin = '..:: TiVu Dream Player by Lululla %s ::.. ' % currversion
 name_plugin = 'TiVuDream Player'
 twxtv = 'aHR0cH+M6Ly9+wYXRidXdlY+i5oZXJva3V+hcHAuY29tL2Fw+aS9wbGF5+P3VybD0='
-skin_dream = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/hd/".format('tvDream'))
+skin_dream = os.path.join(plugin_path, 'res/skins/hd/')
 if Utils.isFHD():
-    skin_dream = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/skins/fhd/".format('tvDream'))
+    skin_dream = os.path.join(plugin_path, 'res/skins/fhd/')
 if Utils.DreamOS():
-    skin_dream = skin_dream + 'dreamOs/'
+    skin_dream = os.path.join(skin_dream, 'dreamOs/')
 
 
 Panel_Dlist = [
@@ -127,10 +124,11 @@ class SetList(MenuList):
         if Utils.isFHD():
             self.l.setItemHeight(50)
             textfont = int(30)
+            self.l.setFont(0, gFont('Regular', textfont))
         else:
             self.l.setItemHeight(30)
             textfont = int(24)
-        self.l.setFont(0, gFont('Regular', textfont))
+            self.l.setFont(0, gFont('Regular', textfont))
 
 
 def DListEntry(name, idx):
@@ -151,40 +149,39 @@ def showlist(data, list):
     for line in data:
         name = data[icount]
         plist.append(DListEntry(name, icount))
-        icount = icount + 1
+        icount += 1
         list.setList(plist)
 
 
 def returnIMDB(text_clear):
     TMDB = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('TMDB'))
     IMDb = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('IMDb'))
-    if TMDB:
+    if os.path.exists(TMDB):
         try:
             from Plugins.Extensions.TMBD.plugin import TMBD
             text = html_conv.html_unescape(text_clear)
             _session.open(TMBD.tmdbScreen, text, 0)
-        except Exception as ex:
-            print("[XCF] Tmdb: ", str(ex))
+        except Exception as e:
+            print("[XCF] Tmdb: ", str(e))
         return True
-    elif IMDb:
+    elif os.path.exists(IMDb):
         try:
             from Plugins.Extensions.IMDb.plugin import main as imdb
             text = html_conv.html_unescape(text_clear)
             imdb(_session, text)
-        except Exception as ex:
-            print("[XCF] imdb: ", str(ex))
+        except Exception as e:
+            print("[XCF] imdb: ", str(e))
         return True
     else:
         text_clear = html_conv.html_unescape(text_clear)
         _session.open(MessageBox, text_clear, MessageBox.TYPE_INFO)
         return True
-    return
 
 
 class MainSetting(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_dream + 'settings.xml'
+        skin = os.path.join(skin_dream, 'settings.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('MainSetting')
@@ -258,7 +255,7 @@ class MainSetting(Screen):
 class State(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_dream + 'settings.xml'
+        skin = os.path.join(skin_dream, 'settings.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -308,7 +305,7 @@ class State(Screen):
                     print('name : ', name)
                     print('url:  ', url)
                     self.urls.append(url)
-                    self.names.append(Utils.checkStr(name))
+                    self.names.append(html_conv.html_unescape(name))
             except:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
@@ -334,7 +331,7 @@ class State(Screen):
 class tvRegioni(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_dream + 'settings.xml'
+        skin = os.path.join(skin_dream, 'settings.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -386,7 +383,7 @@ class tvRegioni(Screen):
                     if 'Logo di TVdream' in name:
                         continue
                     self.urls.append(url)
-                    self.names.append(Utils.checkStr(name))
+                    self.names.append(html_conv.html_unescape(name))
             except:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
@@ -409,7 +406,7 @@ class tvRegioni(Screen):
 class tvItalia(Screen):
     def __init__(self, session, name, url):
         self.session = session
-        skin = skin_dream + 'settings.xml'
+        skin = os.path.join(skin_dream, 'settings.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -457,7 +454,7 @@ class tvItalia(Screen):
                     print('name it : ', name)
                     print('url it:  ', url1)
                     self.urls.append(url1)
-                    self.names.append(Utils.checkStr(name))
+                    self.names.append(html_conv.html_unescape(name))
             except:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
@@ -480,7 +477,7 @@ class tvItalia(Screen):
 class tvCanal(Screen):
     def __init__(self, session, name, url):
         self.session = session
-        skin = skin_dream + 'settings.xml'
+        skin = os.path.join(skin_dream, 'settings.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -530,7 +527,7 @@ class tvCanal(Screen):
                 if 'Logo di TVdream' in name:
                     continue
                 self.urls.append(url)
-                self.names.append(Utils.checkStr(name))
+                self.names.append(html_conv.html_unescape(name))
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
             showlist(self.names, self['text'])
@@ -586,23 +583,23 @@ class tvCanal(Screen):
                     content2 = six.ensure_str(content2)
                 print("getVideos2 content2 =", content2)
 
-                if "youtube" in url.lower():
-                    print("In youtube url =", content2)
-                    from Plugins.Extensions.tvDream.youtube_dl import YoutubeDL
-                    ydl_opts = {'format': 'best'}
-                    '''
-                    ydl_opts = {'format': 'bestaudio/best'}
-                    '''
-                    ydl = YoutubeDL(ydl_opts)
-                    ydl.add_default_info_extractors()
-                    result = ydl.extract_info(url, download=False)
-                    # print ("mediaset result =", result)
-                    url = result["url"]
-                    # print ("mediaset final url =", url)
-                    print('YoutubeDL name: ', name)
-                    print('YoutubeDL url: ', url)
-                    self.session.open(Playstream2, name, url)
-                elif '.m3u8' in content2:
+                # if "youtube" in url.lower():
+                    # print("In youtube url =", content2)
+                    # from Plugins.Extensions.tvDream.youtube_dl import YoutubeDL
+                    # ydl_opts = {'format': 'best'}
+                    # '''
+                    # ydl_opts = {'format': 'bestaudio/best'}
+                    # '''
+                    # ydl = YoutubeDL(ydl_opts)
+                    # ydl.add_default_info_extractors()
+                    # result = ydl.extract_info(url, download=False)
+                    # # print ("mediaset result =", result)
+                    # url = result["url"]
+                    # # print ("mediaset final url =", url)
+                    # print('YoutubeDL name: ', name)
+                    # print('YoutubeDL url: ', url)
+                    # self.session.open(Playstream2, name, url)
+                if '.m3u8' in content2:
                     print('content .m3u8')
                     n1 = content2.find(".m3u8")
                     n2 = content2.rfind("http", 0, n1)
@@ -772,20 +769,20 @@ class tvCanal(Screen):
                 url = match2[0]
                 self.session.open(Playstream2, name, url)
 
-            elif "youtube" in url.lower():
-                print("In youtube url =", content2)
-                from Plugins.Extensions.tvDream.youtube_dl import YoutubeDL
-                ydl_opts = {'format': 'best'}
-                '''
-                ydl_opts = {'format': 'bestaudio/best'}
-                '''
-                ydl = YoutubeDL(ydl_opts)
-                ydl.add_default_info_extractors()
-                result = ydl.extract_info(url, download=False)
-                # print ("mediaset result =", result)
-                url = result["url"]
-                # print ("mediaset final url =", url)
-                self.session.open(Playstream2, name, url)
+            # elif "youtube" in url.lower():
+                # print("In youtube url =", content2)
+                # from Plugins.Extensions.tvDream.youtube_dl import YoutubeDL
+                # ydl_opts = {'format': 'best'}
+                # '''
+                # ydl_opts = {'format': 'bestaudio/best'}
+                # '''
+                # ydl = YoutubeDL(ydl_opts)
+                # ydl.add_default_info_extractors()
+                # result = ydl.extract_info(url, download=False)
+                # # print ("mediaset result =", result)
+                # url = result["url"]
+                # # print ("mediaset final url =", url)
+                # self.session.open(Playstream2, name, url)
             return
 
         except:
@@ -796,7 +793,7 @@ class tvCanal(Screen):
 class tvCategory(Screen):
     def __init__(self, session, name, url):
         self.session = session
-        skin = skin_dream + 'settings.xml'
+        skin = os.path.join(skin_dream, 'settings.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -847,8 +844,8 @@ class tvCategory(Screen):
                         continue
                     print('name : ', name)
                     print('url:  ', url)
-                    self.urls.append(Utils.checkStr(url))
-                    self.names.append(Utils.checkStr(name))
+                    self.urls.append(url)
+                    self.names.append(html_conv.html_unescape(name))
             except:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
@@ -871,7 +868,7 @@ class tvCategory(Screen):
 class subCategory(Screen):
     def __init__(self, session, name, url):
         self.session = session
-        skin = skin_dream + 'settings.xml'
+        skin = os.path.join(skin_dream, 'settings.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -918,8 +915,8 @@ class subCategory(Screen):
                     name = "Page " + str(page)
                     print('name it : ', name)
                     print('url it:  ', url1)
-                    self.urls.append(Utils.checkStr(url1))
-                    self.names.append(Utils.checkStr(name))
+                    self.urls.append(url1)
+                    self.names.append(html_conv.html_unescape(name))
             except:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
@@ -942,7 +939,7 @@ class subCategory(Screen):
 class tvNew(Screen):
     def __init__(self, session, name, url):
         self.session = session
-        skin = skin_dream + 'settings.xml'
+        skin = os.path.join(skin_dream, 'settings.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
@@ -958,15 +955,12 @@ class tvNew(Screen):
         self['key_green'].hide()
         self['key_yellow'] = Button(_(''))
         self['key_yellow'].hide()
-
         self.timer = eTimer()
         if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
         self.timer.start(1500, True)
-        global SREF
-        SREF = self.session.nav.getCurrentlyPlayingServiceReference()
         self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions',
@@ -997,7 +991,7 @@ class tvNew(Screen):
                     if 'Logo di TVdream' in name:
                         continue
                     self.urls.append(url)
-                    self.names.append(Utils.checkStr(name))
+                    self.names.append(html_conv.html_unescape(name))
             except:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
@@ -1065,20 +1059,20 @@ class tvNew(Screen):
                 pic = ""
                 self.session.open(Playstream2, name, url)
 
-            elif "youtube" in url.lower():
-                print("In youtube url =", content2)
-                from Plugins.Extensions.tvDream.youtube_dl import YoutubeDL
-                ydl_opts = {'format': 'best'}
-                '''
-                ydl_opts = {'format': 'bestaudio/best'}
-                '''
-                ydl = YoutubeDL(ydl_opts)
-                ydl.add_default_info_extractors()
-                result = ydl.extract_info(url, download=False)
-                # print ("mediaset result =", result)
-                url = result["url"]
-                # print ("mediaset final url =", url)
-                self.session.open(Playstream2, name, url)
+            # elif "youtube" in url.lower():
+                # print("In youtube url =", content2)
+                # from Plugins.Extensions.tvDream.youtube_dl import YoutubeDL
+                # ydl_opts = {'format': 'best'}
+                # '''
+                # ydl_opts = {'format': 'bestaudio/best'}
+                # '''
+                # ydl = YoutubeDL(ydl_opts)
+                # ydl.add_default_info_extractors()
+                # result = ydl.extract_info(url, download=False)
+                # # print ("mediaset result =", result)
+                # url = result["url"]
+                # # print ("mediaset final url =", url)
+                # self.session.open(Playstream2, name, url)
 
             elif 'source src="' in content2:
                 print('content .mp4')
@@ -1150,8 +1144,14 @@ class TvInfoBarShowHide():
     skipToggleShow = False
 
     def __init__(self):
-        self["ShowHideActions"] = ActionMap(["InfobarShowHideActions"], {"toggleShow": self.OkPressed, "hide": self.hide}, 0)
-        self.__event_tracker = ServiceEventTracker(screen=self, eventmap={iPlayableService.evStart: self.serviceStarted})
+        self["ShowHideActions"] = ActionMap(["InfobarShowHideActions"], {
+            "toggleShow": self.OkPressed,
+            "hide": self.hide
+        }, 0)
+
+        self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
+            iPlayableService.evStart: self.serviceStarted
+        })
         self.__state = self.STATE_SHOWN
         self.__locked = 0
         self.hideTimer = eTimer()
@@ -1188,7 +1188,7 @@ class TvInfoBarShowHide():
 
     def startHideTimer(self):
         if self.__state == self.STATE_SHOWN and not self.__locked:
-            self.hideTimer.stop()
+            # self.hideTimer.stop()
             idx = config.usage.infobar_timeout.index
             if idx:
                 self.hideTimer.start(idx * 1500, True)
@@ -1232,12 +1232,12 @@ class TvInfoBarShowHide():
 
 class Playstream1(Screen):
     def __init__(self, session, name, url):
+        Screen.__init__(self, session)                                      
         self.session = session
-        skin = skin_dream + 'Playstream1.xml'
+        skin = os.path.join(skin_dream, 'Playstream1.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
-        Screen.__init__(self, session)
         self.setTitle(desc_plugin)
         self.list = []
         self['list'] = SetList([])
@@ -1254,8 +1254,7 @@ class Playstream1(Screen):
         self.name1 = name
         self.url = url
         print('In Playstream2 self.url =', url)
-        global SREF
-        SREF = self.session.nav.getCurrentlyPlayingServiceReference()
+        self.srefInit = self.session.nav.getCurrentlyPlayingServiceReference()
         self.onLayoutFinish.append(self.openTest)
 
     def openTest(self):
@@ -1272,18 +1271,14 @@ class Playstream1(Screen):
 
     def okClicked(self):
         idx = self['list'].getSelectionIndex()
-        if idx != '':
+        if idx is not None or idx != -1:
             self.name = self.names[idx]
             self.url = self.urls[idx]
             if idx == 0:
-                self.name = self.names[idx]
-                self.url = self.urls[idx]
                 print('In playVideo url D=', self.url)
                 self.play()
             elif idx == 1:
                 print('In playVideo url B=', self.url)
-                self.name = self.names[idx]
-                self.url = self.urls[idx]
                 try:
                     os.remove('/tmp/hls.avi')
                 except:
@@ -1302,27 +1297,19 @@ class Playstream1(Screen):
                     os.remove('/tmp/hls.avi')
                 except:
                     pass
-
                 cmd = 'python "/usr/lib/enigma2/python/Plugins/Extensions/tvDream/lib/tsclient.py" "' + url + '" "1" + &'
                 print('ts cmd = ', cmd)
                 os.system(cmd)
                 os.system('sleep 3')
                 self.url = '/tmp/hls.avi'
-                self.name = self.names[idx]
                 self.play()
             # preview
             elif idx == 3:
-                self.name = self.names[idx]
-                self.url = self.urls[idx]
                 print('In playVideo url D=', self.url)
                 self.play2()
             else:
-                self.name = self.names[idx]
-                self.url = self.urls[idx]
                 print('In playVideo url D=', self.url)
                 self.play()
-            return
-        else:
             return
 
     def playfile(self, serverint):
@@ -1345,9 +1332,12 @@ class Playstream1(Screen):
         self.session.nav.playService(sref)
 
     def cancel(self):
-        self.session.nav.stopService()
-        self.session.nav.playService(SREF)
-        self.close()
+        try:
+            self.session.nav.stopService()
+            self.session.nav.playService(self.srefInit)
+            self.close()
+        except:
+            pass
 
 
 class Playstream2(
@@ -1427,22 +1417,26 @@ class Playstream2(
         return AVSwitch().getAspectRatioSetting()
 
     def getAspectString(self, aspectnum):
-        return {0: _('4:3 Letterbox'),
-                1: _('4:3 PanScan'),
-                2: _('16:9'),
-                3: _('16:9 always'),
-                4: _('16:10 Letterbox'),
-                5: _('16:10 PanScan'),
-                6: _('16:9 Letterbox')}[aspectnum]
+        return {
+            0: '4:3 Letterbox',
+            1: '4:3 PanScan',
+            2: '16:9',
+            3: '16:9 always',
+            4: '16:10 Letterbox',
+            5: '16:10 PanScan',
+            6: '16:9 Letterbox'
+        }[aspectnum]
 
     def setAspect(self, aspect):
-        map = {0: '4_3_letterbox',
-               1: '4_3_panscan',
-               2: '16_9',
-               3: '16_9_always',
-               4: '16_10_letterbox',
-               5: '16_10_panscan',
-               6: '16_9_letterbox'}
+        map = {
+            0: '4_3_letterbox',
+            1: '4_3_panscan',
+            2: '16_9',
+            3: '16_9_always',
+            4: '16_10_letterbox',
+            5: '16_10_panscan',
+            6: '16_9_letterbox'
+        }
         config.av.aspectratio.setValue(map[aspect])
         try:
             AVSwitch().setAspectRatio(aspect)
@@ -1451,7 +1445,7 @@ class Playstream2(
 
     def av(self):
         temp = int(self.getAspect())
-        temp = temp + 1
+        temp += 1
         if temp > 6:
             temp = 0
         self.new_aspect = temp
@@ -1486,13 +1480,12 @@ class Playstream2(
         self.session.nav.playService(sref)
 
     def cicleStreamType(self):
-        global streml
-        streaml = False
+        global streaml
         from itertools import cycle, islice
         self.servicetype = '4097'
         print('servicetype1: ', self.servicetype)
         url = str(self.url)
-        if str(os.path.splitext(self.url)[-1]) == ".m3u8":
+        if str(os.path.splitext(url)[-1]) == ".m3u8":
             if self.servicetype == "1":
                 self.servicetype = "4097"
         currentindex = 0
@@ -1518,18 +1511,6 @@ class Playstream2(
         print('servicetype2: ', self.servicetype)
         self.openTest(self.servicetype, url)
 
-    def up(self):
-        pass
-
-    def down(self):
-        self.up()
-
-    def doEofInternal(self, playing):
-        self.close()
-
-    def __evEOF(self):
-        self.end = True
-
     def showVideoInfo(self):
         if self.shown:
             self.hideInfobar()
@@ -1542,7 +1523,7 @@ class Playstream2(
             self.doShow()
 
     def cancel(self):
-        if os.path.isfile('/tmp/hls.avi'):
+        if os.path.exists('/tmp/hls.avi'):
             os.remove('/tmp/hls.avi')
         self.session.nav.stopService()
         self.session.nav.playService(self.srefInit)
