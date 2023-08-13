@@ -1417,7 +1417,7 @@ class Playstream2(
         self.onClose.append(self.cancel)
 
     def getAspect(self):
-        return AVSwitch().getAspectRatioSetting()
+        return eAVSwitch().getAspectRatioSetting()
 
     def getAspectString(self, aspectnum):
         return {
@@ -1442,7 +1442,7 @@ class Playstream2(
         }
         config.av.aspectratio.setValue(map[aspect])
         try:
-            AVSwitch().setAspectRatio(aspect)
+            eAVSwitch().setAspectRatio(aspect)
         except:
             pass
 
