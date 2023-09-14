@@ -5,7 +5,7 @@
 ****************************************
 *        coded by Lululla & PCD        *
 *             skin by MMark            *
-*             15/09/2022               *
+*             15/09/2023               *
 *       Skin by MMark                  *
 ****************************************
 #--------------------#
@@ -14,10 +14,12 @@
 from __future__ import print_function
 from . import Utils
 from . import html_conv
+import codecs
+from Components.AVSwitch import AVSwitch
 try:
-    from Components.AVSwitch import eAVSwitch
-except Exception:
-    from Components.AVSwitch import iAVSwitch as eAVSwitch
+    from Components.AVSwitch import iAVSwitch
+except:
+    from enigma import eAVSwitch
 from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.Label import Label
@@ -185,7 +187,7 @@ class MainSetting(Screen):
     def __init__(self, session):
         self.session = session
         skin = os.path.join(skin_dream, 'settings.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('MainSetting')
         Screen.__init__(self, session)
@@ -259,7 +261,7 @@ class State(Screen):
     def __init__(self, session):
         self.session = session
         skin = os.path.join(skin_dream, 'settings.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
@@ -335,7 +337,7 @@ class tvRegioni(Screen):
     def __init__(self, session):
         self.session = session
         skin = os.path.join(skin_dream, 'settings.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
@@ -410,7 +412,7 @@ class tvItalia(Screen):
     def __init__(self, session, name, url):
         self.session = session
         skin = os.path.join(skin_dream, 'settings.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
@@ -481,7 +483,7 @@ class tvCanal(Screen):
     def __init__(self, session, name, url):
         self.session = session
         skin = os.path.join(skin_dream, 'settings.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
@@ -797,7 +799,7 @@ class tvCategory(Screen):
     def __init__(self, session, name, url):
         self.session = session
         skin = os.path.join(skin_dream, 'settings.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
@@ -872,7 +874,7 @@ class subCategory(Screen):
     def __init__(self, session, name, url):
         self.session = session
         skin = os.path.join(skin_dream, 'settings.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
@@ -943,7 +945,7 @@ class tvNew(Screen):
     def __init__(self, session, name, url):
         self.session = session
         skin = os.path.join(skin_dream, 'settings.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         Screen.__init__(self, session)
@@ -1238,7 +1240,7 @@ class Playstream1(Screen):
         Screen.__init__(self, session)                                      
         self.session = session
         skin = os.path.join(skin_dream, 'Playstream1.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('TiVuDream')
         self.setTitle(desc_plugin)
@@ -1417,34 +1419,34 @@ class Playstream2(
         self.onClose.append(self.cancel)
 
     def getAspect(self):
-        return eAVSwitch().getAspectRatioSetting()
+        try:
+            aspect = iAVSwitch.getAspectRatioSetting()
+        except:
+            aspect = eAVSwitch.getAspectRatioSetting()
+        return aspect
 
     def getAspectString(self, aspectnum):
-        return {
-            0: '4:3 Letterbox',
-            1: '4:3 PanScan',
-            2: '16:9',
-            3: '16:9 always',
-            4: '16:10 Letterbox',
-            5: '16:10 PanScan',
-            6: '16:9 Letterbox'
-        }[aspectnum]
+        return {0: '4:3 Letterbox',
+                1: '4:3 PanScan',
+                2: '16:9',
+                3: '16:9 always',
+                4: '16:10 Letterbox',
+                5: '16:10 PanScan',
+                6: '16:9 Letterbox'}[aspectnum]
 
     def setAspect(self, aspect):
-        map = {
-            0: '4_3_letterbox',
-            1: '4_3_panscan',
-            2: '16_9',
-            3: '16_9_always',
-            4: '16_10_letterbox',
-            5: '16_10_panscan',
-            6: '16_9_letterbox'
-        }
+        map = {0: '4_3_letterbox',
+               1: '4_3_panscan',
+               2: '16_9',
+               3: '16_9_always',
+               4: '16_10_letterbox',
+               5: '16_10_panscan',
+               6: '16_9_letterbox'}
         config.av.aspectratio.setValue(map[aspect])
         try:
-            eAVSwitch().setAspectRatio(aspect)
+            iAVSwitch.setAspectRatio(aspect)
         except:
-            pass
+            eAVSwitch.setAspectRatio(aspect)
 
     def av(self):
         temp = int(self.getAspect())
@@ -1464,7 +1466,7 @@ class Playstream2(
         ref = "{0}:{1}".format(url.replace(":", "%3a"), name.replace(":", "%3a"))
         print('final reference:   ', ref)
         sref = eServiceReference(ref)
-        sref.setName(name)
+        sref.setName(str(name))
         self.session.nav.stopService()
         self.session.nav.playService(sref)
 
@@ -1478,7 +1480,7 @@ class Playstream2(
             print('streaml reference:   ', ref)
         print('final reference:   ', ref)
         sref = eServiceReference(ref)
-        sref.setName(name)
+        sref.setName(str(name))
         self.session.nav.stopService()
         self.session.nav.playService(sref)
 
