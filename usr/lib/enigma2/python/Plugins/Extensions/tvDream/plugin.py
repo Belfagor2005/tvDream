@@ -529,7 +529,7 @@ class tvCanal(Screen):
         try:
             data2 = datas
             # print("data A5 =", data2)
-            regexcat = '<div class="item__.*?href="(.*?)".*?alt="(.*?)"'
+            regexcat = '<div class="item__thumb.*?href="(.*?)".*?alt="(.*?)"'
             match = re.compile(regexcat, re.DOTALL).findall(data2)
             for url, name in match:
                 # print('name ch1: ', name)
