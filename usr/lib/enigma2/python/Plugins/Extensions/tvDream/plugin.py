@@ -12,49 +12,52 @@
 #Info http://t.me/tivustream
 '''
 from __future__ import print_function
+from . import _
 from . import Utils
 from . import html_conv
-import codecs
+from .Console import Console as xConsole
+
 from Components.AVSwitch import AVSwitch
-try:
-    from enigma import eAVSwitch
-except Exception as e:
-    print(e)
 from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.Label import Label
 from Components.MenuList import MenuList
-from Components.MultiContent import MultiContentEntryPixmapAlphaTest
-from Components.MultiContent import MultiContentEntryText
-# from Components.Pixmap import Pixmap
-from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
+from Components.MultiContent import (MultiContentEntryPixmapAlphaTest, MultiContentEntryText)
+from Components.ServiceEventTracker import (ServiceEventTracker, InfoBarBase)
 from Components.config import config
 from Plugins.Plugin import PluginDescriptor
-from Screens.InfoBar import InfoBar
-from Screens.InfoBar import MoviePlayer
-from Screens.InfoBarGenerics import InfoBarNotifications
-from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection
-from Screens.InfoBarGenerics import InfoBarSubtitleSupport, InfoBarMenu
+from Screens.InfoBarGenerics import (
+    InfoBarSubtitleSupport,
+    InfoBarSeek,
+    InfoBarAudioSelection,
+    InfoBarMenu,
+    InfoBarNotifications,
+)
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
-from Tools.Directories import SCOPE_PLUGINS
-from Tools.Directories import resolveFilename
-from enigma import RT_HALIGN_LEFT
-from enigma import RT_VALIGN_CENTER
-from enigma import eListboxPythonMultiContent
-from enigma import eServiceReference
-from enigma import eTimer
-from enigma import gFont
-from enigma import iPlayableService
-from enigma import loadPNG
+from Tools.Directories import (SCOPE_PLUGINS, resolveFilename)
+from enigma import (
+    RT_VALIGN_CENTER,
+    RT_HALIGN_LEFT,
+    eTimer,
+    eListboxPythonMultiContent,
+    eServiceReference,
+    iPlayableService,
+    gFont,
+    loadPNG,
+    getDesktop,
+)
+from datetime import datetime
+import codecs
 import os
 import re
 import six
 import ssl
 import sys
+import json
+
 global regioni, skin_dream
 regioni = False
-
 PY3 = False
 PY3 = sys.version_info.major >= 3
 print('Py3: ', PY3)
@@ -62,10 +65,8 @@ print('Py3: ', PY3)
 
 if PY3:
     from urllib.request import urlopen
-    # from urllib.request import Request
     PY3 = True
 else:
-    # from urllib2 import Request
     from urllib2 import urlopen
 
 
@@ -101,26 +102,24 @@ if sslverify:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
 
-currversion = '1.2'
+currversion = '1.3'
 plugin_path = '/usr/lib/enigma2/python/Plugins/Extensions/tvDream'
 res_plugin_path = os.path.join(plugin_path, 'res/')
-# host_b7 = 'https://feed.entertainment.tv.theplatform.eu/f/PR1GhC/mediaset-prod-all-stations'
 desc_plugin = '..:: TiVu Dream Player by Lululla %s ::.. ' % currversion
 name_plugin = 'TiVuDream Player'
 twxtv = 'aHR0cH+M6Ly9+wYXRidXdlY+i5oZXJva3V+hcHAuY29tL2Fw+aS9wbGF5+P3VybD0='
+
+installer_url = 'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0JlbGZhZ29yMjAwNS90dkRyZWFtL21haW4vaW5zdGFsbGVyLnNo'
+developer_url = 'aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9CZWxmYWdvcjIwMDUvdHZEcmVhbQ=='
+
 skin_dream = os.path.join(plugin_path, 'res/skins/hd/')
 if Utils.isFHD():
     skin_dream = os.path.join(plugin_path, 'res/skins/fhd/')
-if Utils.DreamOS():
+if os.path.exists('/var/lib/dpkg/info'):
     skin_dream = os.path.join(skin_dream, 'dreamOs/')
 
 
-Panel_Dlist = [
-              ('TVD Regions'),
-              ('TVD State'),
-              ('TVD Italia'),
-              ('TVD Category'),
-              ('TVD New')]
+Panel_Dlist = [('TVD Regions'), ('TVD State'), ('TVD Italia'), ('TVD Category'), ('TVD New')]
 
 
 class SetList(MenuList):
@@ -193,25 +192,95 @@ class MainSetting(Screen):
         Screen.__init__(self, session)
         self.setTitle(desc_plugin)
         self['text'] = SetList([])
-        self.working = False
         self.selection = 'all'
         self['title'] = Label(desc_plugin)
         self['info'] = Label('')
         self['info'].setText(_('Please select ...'))
-        self['key_yellow'] = Button(_(''))
-        self['key_yellow'].hide()
+        self['key_yellow'] = Button(_('Update'))
+        # self['key_yellow'].hide()
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Exit'))
         self['key_green'].hide()
+        self.Update = False
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions',
-                                     'ButtonSetupActions',
+                                     'HotkeyActions',
+                                     'InfobarEPGActions',
+                                     'ChannelSelectBaseActions',
                                      'DirectionActions'], {'ok': self.okRun,
+                                                           'yellow': self.update_me,  # update_me,
+                                                           'yellow_long': self.update_dev,
+                                                           'info_long': self.update_dev,
+                                                           'infolong': self.update_dev,
+                                                           'showEventInfoPlugin': self.update_dev,
                                                            'green': self.okRun,
-                                                           'back': self.closerm,
-                                                           'red': self.closerm,
-                                                           'cancel': self.closerm}, -1)
+                                                           'cancel': self.closerm,
+                                                           'red': self.closerm}, -1)
+
+        self.timer = eTimer()
+        if os.path.exists('/var/lib/dpkg/status'):
+            self.timer_conn = self.timer.timeout.connect(self.check_vers)
+        else:
+            self.timer.callback.append(self.check_vers)
+        self.timer.start(500, 1)
         self.onLayoutFinish.append(self.updateMenuList)
+
+    def check_vers(self):
+        remote_version = '0.0'
+        remote_changelog = ''
+        req = Utils.Request(Utils.b64decoder(installer_url), headers={'User-Agent': 'Mozilla/5.0'})
+        page = Utils.urlopen(req).read()
+        if PY3:
+            data = page.decode("utf-8")
+        else:
+            data = page.encode("utf-8")
+        if data:
+            lines = data.split("\n")
+            for line in lines:
+                if line.startswith("version"):
+                    remote_version = line.split("=")
+                    remote_version = line.split("'")[1]
+                if line.startswith("changelog"):
+                    remote_changelog = line.split("=")
+                    remote_changelog = line.split("'")[1]
+                    break
+        self.new_version = remote_version
+        self.new_changelog = remote_changelog
+        if currversion < remote_version:
+            self.Update = True
+            # self['key_yellow'].show()
+            # self['key_green'].show()
+            self.session.open(MessageBox, _('New version %s is available\n\nChangelog: %s\n\nPress info_long or yellow_long button to start force updating.') % (self.new_version, self.new_changelog), MessageBox.TYPE_INFO, timeout=5)
+        # self.update_me()
+
+    def update_me(self):
+        if self.Update is True:
+            self.session.openWithCallback(self.install_update, MessageBox, _("New version %s is available.\n\nChangelog: %s \n\nDo you want to install it now?") % (self.new_version, self.new_changelog), MessageBox.TYPE_YESNO)
+        else:
+            self.session.open(MessageBox, _("Congrats! You already have the latest version..."),  MessageBox.TYPE_INFO, timeout=4)
+
+    def update_dev(self):
+        try:
+            req = Utils.Request(Utils.b64decoder(developer_url), headers={'User-Agent': 'Mozilla/5.0'})
+            page = Utils.urlopen(req).read()
+            data = json.loads(page)
+            remote_date = data['pushed_at']
+            strp_remote_date = datetime.strptime(remote_date, '%Y-%m-%dT%H:%M:%SZ')
+            remote_date = strp_remote_date.strftime('%Y-%m-%d')
+            self.session.openWithCallback(self.install_update, MessageBox, _("Do you want to install update ( %s ) now?") % (remote_date), MessageBox.TYPE_YESNO)
+        except Exception as e:
+            print('error xcons:', e)
+
+    def install_update(self, answer=False):
+        if answer:
+            cmd1 = 'wget -q "--no-check-certificate" ' + Utils.b64decoder(installer_url) + ' -O - | /bin/sh'
+            self.session.open(xConsole, 'Upgrading...', cmdlist=[cmd1], finishedCallback=self.myCallback, closeOnSuccess=False)
+        else:
+            self.session.open(MessageBox, _("Update Aborted!"),  MessageBox.TYPE_INFO, timeout=3)
+
+    def myCallback(self, result=None):
+        print('result:', result)
+        return
 
     def closerm(self):
         self.close()
@@ -272,14 +341,14 @@ class State(Screen):
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_green'].hide()
-        self['key_yellow'] = Button(_(''))
+        self['key_yellow'] = Button()
         self['key_yellow'].hide()
         self.timer = eTimer()
-        if Utils.DreamOS():
+        if os.path.exists('/var/lib/dpkg/info'):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self.timer.start(1500, True)
+        self.timer.start(500, True)
         self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions',
@@ -328,6 +397,7 @@ class State(Screen):
         name = self.names[idx]
         url = self.urls[idx]
         self.session.open(tvItalia, name, url)
+
     def exit(self):
         Utils.deletetmp()
         self.close()
@@ -348,14 +418,14 @@ class tvRegioni(Screen):
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_green'].hide()
-        self['key_yellow'] = Button(_(''))
+        self['key_yellow'] = Button()
         self['key_yellow'].hide()
         self.timer = eTimer()
-        if Utils.DreamOS():
+        if os.path.exists('/var/lib/dpkg/info'):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self.timer.start(1500, True)
+        self.timer.start(500, True)
         self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions',
@@ -425,14 +495,14 @@ class tvItalia(Screen):
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_green'].hide()
-        self['key_yellow'] = Button(_(''))
+        self['key_yellow'] = Button()
         self['key_yellow'].hide()
         self.timer = eTimer()
-        if Utils.DreamOS():
+        if os.path.exists('/var/lib/dpkg/info'):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self.timer.start(1500, True)
+        self.timer.start(500, True)
         self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions',
@@ -496,14 +566,14 @@ class tvCanal(Screen):
         self['key_green'] = Button(_('Play'))
         self['key_red'] = Button(_('Back'))
         self['key_green'].hide()
-        self['key_yellow'] = Button(_(''))
+        self['key_yellow'] = Button()
         self['key_yellow'].hide()
         self.timer = eTimer()
-        if Utils.DreamOS():
+        if os.path.exists('/var/lib/dpkg/info'):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self.timer.start(1500, True)
+        self.timer.start(500, True)
         self['title'] = Label(desc_plugin)
         global SREF
         SREF = self.session.nav.getCurrentlyPlayingServiceReference()
@@ -608,7 +678,7 @@ class tvCanal(Screen):
                     print('content .m3u8')
                     n1 = content2.find(".m3u8")
                     n2 = content2.rfind("http", 0, n1)
-                    url = content2[n2:(n1+5)]
+                    url = content2[n2:(n1 + 5)]
                     pic = ""
                     self.session.open(Playstream2, name, url)
 
@@ -619,7 +689,7 @@ class tvCanal(Screen):
                     url = match2[0]
                     n1 = url.find(".mp4")
                     n2 = url.rfind("http", 0, n1)
-                    url = url[n2:(n1+5)]
+                    url = url[n2:(n1 + 5)]
                     pic = ""
                     self.session.open(Playstream2, name, url)
 
@@ -637,7 +707,7 @@ class tvCanal(Screen):
                         print('content .m3u8')
                         n1 = content3.find(".m3u8")
                         n2 = content3.rfind("http", 0, n1)
-                        url = content3[n2:(n1+5)]
+                        url = content3[n2:(n1 + 5)]
                         pic = ""
                         # self.session.open(Playstream2, name, url)
                         print('content3 name: ', name)
@@ -658,7 +728,7 @@ class tvCanal(Screen):
                         print('content4 .m3u8')
                         n1 = content4.find(".m3u8")
                         n2 = content4.rfind("http", 0, n1)
-                        url = content4[n2:(n1+5)]
+                        url = content4[n2:(n1 + 5)]
                         print('content4 name: ', name)
                         print('content4 url: ', url)
                         self.session.open(Playstream2, name, url)
@@ -716,7 +786,7 @@ class tvCanal(Screen):
                 print('content testinpl .m3u8')
                 n1 = content2.find(".m3u8")
                 n2 = content2.rfind("http", 0, n1)
-                url = content2[n2:(n1+5)]
+                url = content2[n2:(n1 + 5)]
                 pic = ""
                 self.session.open(Playstream2, name, url)
 
@@ -727,7 +797,7 @@ class tvCanal(Screen):
                 url = match2[0]
                 n1 = url.find(".mp4")
                 n2 = url.rfind("http", 0, n1)
-                url = url[n2:(n1+5)]
+                url = url[n2:(n1 + 5)]
                 pic = ""
                 self.session.open(Playstream2, name, url)
 
@@ -745,7 +815,7 @@ class tvCanal(Screen):
                     print('content3 .m3u8')
                     n1 = content3.find(".m3u8")
                     n2 = content3.rfind("http", 0, n1)
-                    url = content3[n2:(n1+5)]
+                    url = content3[n2:(n1 + 5)]
                     pic = ""
                     # self.session.open(Playstream2, name, url)
                     self.session.open(Playstream2, name, url)
@@ -764,7 +834,7 @@ class tvCanal(Screen):
                     print('content4 .m3u8')
                     n1 = content3.find(".m3u8")
                     n2 = content3.rfind("http", 0, n1)
-                    url = content3[n2:(n1+5)]
+                    url = content3[n2:(n1 + 5)]
                     self.session.open(Playstream2, name, url)
 
             elif ("rai" in url.lower()) or ("rai" in name.lower()):
@@ -810,14 +880,14 @@ class tvCategory(Screen):
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_green'].hide()
-        self['key_yellow'] = Button(_(''))
+        self['key_yellow'] = Button()
         self['key_yellow'].hide()
         self.timer = eTimer()
-        if Utils.DreamOS():
+        if os.path.exists('/var/lib/dpkg/info'):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self.timer.start(1500, True)
+        self.timer.start(500, True)
         self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['ButtonSetupActions',
                                      'OkCancelActions',
@@ -887,14 +957,14 @@ class subCategory(Screen):
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_green'].hide()
-        self['key_yellow'] = Button(_(''))
+        self['key_yellow'] = Button()
         self['key_yellow'].hide()
         self.timer = eTimer()
-        if Utils.DreamOS():
+        if os.path.exists('/var/lib/dpkg/info'):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self.timer.start(1500, True)
+        self.timer.start(500, True)
         self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions',
@@ -958,14 +1028,14 @@ class tvNew(Screen):
         self['key_green'] = Button(_('Play'))
         self['key_red'] = Button(_('Back'))
         self['key_green'].hide()
-        self['key_yellow'] = Button(_(''))
+        self['key_yellow'] = Button()
         self['key_yellow'].hide()
         self.timer = eTimer()
-        if Utils.DreamOS():
+        if os.path.exists('/var/lib/dpkg/info'):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
-        self.timer.start(1500, True)
+        self.timer.start(500, True)
         self['title'] = Label(desc_plugin)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions',
@@ -1060,7 +1130,7 @@ class tvNew(Screen):
                 print('content .m3u8')
                 n1 = content2.find(".m3u8")
                 n2 = content2.rfind("http", 0, n1)
-                url = content2[n2:(n1+5)]
+                url = content2[n2:(n1 + 5)]
                 pic = ""
                 self.session.open(Playstream2, name, url)
 
@@ -1086,7 +1156,7 @@ class tvNew(Screen):
                 url = match2[0]
                 n1 = url.find(".mp4")
                 n2 = url.rfind("http", 0, n1)
-                url = url[n2:(n1+5)]
+                url = url[n2:(n1 + 5)]
                 pic = ""
                 self.session.open(Playstream2, name, url)
 
@@ -1104,7 +1174,7 @@ class tvNew(Screen):
                     print('content .m3u8')
                     n1 = content3.find(".m3u8")
                     n2 = content3.rfind("http", 0, n1)
-                    url = content3[n2:(n1+5)]
+                    url = content3[n2:(n1 + 5)]
                     pic = ""
                     self.session.open(Playstream2, name, url)
 
@@ -1122,7 +1192,7 @@ class tvNew(Screen):
                     print('content .m3u8')
                     n1 = content3.find(".m3u8")
                     n2 = content3.rfind("http", 0, n1)
-                    url = content3[n2:(n1+5)]
+                    url = content3[n2:(n1 + 5)]
                     self.session.open(Playstream2, name, url)
 
             elif ("rai" in url.lower()) or ("rai" in name.lower()):
@@ -1237,7 +1307,7 @@ class TvInfoBarShowHide():
 
 class Playstream1(Screen):
     def __init__(self, session, name, url):
-        Screen.__init__(self, session)                                      
+        Screen.__init__(self, session)
         self.session = session
         skin = os.path.join(skin_dream, 'Playstream1.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
@@ -1345,16 +1415,14 @@ class Playstream1(Screen):
             pass
 
 
-class Playstream2(
-                 InfoBarBase,
-                 InfoBarMenu,
-                 InfoBarSeek,
-                 InfoBarAudioSelection,
-                 InfoBarSubtitleSupport,
-                 InfoBarNotifications,
-                 TvInfoBarShowHide,
-                 Screen
-                 ):
+class Playstream2(InfoBarBase,
+                  InfoBarMenu,
+                  InfoBarSeek,
+                  InfoBarAudioSelection,
+                  InfoBarSubtitleSupport,
+                  InfoBarNotifications,
+                  TvInfoBarShowHide,
+                  Screen):
     STATE_IDLE = 0
     STATE_PLAYING = 1
     STATE_PAUSED = 2
