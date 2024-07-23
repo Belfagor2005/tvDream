@@ -62,13 +62,11 @@ PY3 = False
 PY3 = sys.version_info.major >= 3
 print('Py3: ', PY3)
 
-
 if PY3:
     from urllib.request import urlopen
     PY3 = True
 else:
     from urllib2 import urlopen
-
 
 if sys.version_info >= (2, 7, 9):
     try:
@@ -246,7 +244,8 @@ class MainSetting(Screen):
                     break
         self.new_version = remote_version
         self.new_changelog = remote_changelog
-        if currversion < remote_version:
+        # if currversion < remote_version:
+        if float(currversion) < float(remote_version):
             self.Update = True
             # self['key_yellow'].show()
             # self['key_green'].show()
