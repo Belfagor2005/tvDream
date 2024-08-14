@@ -45,7 +45,6 @@ from enigma import (
     iPlayableService,
     gFont,
     loadPNG,
-    getDesktop,
 )
 from datetime import datetime
 import codecs
@@ -102,7 +101,6 @@ if sslverify:
 
 currversion = '1.3'
 plugin_path = '/usr/lib/enigma2/python/Plugins/Extensions/tvDream'
-res_plugin_path = os.path.join(plugin_path, 'res/')
 desc_plugin = '..:: TiVu Dream Player by Lululla %s ::.. ' % currversion
 name_plugin = 'TiVuDream Player'
 twxtv = 'aHR0cH+M6Ly9+wYXRidXdlY+i5oZXJva3V+hcHAuY29tL2Fw+aS9wbGF5+P3VybD0='
@@ -110,11 +108,11 @@ twxtv = 'aHR0cH+M6Ly9+wYXRidXdlY+i5oZXJva3V+hcHAuY29tL2Fw+aS9wbGF5+P3VybD0='
 installer_url = 'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0JlbGZhZ29yMjAwNS90dkRyZWFtL21haW4vaW5zdGFsbGVyLnNo'
 developer_url = 'aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9CZWxmYWdvcjIwMDUvdHZEcmVhbQ=='
 
-skin_dream = os.path.join(plugin_path, 'res/skins/hd/')
+skin_dream = os.path.join(plugin_path, 'res/skins/hd')
 if Utils.isFHD():
-    skin_dream = os.path.join(plugin_path, 'res/skins/fhd/')
+    skin_dream = os.path.join(plugin_path, 'res/skins/fhd')
 if os.path.exists('/var/lib/dpkg/info'):
-    skin_dream = os.path.join(skin_dream, 'dreamOs/')
+    skin_dream = os.path.join(skin_dream, 'dreamOs')
 
 
 Panel_Dlist = [('TVD Regions'), ('TVD State'), ('TVD Italia'), ('TVD Category'), ('TVD New')]
@@ -625,9 +623,6 @@ class tvCanal(Screen):
             print('content okRun ====================:  ', content)
             try:
                 regexcat = 'item__.*?href="(.*?)"'
-                # regexcat = 'class="player.*?href="(.*?)"'
-                # if content.find('iframe src='):
-                    # regexcat = 'player-video.*?iframe src="(.*?)"'
 
                 if regioni is True:
                     regexcat = '<iframe src="(.*?)"'
@@ -656,14 +651,14 @@ class tvCanal(Screen):
                 if PY3:
                     content2 = six.ensure_str(content2)
                 print("getVideos2 content2 =", content2)
-
+                '''
                 # if "youtube" in url.lower():
                     # print("In youtube url =", content2)
                     # from Plugins.Extensions.tvDream.youtube_dl import YoutubeDL
                     # ydl_opts = {'format': 'best'}
-                    # '''
+                    #
                     # ydl_opts = {'format': 'bestaudio/best'}
-                    # '''
+                    #
                     # ydl = YoutubeDL(ydl_opts)
                     # ydl.add_default_info_extractors()
                     # result = ydl.extract_info(url, download=False)
@@ -673,12 +668,12 @@ class tvCanal(Screen):
                     # print('YoutubeDL name: ', name)
                     # print('YoutubeDL url: ', url)
                     # self.session.open(Playstream2, name, url)
+                '''
                 if '.m3u8' in content2:
                     print('content .m3u8')
                     n1 = content2.find(".m3u8")
                     n2 = content2.rfind("http", 0, n1)
                     url = content2[n2:(n1 + 5)]
-                    pic = ""
                     self.session.open(Playstream2, name, url)
 
                 elif 'source src="' in content2:
@@ -689,7 +684,6 @@ class tvCanal(Screen):
                     n1 = url.find(".mp4")
                     n2 = url.rfind("http", 0, n1)
                     url = url[n2:(n1 + 5)]
-                    pic = ""
                     self.session.open(Playstream2, name, url)
 
                 elif '<a class="player-' in content2:
@@ -697,7 +691,6 @@ class tvCanal(Screen):
                     regexcat2 = '<a class="player-.*?href="(.*?)"'
                     match2 = re.compile(regexcat2, re.DOTALL).findall(content2)
                     url = match2[0]
-                    pic = ""
                     content3 = Utils.getUrl(url)
                     if PY3:
                         content3 = six.ensure_str(content3)
@@ -707,7 +700,6 @@ class tvCanal(Screen):
                         n1 = content3.find(".m3u8")
                         n2 = content3.rfind("http", 0, n1)
                         url = content3[n2:(n1 + 5)]
-                        pic = ""
                         # self.session.open(Playstream2, name, url)
                         print('content3 name: ', name)
                         print('content3 url: ', url)
@@ -718,7 +710,6 @@ class tvCanal(Screen):
                     regexcat2 = '<a class="player_.*?href="(.*?)"'
                     match2 = re.compile(regexcat2, re.DOTALL).findall(content2)
                     url = match2[0]
-                    pic = ""
                     content4 = Utils.getUrl(url)
                     if PY3:
                         content4 = six.ensure_str(content4)
@@ -747,19 +738,16 @@ class tvCanal(Screen):
                     print("<iframe.*?src= match =", match)
                     url2 = match[0]
                     print("<iframe.*?src= url2 =", url2)
-                    # twitch = url2.find('twitch.tv')
-                    # twitch = url2.find('player.twitch')
                     if 'player.twitch' not in content:
                         print('go testinpl')
                         self.testinpl(name, url2)
                     elif content.find('player.twitch'):
-                    # if twitch:
+
                         match = re.compile(regexcat, re.DOTALL).findall(content)
                         print("get player.twitch =", regexcat)
                         url2 = match[0]
                         print("get url2 =", url2)
-                    # twitch = url2.find('player.twitch')
-                    # if twitch:
+
                         url3 = url2.replace('https://player.twitch.tv/?channel=', '').replace('&parent=www.tvdream.net', '')
                         urlx = twxtv.replace('+', '')
                         url = Utils.b64decoder(urlx) + 'https://www.twitch.tv/' + url3
@@ -786,7 +774,6 @@ class tvCanal(Screen):
                 n1 = content2.find(".m3u8")
                 n2 = content2.rfind("http", 0, n1)
                 url = content2[n2:(n1 + 5)]
-                pic = ""
                 self.session.open(Playstream2, name, url)
 
             elif 'source src="' in content2:
@@ -797,7 +784,6 @@ class tvCanal(Screen):
                 n1 = url.find(".mp4")
                 n2 = url.rfind("http", 0, n1)
                 url = url[n2:(n1 + 5)]
-                pic = ""
                 self.session.open(Playstream2, name, url)
 
             elif '<a class="player-' in content2:
@@ -805,7 +791,6 @@ class tvCanal(Screen):
                 regexcat2 = '<a class="player-.*?href="(.*?)"'
                 match2 = re.compile(regexcat2, re.DOTALL).findall(content2)
                 url = match2[0]
-                pic = ""
                 content3 = Utils.getUrl(url)
                 if PY3:
                     content3 = six.ensure_str(content3)
@@ -815,7 +800,6 @@ class tvCanal(Screen):
                     n1 = content3.find(".m3u8")
                     n2 = content3.rfind("http", 0, n1)
                     url = content3[n2:(n1 + 5)]
-                    pic = ""
                     # self.session.open(Playstream2, name, url)
                     self.session.open(Playstream2, name, url)
 
@@ -824,7 +808,6 @@ class tvCanal(Screen):
                 regexcat2 = '<a class="player_.*?href="(.*?)"'
                 match2 = re.compile(regexcat2, re.DOTALL).findall(content2)
                 url = match2[0]
-                pic = ""
                 content3 = Utils.getUrl(url)
                 if PY3:
                     content3 = six.ensure_str(content3)
@@ -1089,9 +1072,6 @@ class tvNew(Screen):
             print('content :  ', content)
             try:
                 regexcat = '<iframe.*?src="(.*?)"'
-                # yt = content.find('youtube')
-                # if yt:
-                    # regexcat = 'player-video.*?src="(.*?)"'
 
                 match = re.compile(regexcat, re.DOTALL).findall(content)
                 print("getVideos2 match =", match)
@@ -1130,7 +1110,6 @@ class tvNew(Screen):
                 n1 = content2.find(".m3u8")
                 n2 = content2.rfind("http", 0, n1)
                 url = content2[n2:(n1 + 5)]
-                pic = ""
                 self.session.open(Playstream2, name, url)
 
             # elif "youtube" in url.lower():
@@ -1156,7 +1135,6 @@ class tvNew(Screen):
                 n1 = url.find(".mp4")
                 n2 = url.rfind("http", 0, n1)
                 url = url[n2:(n1 + 5)]
-                pic = ""
                 self.session.open(Playstream2, name, url)
 
             elif '<a class="player-' in content2:
@@ -1164,7 +1142,6 @@ class tvNew(Screen):
                 regexcat2 = '<a class="player-.*?href="(.*?)"'
                 match2 = re.compile(regexcat2, re.DOTALL).findall(content2)
                 url = match2[0]
-                pic = ""
                 content3 = Utils.getUrl(url)
                 if PY3:
                     content3 = six.ensure_str(content3)
@@ -1174,7 +1151,6 @@ class tvNew(Screen):
                     n1 = content3.find(".m3u8")
                     n2 = content3.rfind("http", 0, n1)
                     url = content3[n2:(n1 + 5)]
-                    pic = ""
                     self.session.open(Playstream2, name, url)
 
             elif '<a class="player_' in content2:
@@ -1182,7 +1158,6 @@ class tvNew(Screen):
                 regexcat2 = '<a class="player_.*?href="(.*?)"'
                 match2 = re.compile(regexcat2, re.DOTALL).findall(content2)
                 url = match2[0]
-                pic = ""
                 content3 = Utils.getUrl(url)
                 if PY3:
                     content3 = six.ensure_str(content3)
@@ -1430,13 +1405,11 @@ class Playstream2(InfoBarBase,
     screen_timeout = 5000
 
     def __init__(self, session, name, url):
-        global streaml
         Screen.__init__(self, session)
         self.session = session
         global _session
         _session = session
         self.skinName = 'MoviePlayer'
-        streaml = False
         for x in InfoBarBase, \
                 InfoBarMenu, \
                 InfoBarSeek, \
@@ -1536,11 +1509,6 @@ class Playstream2(InfoBarBase,
     def openTest(self, servicetype, url):
         name = self.name
         ref = "{0}:0:0:0:0:0:0:0:0:0:{1}:{2}".format(servicetype, url.replace(":", "%3a"), name.replace(":", "%3a"))
-        print('reference:   ', ref)
-        if streaml is True:
-            url = 'http://127.0.0.1:8088/' + str(url)
-            ref = "{0}:0:1:0:0:0:0:0:0:0:{1}:{2}".format(servicetype, url.replace(":", "%3a"), name.replace(":", "%3a"))
-            print('streaml reference:   ', ref)
         print('final reference:   ', ref)
         sref = eServiceReference(ref)
         sref.setName(str(name))
@@ -1548,7 +1516,6 @@ class Playstream2(InfoBarBase,
         self.session.nav.playService(sref)
 
     def cicleStreamType(self):
-        global streaml
         from itertools import cycle, islice
         self.servicetype = '4097'
         print('servicetype1: ', self.servicetype)
@@ -1558,16 +1525,7 @@ class Playstream2(InfoBarBase,
                 self.servicetype = "4097"
         currentindex = 0
         streamtypelist = ["4097"]
-        # if "youtube" in str(self.url):
-            # self.mbox = self.session.open(MessageBox, _('For Stream Youtube coming soon!'), MessageBox.TYPE_INFO, timeout=5)
-            # return
-        # if Utils.isStreamlinkAvailable():
-            # streamtypelist.append("5002")
-            # streaml = True
-        # if os.path.exists("/usr/bin/gstplayer"):
-            # streamtypelist.append("5001")
-        # if os.path.exists("/usr/bin/exteplayer3"):
-            # streamtypelist.append("5002")
+
         if os.path.exists("/usr/bin/apt-get"):
             streamtypelist.append("8193")
         for index, item in enumerate(streamtypelist, start=0):
@@ -1600,7 +1558,6 @@ class Playstream2(InfoBarBase,
                 self.setAspect(self.init_aspect)
             except:
                 pass
-        streaml = False
         self.close()
 
     def leavePlayer(self):
