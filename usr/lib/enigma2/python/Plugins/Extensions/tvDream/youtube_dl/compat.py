@@ -42,7 +42,7 @@ except NameError:
 # casefold
 try:
     compat_str.casefold
-    compat_casefold = lambda s: s.casefold()
+    def compat_casefold(s): return s.casefold()
 except AttributeError:
     from .casefold import casefold as compat_casefold
 
@@ -100,7 +100,8 @@ try:
     compat_urllib_response.addinfourl.status
 except AttributeError:
     # .getcode() is deprecated in Py 3.
-    compat_urllib_response.addinfourl.status = property(lambda self: self.getcode())
+    compat_urllib_response.addinfourl.status = property(
+        lambda self: self.getcode())
 
 try:
     import http.cookiejar as compat_cookiejar
@@ -115,7 +116,8 @@ if sys.version_info[0] == 2:
                 name = name.encode()
             if isinstance(value, compat_str):
                 value = value.encode()
-            compat_cookiejar.Cookie.__init__(self, version, name, value, *args, **kwargs)
+            compat_cookiejar.Cookie.__init__(
+                self, version, name, value, *args, **kwargs)
 else:
     compat_cookiejar_Cookie = compat_cookiejar.Cookie
 compat_http_cookiejar_Cookie = compat_cookiejar_Cookie
@@ -131,7 +133,8 @@ if sys.version_info[0] == 2 or sys.version_info < (3, 3):
         def load(self, rawdata):
             must_have_value = 0
             if not isinstance(rawdata, dict):
-                if sys.version_info[:2] != (2, 7) or sys.platform.startswith('java'):
+                if sys.version_info[:2] != (
+                        2, 7) or sys.platform.startswith('java'):
                     # attribute must have value for parsing
                     rawdata, must_have_value = re.subn(
                         r'(?i)(;\s*)(secure|httponly)(\s*(?:;|$))', r'\1\2=\2\3', rawdata)
@@ -2435,9 +2438,9 @@ compat_html_parser_HTMLParseError = compat_HTMLParseError
 
 try:
     from subprocess import DEVNULL
-    compat_subprocess_get_DEVNULL = lambda: DEVNULL
+    def compat_subprocess_get_DEVNULL(): return DEVNULL
 except ImportError:
-    compat_subprocess_get_DEVNULL = lambda: open(os.path.devnull, 'w')
+    def compat_subprocess_get_DEVNULL(): return open(os.path.devnull, 'w')
 
 try:
     import http.server as compat_http_server
@@ -2451,12 +2454,15 @@ try:
     from urllib.parse import urlencode as compat_urllib_parse_urlencode
     from urllib.parse import parse_qs as compat_parse_qs
 except ImportError:  # Python 2
-    _asciire = (compat_urllib_parse._asciire if hasattr(compat_urllib_parse, '_asciire')
-                else re.compile(r'([\x00-\x7f]+)'))
+    _asciire = (
+        compat_urllib_parse._asciire if hasattr(
+            compat_urllib_parse,
+            '_asciire') else re.compile(r'([\x00-\x7f]+)'))
 
     # HACK: The following are the correct unquote_to_bytes, unquote and unquote_plus
     # implementations from cpython 3.4.3's stdlib. Python 2's version
-    # is apparently broken (see https://github.com/ytdl-org/youtube-dl/pull/6244)
+    # is apparently broken (see
+    # https://github.com/ytdl-org/youtube-dl/pull/6244)
 
     def compat_urllib_parse_unquote_to_bytes(string):
         """unquote_to_bytes('abc%20def') -> b'abc def'."""
@@ -2482,7 +2488,10 @@ except ImportError:  # Python 2
                 append(item)
         return b''.join(res)
 
-    def compat_urllib_parse_unquote(string, encoding='utf-8', errors='replace'):
+    def compat_urllib_parse_unquote(
+            string,
+            encoding='utf-8',
+            errors='replace'):
         """Replace %xx escapes by their single-character equivalent. The optional
         encoding and errors parameters specify how to decode percent-encoded
         sequences into Unicode characters, as accepted by the bytes.decode()
@@ -2503,11 +2512,15 @@ except ImportError:  # Python 2
         res = [bits[0]]
         append = res.append
         for i in range(1, len(bits), 2):
-            append(compat_urllib_parse_unquote_to_bytes(bits[i]).decode(encoding, errors))
+            append(
+                compat_urllib_parse_unquote_to_bytes(
+                    bits[i]).decode(
+                    encoding, errors))
             append(bits[i + 1])
         return ''.join(res)
 
-    def compat_urllib_parse_unquote_plus(string, encoding='utf-8', errors='replace'):
+    def compat_urllib_parse_unquote_plus(
+            string, encoding='utf-8', errors='replace'):
         """Like unquote(), but also replace plus signs by spaces, as required for
         unquoting HTML form values.
 
@@ -2614,7 +2627,8 @@ except ImportError:  # Python < 3.4
             scheme, data = url.split(':', 1)
             mediatype, data = data.split(',', 1)
 
-            # even base64 encoded data URLs might be quoted so unquote in any case:
+            # even base64 encoded data URLs might be quoted so unquote in any
+            # case:
             data = compat_urllib_parse_unquote_to_bytes(data)
             if mediatype.endswith(';base64'):
                 data = binascii.a2b_base64(data)
@@ -2624,9 +2638,11 @@ except ImportError:  # Python < 3.4
                 mediatype = 'text/plain;charset=US-ASCII'
 
             headers = email.message_from_string(
-                'Content-type: %s\nContent-length: %d\n' % (mediatype, len(data)))
+                'Content-type: %s\nContent-length: %d\n' %
+                (mediatype, len(data)))
 
-            return compat_urllib_response.addinfourl(io.BytesIO(data), headers, url)
+            return compat_urllib_response.addinfourl(
+                io.BytesIO(data), headers, url)
 
 try:
     from xml.etree.ElementTree import ParseError as compat_xml_parse_error
@@ -2645,7 +2661,8 @@ class _TreeBuilder(etree.TreeBuilder):
 try:
     # xml.etree.ElementTree.Element is a method in Python <=2.6 and
     # the following will crash with:
-    #  TypeError: isinstance() arg 2 must be a class, type, or tuple of classes and types
+    # TypeError: isinstance() arg 2 must be a class, type, or tuple of classes
+    # and types
     isinstance(None, etree.Element)
     from xml.etree.ElementTree import Element as compat_etree_Element
 except TypeError:  # Python <=2.6
@@ -2683,7 +2700,10 @@ else:
         return el
 
     def compat_etree_fromstring(text):
-        doc = _XML(text, parser=etree.XMLParser(target=_TreeBuilder(element_factory=_element_factory)))
+        doc = _XML(
+            text, parser=etree.XMLParser(
+                target=_TreeBuilder(
+                    element_factory=_element_factory)))
         for el in _etree_iter(doc):
             if el.text is not None and isinstance(el.text, bytes):
                 el.text = el.text.decode('utf-8')
@@ -2716,7 +2736,7 @@ if sys.version_info < (2, 7):
             xpath = xpath.encode('ascii')
         return xpath
 else:
-    compat_xpath = lambda xpath: xpath
+    def compat_xpath(xpath): return xpath
 
 
 compat_os_name = os._name if os.name == 'java' else os.name
@@ -2724,7 +2744,11 @@ compat_os_name = os._name if os.name == 'java' else os.name
 
 if compat_os_name == 'nt':
     def compat_shlex_quote(s):
-        return s if re.match(r'^[-_\w./]+$', s) else '"%s"' % s.replace('"', '\\"')
+        return s if re.match(
+            r'^[-_\w./]+$',
+            s) else '"%s"' % s.replace(
+            '"',
+            '\\"')
 else:
     try:
         from shlex import quote as compat_shlex_quote
@@ -2748,7 +2772,8 @@ except (AssertionError, UnicodeEncodeError):
     def compat_shlex_split(s, comments=False, posix=True):
         if isinstance(s, compat_str):
             s = s.encode('utf-8')
-        return list(map(lambda s: s.decode('utf-8'), shlex.split(s, comments, posix)))
+        return list(map(lambda s: s.decode('utf-8'),
+                    shlex.split(s, comments, posix)))
 
 
 def compat_ord(c):
@@ -2766,7 +2791,8 @@ if sys.version_info >= (3, 0):
         env[key] = value
 else:
     # Environment variables should be decoded with filesystem encoding.
-    # Otherwise it will fail if any non-ASCII characters present (see #3854 #3217 #2918)
+    # Otherwise it will fail if any non-ASCII characters present (see #3854
+    # #3217 #2918)
 
     def compat_getenv(key, default=None):
         from .utils import get_filesystem_encoding
@@ -2778,7 +2804,9 @@ else:
     def compat_setenv(key, value, env=os.environ):
         def encode(v):
             from .utils import get_filesystem_encoding
-            return v.encode(get_filesystem_encoding()) if isinstance(v, compat_str) else v
+            return v.encode(
+                get_filesystem_encoding()) if isinstance(
+                v, compat_str) else v
         env[encode(key)] = encode(value)
 
     # HACK: The default implementations of os.path.expanduser from cpython do not decode
@@ -2895,7 +2923,7 @@ except TypeError:
     def compat_kwargs(kwargs):
         return dict((bytes(k), v) for k, v in kwargs.items())
 else:
-    compat_kwargs = lambda kwargs: kwargs
+    def compat_kwargs(kwargs): return kwargs
 
 
 try:
@@ -2947,7 +2975,7 @@ def workaround_optparse_bug9161():
         real_add_option = optparse.OptionGroup.add_option
 
         def _compat_add_option(self, *args, **kwargs):
-            enc = lambda v: (
+            def enc(v): return (
                 v.encode('ascii', 'replace') if isinstance(v, compat_str)
                 else v)
             bargs = [enc(a) for a in args]
@@ -2960,7 +2988,8 @@ def workaround_optparse_bug9161():
 if hasattr(shutil, 'get_terminal_size'):  # Python >= 3.3
     compat_get_terminal_size = shutil.get_terminal_size
 else:
-    _terminal_size = collections.namedtuple('terminal_size', ['columns', 'lines'])
+    _terminal_size = collections.namedtuple(
+        'terminal_size', ['columns', 'lines'])
 
     def compat_get_terminal_size(fallback=(80, 24)):
         from .utils import process_communicate_or_kill
@@ -3138,7 +3167,8 @@ except ImportError:
             return compat_collections_chain_map(*(self.maps[1:]))
 
 
-# Pythons disagree on the type of a pattern (RegexObject, _sre.SRE_Pattern, Pattern, ...?)
+# Pythons disagree on the type of a pattern (RegexObject,
+# _sre.SRE_Pattern, Pattern, ...?)
 compat_re_Pattern = type(re.compile(''))
 # and on the type of a match
 compat_re_Match = type(re.match('a', 'a'))
@@ -3174,7 +3204,8 @@ else:
 
 
 if sys.version_info < (3, 0):
-    # open(file, mode='r', buffering=- 1, encoding=None, errors=None, newline=None, closefd=True) not: opener=None
+    # open(file, mode='r', buffering=- 1, encoding=None, errors=None,
+    # newline=None, closefd=True) not: opener=None
     def compat_open(file_, *args, **kwargs):
         if len(args) > 6 or 'opener' in kwargs:
             raise ValueError('open: unsupported argument "opener"')
@@ -3198,7 +3229,8 @@ try:
 except AttributeError:
     # Py 2.6
     def compat_datetime_timedelta_total_seconds(td):
-        return (td.microseconds + (td.seconds + td.days * 24 * 3600) * 10**6) / 10**6
+        return (td.microseconds + (td.seconds +
+                td.days * 24 * 3600) * 10**6) / 10**6
 
 # optional decompression packages
 # PyPi brotli package implements 'br' Content-Encoding

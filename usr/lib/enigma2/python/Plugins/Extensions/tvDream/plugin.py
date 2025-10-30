@@ -22,7 +22,9 @@ from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.Label import Label
 from Components.MenuList import MenuList
-from Components.MultiContent import (MultiContentEntryPixmapAlphaTest, MultiContentEntryText)
+from Components.MultiContent import (
+    MultiContentEntryPixmapAlphaTest,
+    MultiContentEntryText)
 from Components.ServiceEventTracker import (ServiceEventTracker, InfoBarBase)
 from Components.config import config
 from Plugins.Plugin import PluginDescriptor
@@ -71,7 +73,7 @@ if sys.version_info >= (2, 7, 9):
     try:
         import ssl
         sslContext = ssl._create_unverified_context()
-    except:
+    except BaseException:
         sslContext = None
 
 
@@ -86,7 +88,7 @@ try:
     from twisted.internet import ssl
     from twisted.internet._sslverify import ClientTLSOptions
     sslverify = True
-except:
+except BaseException:
     sslverify = False
 if sslverify:
     class SNIFactory(ssl.ClientContextFactory):
@@ -115,7 +117,12 @@ if os.path.exists('/var/lib/dpkg/info'):
     skin_dream = os.path.join(skin_dream, 'dreamOs')
 
 
-Panel_Dlist = [('TVD Regions'), ('TVD State'), ('TVD Italia'), ('TVD Category'), ('TVD New')]
+Panel_Dlist = [
+    ('TVD Regions'),
+    ('TVD State'),
+    ('TVD Italia'),
+    ('TVD Category'),
+    ('TVD New')]
 
 
 class SetList(MenuList):
@@ -133,13 +140,45 @@ class SetList(MenuList):
 
 def DListEntry(name, idx=None):
     res = [name]
-    pngs = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('tvDream'))
+    pngs = resolveFilename(
+        SCOPE_PLUGINS,
+        "Extensions/{}/res/pics/setting.png".format('tvDream'))
     if Utils.isFHD():
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(
+            MultiContentEntryPixmapAlphaTest(
+                pos=(
+                    5, 5), size=(
+                    40, 40), png=loadPNG(pngs)))
+        res.append(
+            MultiContentEntryText(
+                pos=(
+                    70,
+                    0),
+                size=(
+                    1000,
+                    50),
+                font=0,
+                text=name,
+                color=0xa6d1fe,
+                flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(3, 3), size=(30, 30), png=loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos=(50, 0), size=(500, 30), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(
+            MultiContentEntryPixmapAlphaTest(
+                pos=(
+                    3, 3), size=(
+                    30, 30), png=loadPNG(pngs)))
+        res.append(
+            MultiContentEntryText(
+                pos=(
+                    50,
+                    0),
+                size=(
+                    500,
+                    30),
+                font=0,
+                text=name,
+                color=0xa6d1fe,
+                flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
 
 
@@ -241,7 +280,9 @@ class MainSetting(Screen):
     def check_vers(self):
         remote_version = '0.0'
         remote_changelog = ''
-        req = Utils.Request(Utils.b64decoder(installer_url), headers={'User-Agent': 'Mozilla/5.0'})
+        req = Utils.Request(
+            Utils.b64decoder(installer_url), headers={
+                'User-Agent': 'Mozilla/5.0'})
         page = Utils.urlopen(req).read()
         if PY3:
             data = page.decode("utf-8")
@@ -264,33 +305,67 @@ class MainSetting(Screen):
             self.Update = True
             # self['key_yellow'].show()
             # self['key_green'].show()
-            self.session.open(MessageBox, _('New version %s is available\n\nChangelog: %s\n\nPress info_long or yellow_long button to start force updating.') % (self.new_version, self.new_changelog), MessageBox.TYPE_INFO, timeout=5)
+            self.session.open(
+                MessageBox,
+                _('New version %s is available\n\nChangelog: %s\n\nPress info_long or yellow_long button to start force updating.') %
+                (self.new_version,
+                 self.new_changelog),
+                MessageBox.TYPE_INFO,
+                timeout=5)
         # self.update_me()
 
     def update_me(self):
         if self.Update is True:
-            self.session.openWithCallback(self.install_update, MessageBox, _("New version %s is available.\n\nChangelog: %s \n\nDo you want to install it now?") % (self.new_version, self.new_changelog), MessageBox.TYPE_YESNO)
+            self.session.openWithCallback(
+                self.install_update,
+                MessageBox,
+                _("New version %s is available.\n\nChangelog: %s \n\nDo you want to install it now?") %
+                (self.new_version,
+                 self.new_changelog),
+                MessageBox.TYPE_YESNO)
         else:
-            self.session.open(MessageBox, _("Congrats! You already have the latest version..."),  MessageBox.TYPE_INFO, timeout=4)
+            self.session.open(
+                MessageBox,
+                _("Congrats! You already have the latest version..."),
+                MessageBox.TYPE_INFO,
+                timeout=4)
 
     def update_dev(self):
         try:
-            req = Utils.Request(Utils.b64decoder(developer_url), headers={'User-Agent': 'Mozilla/5.0'})
+            req = Utils.Request(
+                Utils.b64decoder(developer_url), headers={
+                    'User-Agent': 'Mozilla/5.0'})
             page = Utils.urlopen(req).read()
             data = json.loads(page)
             remote_date = data['pushed_at']
-            strp_remote_date = datetime.strptime(remote_date, '%Y-%m-%dT%H:%M:%SZ')
+            strp_remote_date = datetime.strptime(
+                remote_date, '%Y-%m-%dT%H:%M:%SZ')
             remote_date = strp_remote_date.strftime('%Y-%m-%d')
-            self.session.openWithCallback(self.install_update, MessageBox, _("Do you want to install update ( %s ) now?") % (remote_date), MessageBox.TYPE_YESNO)
+            self.session.openWithCallback(
+                self.install_update,
+                MessageBox,
+                _("Do you want to install update ( %s ) now?") %
+                (remote_date),
+                MessageBox.TYPE_YESNO)
         except Exception as e:
             print('error xcons:', e)
 
     def install_update(self, answer=False):
         if answer:
-            cmd1 = 'wget -q "--no-check-certificate" ' + Utils.b64decoder(installer_url) + ' -O - | /bin/sh'
-            self.session.open(xConsole, 'Upgrading...', cmdlist=[cmd1], finishedCallback=self.myCallback, closeOnSuccess=False)
+            cmd1 = 'wget -q "--no-check-certificate" ' + \
+                Utils.b64decoder(installer_url) + ' -O - | /bin/sh'
+            self.session.open(
+                xConsole,
+                'Upgrading...',
+                cmdlist=[cmd1],
+                finishedCallback=self.myCallback,
+                closeOnSuccess=False)
         else:
-            self.session.open(MessageBox, _("Update Aborted!"),  MessageBox.TYPE_INFO, timeout=3)
+            self.session.open(
+                MessageBox,
+                _("Update Aborted!"),
+                MessageBox.TYPE_INFO,
+                timeout=3)
 
     def myCallback(self, result=None):
         print('result:', result)
@@ -394,13 +469,17 @@ class State(Screen):
                     print('url:  ', url)
                     self.urls.append(url)
                     self.names.append(html_conv.html_unescape(name))
-            except:
+            except BaseException:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
             showlist(self.names, self['text'])
         else:
-            self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout=5)
+            self.session.open(
+                MessageBox,
+                _("Sorry no found!"),
+                MessageBox.TYPE_INFO,
+                timeout=5)
 
     def okRun(self):
         i = len(self.names)
@@ -473,13 +552,17 @@ class tvRegioni(Screen):
                         continue
                     self.urls.append(url)
                     self.names.append(html_conv.html_unescape(name))
-            except:
+            except BaseException:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
             showlist(self.names, self['text'])
         else:
-            self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout=5)
+            self.session.open(
+                MessageBox,
+                _("Sorry no found!"),
+                MessageBox.TYPE_INFO,
+                timeout=5)
 
     def okRun(self):
         i = len(self.names)
@@ -544,13 +627,17 @@ class tvItalia(Screen):
                     print('url it:  ', url1)
                     self.urls.append(url1)
                     self.names.append(html_conv.html_unescape(name))
-            except:
+            except BaseException:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
             showlist(self.names, self['text'])
         else:
-            self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout=5)
+            self.session.open(
+                MessageBox,
+                _("Sorry no found!"),
+                MessageBox.TYPE_INFO,
+                timeout=5)
 
     def okRun(self):
         i = len(self.names)
@@ -620,7 +707,7 @@ class tvCanal(Screen):
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
             showlist(self.names, self['text'])
-        except:
+        except BaseException:
             self['info'].setText(_('Nothing ... Retry'))
 
     def okRun(self):
@@ -760,25 +847,39 @@ class tvCanal(Screen):
                         self.testinpl(name, url2)
                     elif content.find('player.twitch'):
 
-                        match = re.compile(regexcat, re.DOTALL).findall(content)
+                        match = re.compile(
+                            regexcat, re.DOTALL).findall(content)
                         print("get player.twitch =", regexcat)
                         url2 = match[0]
                         print("get url2 =", url2)
 
-                        url3 = url2.replace('https://player.twitch.tv/?channel=', '').replace('&parent=www.tvdream.net', '')
+                        url3 = url2.replace(
+                            'https://player.twitch.tv/?channel=',
+                            '').replace(
+                            '&parent=www.tvdream.net',
+                            '')
                         urlx = twxtv.replace('+', '')
-                        url = Utils.b64decoder(urlx) + 'https://www.twitch.tv/' + url3
+                        url = Utils.b64decoder(
+                            urlx) + 'https://www.twitch.tv/' + url3
                         self.session.open(Playstream2, name, url)
                     else:
                         self.testinpl(name, url)
                     return
                 return
-            except:
-                self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout=5)
+            except BaseException:
+                self.session.open(
+                    MessageBox,
+                    _("Sorry no found!"),
+                    MessageBox.TYPE_INFO,
+                    timeout=5)
                 self['info'].setText(_('Nothing ... Retry'))
             return
         else:
-            self.session.open(MessageBox, _("Sorry no found!!!"), MessageBox.TYPE_INFO, timeout=5)
+            self.session.open(
+                MessageBox,
+                _("Sorry no found!!!"),
+                MessageBox.TYPE_INFO,
+                timeout=5)
 
     def testinpl(self, name, url):
         try:
@@ -859,8 +960,12 @@ class tvCanal(Screen):
                 # self.session.open(Playstream2, name, url)
             return
 
-        except:
-            self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout=5)
+        except BaseException:
+            self.session.open(
+                MessageBox,
+                _("Sorry no found!"),
+                MessageBox.TYPE_INFO,
+                timeout=5)
             self['info'].setText(_('Nothing ... Retry'))
 
 
@@ -920,13 +1025,17 @@ class tvCategory(Screen):
                     print('url:  ', url)
                     self.urls.append(url)
                     self.names.append(html_conv.html_unescape(name))
-            except:
+            except BaseException:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
             showlist(self.names, self['text'])
         else:
-            self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout=5)
+            self.session.open(
+                MessageBox,
+                _("Sorry no found!"),
+                MessageBox.TYPE_INFO,
+                timeout=5)
 
     def okRun(self):
         i = len(self.names)
@@ -991,13 +1100,17 @@ class subCategory(Screen):
                     print('url it:  ', url1)
                     self.urls.append(url1)
                     self.names.append(html_conv.html_unescape(name))
-            except:
+            except BaseException:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
             showlist(self.names, self['text'])
         else:
-            self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout=5)
+            self.session.open(
+                MessageBox,
+                _("Sorry no found!"),
+                MessageBox.TYPE_INFO,
+                timeout=5)
 
     def okRun(self):
         i = len(self.names)
@@ -1066,13 +1179,17 @@ class tvNew(Screen):
                         continue
                     self.urls.append(url)
                     self.names.append(html_conv.html_unescape(name))
-            except:
+            except BaseException:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
             showlist(self.names, self['text'])
         else:
-            self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout=5)
+            self.session.open(
+                MessageBox,
+                _("Sorry no found!"),
+                MessageBox.TYPE_INFO,
+                timeout=5)
 
     def okRun(self):
         i = len(self.names)
@@ -1099,21 +1216,30 @@ class tvNew(Screen):
                     self.testinpl(name, url2)
 
                 elif content.find('player.twitch'):
-                    url3 = url2.replace('https://player.twitch.tv/?channel=', '').replace('&parent=www.tvdream.net', '')
+                    url3 = url2.replace(
+                        'https://player.twitch.tv/?channel=',
+                        '').replace(
+                        '&parent=www.tvdream.net',
+                        '')
                     urlx = twxtv.replace('+', '')
-                    url = Utils.b64decoder(urlx) + 'https://www.twitch.tv/' + url3
+                    url = Utils.b64decoder(
+                        urlx) + 'https://www.twitch.tv/' + url3
                     self.session.open(Playstream2, name, url)
                 else:
                     self.testinpl(name, url2)
                 # return
 
-            except:
+            except BaseException:
                 # self.testinpl(name,url2)
                 self['info'].setText(_('Nothing ... Retry'))
             return
 
         else:
-            self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout=5)
+            self.session.open(
+                MessageBox,
+                _("Sorry no found!"),
+                MessageBox.TYPE_INFO,
+                timeout=5)
 
     def testinpl(self, name, url2):
         try:
@@ -1195,8 +1321,12 @@ class tvNew(Screen):
 
             return
 
-        except:
-            self.session.open(MessageBox, _("Sorry no found!"), MessageBox.TYPE_INFO, timeout=5)
+        except BaseException:
+            self.session.open(
+                MessageBox,
+                _("Sorry no found!"),
+                MessageBox.TYPE_INFO,
+                timeout=5)
             self['info'].setText(_('Nothing ... Retry'))
 
 
@@ -1222,8 +1352,9 @@ class TvInfoBarShowHide():
         self.__locked = 0
         self.hideTimer = eTimer()
         try:
-            self.hideTimer_conn = self.hideTimer.timeout.connect(self.doTimerHide)
-        except:
+            self.hideTimer_conn = self.hideTimer.timeout.connect(
+                self.doTimerHide)
+        except BaseException:
             self.hideTimer.callback.append(self.doTimerHide)
         self.hideTimer.start(5000, True)
         self.onShow.append(self.__onShow)
@@ -1275,7 +1406,7 @@ class TvInfoBarShowHide():
     def lockShow(self):
         try:
             self.__locked += 1
-        except:
+        except BaseException:
             self.__locked = 0
         if self.execing:
             self.show()
@@ -1285,7 +1416,7 @@ class TvInfoBarShowHide():
     def unlockShow(self):
         try:
             self.__locked -= 1
-        except:
+        except BaseException:
             self.__locked = 0
         if self.__locked < 0:
             self.__locked = 0
@@ -1347,10 +1478,11 @@ class Playstream1(Screen):
                 print('In playVideo url B=', self.url)
                 try:
                     os.remove('/tmp/hls.avi')
-                except:
+                except BaseException:
                     pass
                 header = ''
-                cmd = 'python "/usr/lib/enigma2/python/Plugins/Extensions/tvDream/lib/hlsclient.py" "' + self.url + '" "1" "' + header + '" + &'
+                cmd = 'python "/usr/lib/enigma2/python/Plugins/Extensions/tvDream/lib/hlsclient.py" "' + \
+                    self.url + '" "1" "' + header + '" + &'
                 print('In playVideo cmd =', cmd)
                 os.system(cmd)
                 os.system('sleep 3')
@@ -1361,7 +1493,7 @@ class Playstream1(Screen):
                 url = self.url
                 try:
                     os.remove('/tmp/hls.avi')
-                except:
+                except BaseException:
                     pass
                 cmd = 'python "/usr/lib/enigma2/python/Plugins/Extensions/tvDream/lib/tsclient.py" "' + url + '" "1" + &'
                 print('ts cmd = ', cmd)
@@ -1402,7 +1534,7 @@ class Playstream1(Screen):
             self.session.nav.stopService()
             self.session.nav.playService(self.srefInit)
             self.close()
-        except:
+        except BaseException:
             pass
 
 
@@ -1437,7 +1569,7 @@ class Playstream2(InfoBarBase,
             x.__init__(self)
         try:
             self.init_aspect = int(self.getAspect())
-        except:
+        except BaseException:
             self.init_aspect = 0
         self.new_aspect = self.init_aspect
         self['actions'] = ActionMap(['MoviePlayerActions',
@@ -1498,7 +1630,7 @@ class Playstream2(InfoBarBase,
         config.av.aspectratio.setValue(map[aspect])
         try:
             AVSwitch().setAspectRatio(aspect)
-        except:
+        except BaseException:
             pass
 
     def av(self):
@@ -1516,7 +1648,10 @@ class Playstream2(InfoBarBase,
 
     def slinkPlay(self, url):
         name = self.name
-        ref = "{0}:{1}".format(url.replace(":", "%3a"), name.replace(":", "%3a"))
+        ref = "{0}:{1}".format(
+            url.replace(
+                ":", "%3a"), name.replace(
+                ":", "%3a"))
         print('final reference:   ', ref)
         sref = eServiceReference(ref)
         sref.setName(str(name))
@@ -1525,7 +1660,10 @@ class Playstream2(InfoBarBase,
 
     def openTest(self, servicetype, url):
         name = self.name
-        ref = "{0}:0:0:0:0:0:0:0:0:0:{1}:{2}".format(servicetype, url.replace(":", "%3a"), name.replace(":", "%3a"))
+        ref = "{0}:0:0:0:0:0:0:0:0:0:{1}:{2}".format(
+            servicetype, url.replace(
+                ":", "%3a"), name.replace(
+                ":", "%3a"))
         print('final reference:   ', ref)
         sref = eServiceReference(ref)
         sref.setName(str(name))
@@ -1573,7 +1711,7 @@ class Playstream2(InfoBarBase,
         if not self.new_aspect == self.init_aspect:
             try:
                 self.setAspect(self.init_aspect)
-            except:
+            except BaseException:
                 pass
         self.close()
 
@@ -1587,7 +1725,7 @@ def main(session, **kwargs):
     try:
         from . import Update
         Update.upd_done()
-    except:
+    except BaseException:
         import traceback
         traceback.print_exc()
     session.open(MainSetting)
@@ -1597,7 +1735,18 @@ def Plugins(**kwargs):
     ico_path = 'logo.png'
     if not os.path.exists('/var/lib/dpkg/status'):
         ico_path = plugin_path + '/res/pics/logo.png'
-    extensions_menu = PluginDescriptor(name=name_plugin, description=desc_plugin, where=PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=main, needsRestart=True)
-    result = [PluginDescriptor(name=name_plugin, description=desc_plugin, where=PluginDescriptor.WHERE_PLUGINMENU, icon=ico_path, fnc=main)]
+    extensions_menu = PluginDescriptor(
+        name=name_plugin,
+        description=desc_plugin,
+        where=PluginDescriptor.WHERE_EXTENSIONSMENU,
+        fnc=main,
+        needsRestart=True)
+    result = [
+        PluginDescriptor(
+            name=name_plugin,
+            description=desc_plugin,
+            where=PluginDescriptor.WHERE_PLUGINMENU,
+            icon=ico_path,
+            fnc=main)]
     result.append(extensions_menu)
     return result

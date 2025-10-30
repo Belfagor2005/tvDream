@@ -30,7 +30,8 @@ class DashSegmentsFD(FragmentFD):
         self._prepare_and_start_frag_download(ctx)
 
         fragment_retries = self.params.get('fragment_retries', 0)
-        skip_unavailable_fragments = self.params.get('skip_unavailable_fragments', True)
+        skip_unavailable_fragments = self.params.get(
+            'skip_unavailable_fragments', True)
 
         for frag_index, fragment in enumerate(fragments, 1):
             if frag_index <= ctx['fragment_index']:
@@ -45,7 +46,8 @@ class DashSegmentsFD(FragmentFD):
             success = False
             for count in itertools.count():
                 try:
-                    success, frag_content = self._download_fragment(ctx, fragment_url, info_dict)
+                    success, frag_content = self._download_fragment(
+                        ctx, fragment_url, info_dict)
                     if not success:
                         return False
                     self._append_fragment(ctx, frag_content)
@@ -57,7 +59,8 @@ class DashSegmentsFD(FragmentFD):
                     # To be future-proof we will retry all fragments that fail with any
                     # HTTP error.
                     if count < fragment_retries:
-                        self.report_retry_fragment(err, frag_index, count + 1, fragment_retries)
+                        self.report_retry_fragment(
+                            err, frag_index, count + 1, fragment_retries)
                         continue
                 except DownloadError:
                     # Don't retry fragment if error occurred during HTTP downloading
@@ -70,7 +73,9 @@ class DashSegmentsFD(FragmentFD):
                 if not fatal:
                     self.report_skip_fragment(frag_index)
                     continue
-                self.report_error('giving up after %s fragment retries' % count)
+                self.report_error(
+                    'giving up after %s fragment retries' %
+                    count)
                 return False
 
         self._finish_frag_download(ctx)

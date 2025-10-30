@@ -14,5 +14,3 @@ def upd_done():
     cmd00 = 'wget -q "--no-check-certificate" ' + installUrl + ' -O - | /bin/sh'
     popen(cmd00)
     return
-
-
