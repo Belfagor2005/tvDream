@@ -131,7 +131,7 @@ class SetList(MenuList):
             self.l.setFont(0, gFont('Regular', textfont))
 
 
-def DListEntry(name, idx):
+def DListEntry(name, idx=None):
     res = [name]
     pngs = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('tvDream'))
     if Utils.isFHD():
@@ -146,7 +146,7 @@ def DListEntry(name, idx):
 def showlist(datal, list):
     plist = []
     for name in datal:  # Iterazione più pythonica
-        plist.append(show_list_1(name))
+        plist.append(DListEntry(name))
     list.setList(plist)
 
 
