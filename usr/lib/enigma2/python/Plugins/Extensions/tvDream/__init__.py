@@ -19,17 +19,23 @@ def localeInit():
     if isDreamOS:  # check if opendreambox image
         lang = language.getLanguage()[:2]
         os.environ["LANGUAGE"] = lang
-    gettext.bindtextdomain(PluginLanguageDomain, resolveFilename(SCOPE_PLUGINS, PluginLanguagePath))
+    gettext.bindtextdomain(
+        PluginLanguageDomain,
+        resolveFilename(
+            SCOPE_PLUGINS,
+            PluginLanguagePath))
 
 
 if isDreamOS:  # check if DreamOS image
-    _ = lambda txt: gettext.dgettext(PluginLanguageDomain, txt) if txt else ""
+    def _(txt): return gettext.dgettext(
+        PluginLanguageDomain, txt) if txt else ""
 else:
     def _(txt):
         if gettext.dgettext(PluginLanguageDomain, txt):
             return gettext.dgettext(PluginLanguageDomain, txt)
         else:
-            print(("[%s] fallback to default translation for %s" % (PluginLanguageDomain, txt)))
+            print(("[%s] fallback to default translation for %s" %
+                  (PluginLanguageDomain, txt)))
             return gettext.gettext(txt)
 localeInit()
 language.addCallback(localeInit)
