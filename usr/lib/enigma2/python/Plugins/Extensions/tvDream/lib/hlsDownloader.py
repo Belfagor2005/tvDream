@@ -45,7 +45,7 @@ gauth = None
 try:
     from Crypto.Cipher import AES
     USEDec = 1  # 1==crypto 2==local, local pycrypto
-except:
+except BaseException:
     print('pycrypt not available using slow decryption')
     USEDec = 3  # 1==crypto 2==local, local pycrypto
 
@@ -80,7 +80,15 @@ class HLSDownloader():
     def __init__(self):
         self.init_done = False
 
-    def init(self, out_stream, url, proxy=None, use_proxy_for_chunks=True, g_stopEvent=None, maxbitrate=0, auth=''):
+    def init(
+            self,
+            out_stream,
+            url,
+            proxy=None,
+            use_proxy_for_chunks=True,
+            g_stopEvent=None,
+            maxbitrate=0,
+            auth=''):
         try:
             self.init_done = False
             self.init_url = url
@@ -107,11 +115,14 @@ class HLSDownloader():
                     clientHeader = urllib.parse.parse_qsl(clientHeader)
                 else:
                     clientHeader = urlparse.parse_qsl(clientHeader)
-                print('header recieved now url and headers are', url, clientHeader)
+                print(
+                    'header recieved now url and headers are',
+                    url,
+                    clientHeader)
             self.status = 'init done'
             self.url = url
             return self.preDownoload()
-        except:
+        except BaseException:
             traceback.print_exc()
             self.status = 'finished'
         return False
@@ -120,11 +131,19 @@ class HLSDownloader():
         print('code here')
         return True
 
-    def keep_sending_video(self, dest_stream, segmentToStart=None, totalSegmentToSend=0):
+    def keep_sending_video(
+            self,
+            dest_stream,
+            segmentToStart=None,
+            totalSegmentToSend=0):
         try:
             self.status = 'download Starting'
-            downloadInternal(self.url, dest_stream, self.maxbitrate, self.g_stopEvent)
-        except:
+            downloadInternal(
+                self.url,
+                dest_stream,
+                self.maxbitrate,
+                self.g_stopEvent)
+        except BaseException:
             traceback.print_exc()
         self.status = 'finished'
 
@@ -135,7 +154,8 @@ def getUrl(url, timeout=15, returnres=False, stream=False):
         # Fixed: create session object instead of using undefined variable
         session_obj = requests.Session()
         session_obj.cookies = cookieJar
-        headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:42.0) Gecko/20100101 Firefox/42.0 Iceweasel/42.0'}
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (X11; Linux i686; rv:42.0) Gecko/20100101 Firefox/42.0 Iceweasel/42.0'}
         if clientHeader:
             for n, v in clientHeader:
                 headers[n] = v
@@ -143,16 +163,29 @@ def getUrl(url, timeout=15, returnres=False, stream=False):
         if gproxy:
             proxies = {"http": "http://" + gproxy}
         if post:
-            req = session_obj.post(url, headers=headers, data=post, proxies=proxies, verify=False, timeout=timeout, stream=stream)
+            req = session_obj.post(
+                url,
+                headers=headers,
+                data=post,
+                proxies=proxies,
+                verify=False,
+                timeout=timeout,
+                stream=stream)
         else:
-            req = session_obj.get(url, headers=headers, proxies=proxies, verify=False, timeout=timeout, stream=stream)
+            req = session_obj.get(
+                url,
+                headers=headers,
+                proxies=proxies,
+                verify=False,
+                timeout=timeout,
+                stream=stream)
 
         req.raise_for_status()
         if returnres:
             return req
         else:
             return req.text
-    except:
+    except BaseException:
         print('Error in getUrl')
         traceback.print_exc()
         return None
@@ -257,11 +290,13 @@ def handle_basic_m3u(url):
             if tag == '#EXTINF':
                 duration = float(attribs[0])
             elif tag == '#EXT-X-TARGETDURATION':
-                assert len(attribs) == 1, "too many attribs in EXT-X-TARGETDURATION"
+                assert len(
+                    attribs) == 1, "too many attribs in EXT-X-TARGETDURATION"
                 targetduration = int(attribs[0])
                 pass
             elif tag == '#EXT-X-MEDIA-SEQUENCE':
-                assert len(attribs) == 1, "too many attribs in EXT-X-MEDIA-SEQUENCE"
+                assert len(
+                    attribs) == 1, "too many attribs in EXT-X-MEDIA-SEQUENCE"
                 seq = int(attribs[0])
             elif tag == '#EXT-X-KEY':
                 attribs = parse_kv(attribs, ('METHOD', 'URI', 'IV'))
@@ -283,15 +318,18 @@ def handle_basic_m3u(url):
                             else:
                                 codeurl = urlparse.urljoin(url, codeurl)
 
-                        assert len(key) == 16, 'EXT-X-KEY: downloaded key file has bad length'
+                        assert len(
+                            key) == 16, 'EXT-X-KEY: downloaded key file has bad length'
                         if 'IV' in attribs:
-                            assert attribs['IV'].lower().startswith('0x'), 'EXT-X-KEY: IV attribute has bad format'
+                            assert attribs['IV'].lower().startswith(
+                                '0x'), 'EXT-X-KEY: IV attribute has bad format'
                             iv_hex = attribs['IV'][2:].zfill(32)
                             if PY3:
                                 iv = bytes.fromhex(iv_hex)
                             else:
                                 iv = iv_hex.decode('hex')
-                            assert len(iv) == 16, 'EXT-X-KEY: IV attribute has bad length'
+                            assert len(
+                                iv) == 16, 'EXT-X-KEY: IV attribute has bad length'
                         else:
                             if PY3:
                                 iv = b'\0' * 8 + struct.pack('>Q', seq)
@@ -300,7 +338,8 @@ def handle_basic_m3u(url):
                 else:
                     assert False, 'EXT-X-KEY: METHOD=%s unknown' % attribs['METHOD']
             elif tag == '#EXT-X-PROGRAM-DATE-TIME':
-                assert len(attribs) == 1, "too many attribs in EXT-X-PROGRAM-DATE-TIME"
+                assert len(
+                    attribs) == 1, "too many attribs in EXT-X-PROGRAM-DATE-TIME"
                 pass
             elif tag == '#EXT-X-ALLOW-CACHE':
                 pass
@@ -309,14 +348,17 @@ def handle_basic_m3u(url):
                 yield None
                 return
             elif tag == '#EXT-X-STREAM-INF':
-                raise ValueError("don't know how to handle EXT-X-STREAM-INF in basic playlist")
+                raise ValueError(
+                    "don't know how to handle EXT-X-STREAM-INF in basic playlist")
             elif tag == '#EXT-X-DISCONTINUITY':
                 assert not attribs
                 print("[warn] discontinuity in stream")
             elif tag == '#EXT-X-VERSION':
                 assert len(attribs) == 1
                 if int(attribs[0]) > SUPPORTED_VERSION:
-                    print("[warn] file version %s exceeds supported version %d; some things might be broken" % (attribs[0], SUPPORTED_VERSION))
+                    print(
+                        "[warn] file version %s exceeds supported version %d; some things might be broken" %
+                        (attribs[0], SUPPORTED_VERSION))
         else:
             yield (seq, enc, duration, targetduration, line)
             seq += 1
@@ -343,7 +385,7 @@ def downloadInternal(url, file, maxbitrate=0, stopEvent=None):
             redirurl = res.url
         res.close()
 
-    except:
+    except BaseException:
         traceback.print_exc()
     print('redirurl', redirurl)
     for line in gen_m3u(url):
@@ -375,7 +417,8 @@ def downloadInternal(url, file, maxbitrate=0, stopEvent=None):
                 value = value.strip().strip('"')
                 if attr_key == 'BANDWIDTH':
                     print('bitrate %.2f kbps' % (int(value) / 1024.0))
-                    if int(value) <= int(maxbitrate) and int(value) > lastbitrate:
+                    if int(value) <= int(maxbitrate) and int(
+                            value) > lastbitrate:
                         choice = i
                         lastbitrate = int(value)
                 elif attr_key == 'PROGRAM-ID':
@@ -402,8 +445,9 @@ def downloadInternal(url, file, maxbitrate=0, stopEvent=None):
     if ':7777' in url:
         try:
             # Fixed: escape sequence in regex
-            glsession = re.compile(r':7777/.*?m3u8.*?session=(.*?)&').findall(url)[0]
-        except:
+            glsession = re.compile(
+                r':7777/.*?m3u8.*?session=(.*?)&').findall(url)[0]
+        except BaseException:
             pass
     try:
         while True:
@@ -439,9 +483,11 @@ def downloadInternal(url, file, maxbitrate=0, stopEvent=None):
                             enc = python_aes.new(keyb, 2, ivb)
 
                     if glsession:
-                        media_url = media_url.replace(glsession, glsession[:-10] + ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10)))
+                        media_url = media_url.replace(glsession, glsession[:-10] + ''.join(
+                            random.choice(string.ascii_uppercase + string.digits) for _ in range(10)))
                     try:
-                        for chunk in download_chunks(urlparse.urljoin(url, media_url), enc=encobj):
+                        for chunk in download_chunks(
+                                urlparse.urljoin(url, media_url), enc=encobj):
                             if stopEvent and stopEvent.isSet():
                                 return
 
@@ -459,11 +505,11 @@ def downloadInternal(url, file, maxbitrate=0, stopEvent=None):
 
                         last_seq = seq
                         playedSomething = True
-                    except:
+                    except BaseException:
                         pass
 
             if not playedSomething:
                 xbmc.sleep(2000 + (3000 if addsomewait else 0))
-    except:
+    except BaseException:
         control[0] = 'stop'
         raise
