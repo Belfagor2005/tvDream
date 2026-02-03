@@ -6,7 +6,7 @@ from Tools.Directories import resolveFilename, SCOPE_PLUGINS
 import gettext
 import os
 
-PluginLanguageDomain = 'tvdream'
+PluginLanguageDomain = 'tvDream'
 PluginLanguagePath = 'Extensions/tvDream/res/locale'
 
 
