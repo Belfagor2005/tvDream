@@ -8,7 +8,7 @@ import os
 
 PluginLanguageDomain = 'tvDream'
 PluginLanguagePath = 'Extensions/tvDream/res/locale'
-
+__version__ = "1.3"
 
 isDreamOS = False
 if os.path.exists("/var/lib/dpkg/status"):

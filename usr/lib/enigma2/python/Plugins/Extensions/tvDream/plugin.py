@@ -52,7 +52,7 @@ import ssl
 import sys
 import json
 
-from . import _
+from . import _, __version__
 from . import Utils
 from . import html_conv
 from .Console import Console as xConsole
@@ -101,9 +101,8 @@ if sslverify:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
 
-currversion = '1.3'
 plugin_path = '/usr/lib/enigma2/python/Plugins/Extensions/tvDream'
-desc_plugin = '..:: TiVu Dream Player by Lululla %s ::.. ' % currversion
+desc_plugin = '..:: TiVu Dream Player by Lululla %s ::.. ' % __version__
 name_plugin = 'TiVuDream Player'
 twxtv = 'aHR0cH+M6Ly9+wYXRidXdlY+i5oZXJva3V+hcHAuY29tL2Fw+aS9wbGF5+P3VybD0='
 
@@ -300,8 +299,8 @@ class MainSetting(Screen):
                     break
         self.new_version = remote_version
         self.new_changelog = remote_changelog
-        # if currversion < remote_version:
-        if float(currversion) < float(remote_version):
+        # if __version__ < remote_version:
+        if float(__version__) < float(remote_version):
             self.Update = True
             # self['key_yellow'].show()
             # self['key_green'].show()
