@@ -67,7 +67,6 @@ class MyHandler(BaseHTTPRequestHandler):
         s.answer_request(True)
 
     def answer_request(self, sendData):
-        global g_stopEvent
         global g_downloader
 
         try:
@@ -349,8 +348,6 @@ PORT_NUMBER = 55333
 class f4mProxy():
 
     def start(self, stopEvent, port=PORT_NUMBER):
-        global PORT_NUMBER
-        global HOST_NAME
         global g_stopEvent
         print('port', port, 'HOST_NAME', HOST_NAME)
         g_stopEvent = stopEvent
@@ -366,8 +363,6 @@ class f4mProxy():
         print("XBMCLocalProxy Stops %s:%s" % (HOST_NAME, port))
 
     def prepare_url(self, url, proxy=None, use_proxy_for_chunks=True, port=PORT_NUMBER, maxbitrate=0, simpleDownloader=False, auth=None, streamtype='HDS', swf=None, callbackpath="", callbackparam=""):
-        global PORT_NUMBER
-        global PORT_NUMBER
         newurl = urlencode({'url': url, 'proxy': proxy, 'use_proxy_for_chunks': use_proxy_for_chunks, 'maxbitrate': maxbitrate, 'simpledownloader': simpleDownloader, 'auth': auth, 'streamtype': streamtype, 'swf': swf, 'callbackpath': callbackpath, 'callbackparam': callbackparam})
         link = 'http://' + HOST_NAME + (':%s/' % str(port)) + newurl
         return (link)  # make a url that caller then call load into player
