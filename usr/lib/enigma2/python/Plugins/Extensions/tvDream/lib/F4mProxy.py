@@ -458,8 +458,6 @@ class f4mProxy():
             swf=None,
             callbackpath="",
             callbackparam=""):
-        global PORT_NUMBER
-        global PORT_NUMBER
         newurl = urlencode({'url': url,
                             'proxy': proxy,
                             'use_proxy_for_chunks': use_proxy_for_chunks,
