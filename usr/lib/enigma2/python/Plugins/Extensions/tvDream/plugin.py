@@ -1,16 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from __future__ import print_function
-'''
-****************************************
-*        coded by Lululla & PCD        *
-*             skin by MMark            *
-*             13/11/2025               *
-*       Skin by MMark                  *
-****************************************
-#--------------------#
-#Info http://t.me/tivustream
-'''
 
 from Components.AVSwitch import AVSwitch
 from Components.ActionMap import ActionMap
@@ -48,7 +38,6 @@ import codecs
 import os
 import re
 import six
-import ssl
 import sys
 import json
 
@@ -56,6 +45,18 @@ from . import _, __version__
 from . import Utils
 from . import html_conv
 from .Console import Console as xConsole
+
+'''
+****************************************
+*        coded by Lululla & PCD        *
+*             skin by MMark            *
+*             13/11/2025               *
+*       Skin by MMark                  *
+****************************************
+#--------------------#
+#Info http://t.me/tivustream
+'''
+
 
 global regioni, skin_dream
 regioni = False

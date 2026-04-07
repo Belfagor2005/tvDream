@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os
 import sys
 PY3 = sys.version_info.major >= 3
 print("Update.py")
