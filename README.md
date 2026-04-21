@@ -8,7 +8,7 @@
 [![Python package](https://github.com/Belfagor2005/tvDream/actions/workflows/pylint.yml/badge.svg)](https://github.com/Belfagor2005/tvDream/actions/workflows/pylint.yml)
 [![Ruff Status](https://github.com/Belfagor2005/tvDream/actions/workflows/ruff.yml/badge.svg)](https://github.com/Belfagor2005/tvDream/actions/workflows/ruff.yml)
 [![GitHub stars](https://img.shields.io/github/stars/Belfagor2005/tvDream?style=social)](https://github.com/Belfagor2005/tvDream/stargazers)
-[![Donate](https://img.shields.io/badge/_-Donate-red.svg?logo=githubsponsors&labelColor=555555&style=for-the-badge)](Maintainers.md#maintainers "Donate")
+[![Donate](https://img.shields.io/badge/_-Donate-red.svg?logo=githubsponsors&labelColor=555555&style=for-the-badge)](https://ko-fi.com/lululla)
 
 <p align="center">
   <img src="https://github.com/Belfagor2005/tvDream/blob/main/usr/lib/enigma2/python/Plugins/Extensions/tvDream/logo.png" height="120">
