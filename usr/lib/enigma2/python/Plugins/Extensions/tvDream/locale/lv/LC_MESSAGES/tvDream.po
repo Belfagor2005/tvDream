@@ -1,0 +1,63 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:22+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Latvian <translation-team-lv@lists.sourceforge.net>\n"
+"Language: lv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);\n"
+
+msgid "Back"
+msgstr "Atpakaļ"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "Apsveicam! Jums jau ir jaunākā versija..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "Vai vēlaties instalēt atjauninājumu ( %s ) tūlīt?"
+
+msgid "Exit"
+msgstr "Iziet"
+
+msgid "Getting the list, please wait ..."
+msgstr "Notiek saraksta iegūšana, lūdzu, uzgaidiet..."
+
+msgid "Nothing ... Retry"
+msgstr "Nekas... Mēģiniet vēlreiz"
+
+msgid "Play"
+msgstr "Spēlēt"
+
+msgid "Please select ..."
+msgstr "Lūdzu, atlasiet..."
+
+msgid "Select"
+msgstr "Izvēlieties"
+
+msgid "Sorry no found!"
+msgstr "Atvainojiet, nav atrasts!"
+
+msgid "Sorry no found!!!"
+msgstr "Diemžēl nav atrasts!!!"
+
+msgid "TVD Regions"
+msgstr "TVD reģioni"
+
+msgid "TVD State"
+msgstr "TVD valsts"
+
+msgid "Update"
+msgstr "Atjaunināt"
+
+msgid "Update Aborted!"
+msgstr "Atjaunināšana pārtraukta!"

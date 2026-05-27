@@ -1,0 +1,63 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:25+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
+"Language: sk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+
+msgid "Back"
+msgstr "Späť"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "gratulujem! Už máte najnovšiu verziu..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "Chcete nainštalovať aktualizáciu ( %s) teraz?"
+
+msgid "Exit"
+msgstr "VÝCHOD"
+
+msgid "Getting the list, please wait ..."
+msgstr "Načítava sa zoznam, čakajte prosím..."
+
+msgid "Nothing ... Retry"
+msgstr "Nič... Skúste to znova"
+
+msgid "Play"
+msgstr "Hrať"
+
+msgid "Please select ..."
+msgstr "Vyberte prosím..."
+
+msgid "Select"
+msgstr "Vyberte"
+
+msgid "Sorry no found!"
+msgstr "Ľutujeme, nenašlo sa!"
+
+msgid "Sorry no found!!!"
+msgstr "Ľutujeme, nenašlo sa!!!"
+
+msgid "TVD Regions"
+msgstr "TVD regióny"
+
+msgid "TVD State"
+msgstr "štát TVD"
+
+msgid "Update"
+msgstr "Aktualizovať"
+
+msgid "Update Aborted!"
+msgstr "Aktualizácia prerušená!"

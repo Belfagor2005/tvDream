@@ -1,0 +1,62 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:24+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Occitan\n"
+"Language: oc\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Back"
+msgstr "Arrièr"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "Felicitacions! Avètz ja la darrièra version..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "Volètz installar la mesa a jorn ( %s ) ara ?"
+
+msgid "Exit"
+msgstr "Sortida"
+
+msgid "Getting the list, please wait ..."
+msgstr "En obtenent la lista, esperatz ..."
+
+msgid "Nothing ... Retry"
+msgstr "Res ... Tornatz ensajar"
+
+msgid "Play"
+msgstr "Jogar"
+
+msgid "Please select ..."
+msgstr "Seleccionatz ..."
+
+msgid "Select"
+msgstr "Causir"
+
+msgid "Sorry no found!"
+msgstr "O planhèm pas trobat!"
+
+msgid "Sorry no found!!!"
+msgstr "O planhèm pas trobat!!!"
+
+msgid "TVD Regions"
+msgstr "Regions TVD"
+
+msgid "TVD State"
+msgstr "Estat TVD"
+
+msgid "Update"
+msgstr "Metre al jorn"
+
+msgid "Update Aborted!"
+msgstr "Mesa a jorn avortada!"

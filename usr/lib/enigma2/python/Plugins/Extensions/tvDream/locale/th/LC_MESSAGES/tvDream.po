@@ -1,0 +1,62 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:26+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Thai <(nothing)>\n"
+"Language: th\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Back"
+msgstr "กลับ"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "ยินดีด้วย! คุณมีเวอร์ชันล่าสุดแล้ว..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "คุณต้องการติดตั้งการอัปเดต ( %s ) ตอนนี้หรือไม่?"
+
+msgid "Exit"
+msgstr "ออก"
+
+msgid "Getting the list, please wait ..."
+msgstr "กำลังรับรายชื่อ กรุณารอสักครู่..."
+
+msgid "Nothing ... Retry"
+msgstr "ไม่มีอะไร ... ลองอีกครั้ง"
+
+msgid "Play"
+msgstr "เล่น"
+
+msgid "Please select ..."
+msgstr "กรุณาเลือก..."
+
+msgid "Select"
+msgstr "เลือก"
+
+msgid "Sorry no found!"
+msgstr "ขออภัย ไม่พบ!"
+
+msgid "Sorry no found!!!"
+msgstr "ขออภัย ไม่พบ!!!"
+
+msgid "TVD Regions"
+msgstr "ภูมิภาค TVD"
+
+msgid "TVD State"
+msgstr "รัฐทีวีดี"
+
+msgid "Update"
+msgstr "อัปเดต"
+
+msgid "Update Aborted!"
+msgstr "การอัปเดตถูกยกเลิก!"

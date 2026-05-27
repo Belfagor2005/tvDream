@@ -1,0 +1,63 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:18+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Greek <team@lists.gnome.gr>\n"
+"Language: el\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Back"
+msgstr "Πίσω"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "Συγχαρητήρια! Έχετε ήδη την πιο πρόσφατη έκδοση..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "Θέλετε να εγκαταστήσετε την ενημέρωση ( %s ) τώρα;"
+
+msgid "Exit"
+msgstr "Εξοδος"
+
+msgid "Getting the list, please wait ..."
+msgstr "Λήψη της λίστας, περιμένετε..."
+
+msgid "Nothing ... Retry"
+msgstr "Τίποτα... Επανάληψη"
+
+msgid "Play"
+msgstr "Παιχνίδι"
+
+msgid "Please select ..."
+msgstr "Επιλέξτε..."
+
+msgid "Select"
+msgstr "Επιλέγω"
+
+msgid "Sorry no found!"
+msgstr "Συγγνώμη δεν βρέθηκε!"
+
+msgid "Sorry no found!!!"
+msgstr "Συγγνώμη δεν βρέθηκε!!!"
+
+msgid "TVD Regions"
+msgstr "Περιφέρειες TVD"
+
+msgid "TVD State"
+msgstr "Πολιτεία TVD"
+
+msgid "Update"
+msgstr "Εκσυγχρονίζω"
+
+msgid "Update Aborted!"
+msgstr "Η ενημέρωση ματαιώθηκε!"

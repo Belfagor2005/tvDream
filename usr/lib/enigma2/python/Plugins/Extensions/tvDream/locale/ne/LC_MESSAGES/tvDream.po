@@ -1,0 +1,62 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:23+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Nepali <translation-team-ne@lists.sourceforge.net>\n"
+"Language: ne\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Back"
+msgstr "पछाडि"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "बधाई छ! तपाईंसँग पहिले नै नवीनतम संस्करण छ..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "के तपाई अहिले अपडेट (%s) स्थापना गर्न चाहनुहुन्छ?"
+
+msgid "Exit"
+msgstr "बाहिर निस्कनुहोस्"
+
+msgid "Getting the list, please wait ..."
+msgstr "सूची प्राप्त गर्दै, कृपया प्रतीक्षा गर्नुहोस् ..."
+
+msgid "Nothing ... Retry"
+msgstr "केहि छैन ... पुन: प्रयास गर्नुहोस्"
+
+msgid "Play"
+msgstr "खेल्नुहोस्"
+
+msgid "Please select ..."
+msgstr "कृपया चयन गर्नुहोस्..."
+
+msgid "Select"
+msgstr "चयन गर्नुहोस्"
+
+msgid "Sorry no found!"
+msgstr "माफ गर्नुहोस्, फेला परेन!"
+
+msgid "Sorry no found!!!"
+msgstr "भेटिएन माफ गर्नुहोस् !!!"
+
+msgid "TVD Regions"
+msgstr "TVD क्षेत्रहरू"
+
+msgid "TVD State"
+msgstr "TVD राज्य"
+
+msgid "Update"
+msgstr "अपडेट गर्नुहोस्"
+
+msgid "Update Aborted!"
+msgstr "अपडेट रद्द गरियो!"

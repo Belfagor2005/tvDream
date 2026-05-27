@@ -1,0 +1,62 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:27+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Uighur\n"
+"Language: ug\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Back"
+msgstr "قايتىش"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "مۇبارەك بولسۇن! سىزدە ئەڭ يېڭى نەشرى بار ..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "ھازىر يېڭىلاش (% s) نى قاچىلىماقچىمۇ؟"
+
+msgid "Exit"
+msgstr "چىقىش"
+
+msgid "Getting the list, please wait ..."
+msgstr "تىزىملىككە ئېرىشىش ، ساقلاپ تۇرۇڭ ..."
+
+msgid "Nothing ... Retry"
+msgstr "ھېچنېمە ... قايتا سىناڭ"
+
+msgid "Play"
+msgstr "ئويناش"
+
+msgid "Please select ..."
+msgstr "تاللاڭ ..."
+
+msgid "Select"
+msgstr "تاللاڭ"
+
+msgid "Sorry no found!"
+msgstr "كەچۈرۈڭ ، تېپىلمىدى!"
+
+msgid "Sorry no found!!!"
+msgstr "كەچۈرۈڭ ، تېپىلمىدى !!!"
+
+msgid "TVD Regions"
+msgstr "TVD رايونلىرى"
+
+msgid "TVD State"
+msgstr ""
+
+msgid "Update"
+msgstr "يېڭىلاش"
+
+msgid "Update Aborted!"
+msgstr "يېڭىلانغان ئەمەلدىن قالدۇرۇلدى!"

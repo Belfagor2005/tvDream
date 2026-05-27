@@ -1,0 +1,62 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:26+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Tajik <rkovacs@khujand.org>\n"
+"Language: tg\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Back"
+msgstr "Бозгашт"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "Табрик! Шумо аллакай версияи охиринро доред..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "Оё шумо мехоҳед навсозиро ( %s ) ҳозир насб кунед?"
+
+msgid "Exit"
+msgstr "Баромадгоҳ"
+
+msgid "Getting the list, please wait ..."
+msgstr "Рӯйхат гирифта мешавад, лутфан интизор шавед ..."
+
+msgid "Nothing ... Retry"
+msgstr "Ҳеҷ чиз ... Боз кӯшиш кунед"
+
+msgid "Play"
+msgstr "Бозӣ"
+
+msgid "Please select ..."
+msgstr "Лутфан интихоб кунед ..."
+
+msgid "Select"
+msgstr "Интихоб кунед"
+
+msgid "Sorry no found!"
+msgstr "Бубахшед, ёфт нашуд!"
+
+msgid "Sorry no found!!!"
+msgstr "Бубахшед ёфт нашуд!!!"
+
+msgid "TVD Regions"
+msgstr "Минтақаҳои TVD"
+
+msgid "TVD State"
+msgstr "Давлат ТВД"
+
+msgid "Update"
+msgstr "Навсозӣ"
+
+msgid "Update Aborted!"
+msgstr "Навсозӣ қатъ карда шуд!"

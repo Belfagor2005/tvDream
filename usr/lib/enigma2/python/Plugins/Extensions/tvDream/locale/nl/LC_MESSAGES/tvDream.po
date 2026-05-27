@@ -1,0 +1,63 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:23+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Dutch <vertaling@vrijschrift.org>\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Back"
+msgstr "Rug"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "Gefeliciteerd! Je beschikt al over de nieuwste versie..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "Wilt u update ( %s ) nu installeren?"
+
+msgid "Exit"
+msgstr "Uitgang"
+
+msgid "Getting the list, please wait ..."
+msgstr "De lijst wordt opgehaald. Even geduld a.u.b...."
+
+msgid "Nothing ... Retry"
+msgstr "Niets... Probeer het opnieuw"
+
+msgid "Play"
+msgstr "Toneelstuk"
+
+msgid "Please select ..."
+msgstr "Selecteer a.u.b...."
+
+msgid "Select"
+msgstr "Selecteer"
+
+msgid "Sorry no found!"
+msgstr "Helaas niet gevonden!"
+
+msgid "Sorry no found!!!"
+msgstr "Helaas niet gevonden!!!"
+
+msgid "TVD Regions"
+msgstr "TVD-regio's"
+
+msgid "TVD State"
+msgstr "TVD-staat"
+
+msgid "Update"
+msgstr ""
+
+msgid "Update Aborted!"
+msgstr "Update afgebroken!"

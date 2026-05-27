@@ -1,0 +1,62 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:20+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Hindi <fedora-trans-hi@redhat.com>\n"
+"Language: hi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Back"
+msgstr "पीछे"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "बधाई! आपके पास पहले से ही नवीनतम संस्करण है..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "क्या आप अभी अपडेट ( %s ) इंस्टॉल करना चाहते हैं?"
+
+msgid "Exit"
+msgstr "बाहर निकलना"
+
+msgid "Getting the list, please wait ..."
+msgstr "सूची मिल रही है, कृपया प्रतीक्षा करें..."
+
+msgid "Nothing ... Retry"
+msgstr "कुछ नहीं... पुनः प्रयास करें"
+
+msgid "Play"
+msgstr "खेल"
+
+msgid "Please select ..."
+msgstr "कृपया चयन कीजिए ..."
+
+msgid "Select"
+msgstr "चुनना"
+
+msgid "Sorry no found!"
+msgstr "क्षमा करें, कोई नहीं मिला!"
+
+msgid "Sorry no found!!!"
+msgstr "क्षमा करें, कोई नहीं मिला!!!"
+
+msgid "TVD Regions"
+msgstr "टीवीडी क्षेत्र"
+
+msgid "TVD State"
+msgstr "टीवीडी राज्य"
+
+msgid "Update"
+msgstr "अद्यतन"
+
+msgid "Update Aborted!"
+msgstr "अद्यतन निरस्त किया गया!"

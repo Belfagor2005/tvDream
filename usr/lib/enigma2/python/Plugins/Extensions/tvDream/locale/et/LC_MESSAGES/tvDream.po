@@ -1,0 +1,63 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:18+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Estonian <linux-ee@lists.eenet.ee>\n"
+"Language: et\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Back"
+msgstr "Tagasi"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "Õnnitlused! Teil on juba uusim versioon..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "Kas soovite värskenduse ( %s ) kohe installida?"
+
+msgid "Exit"
+msgstr "Välju"
+
+msgid "Getting the list, please wait ..."
+msgstr "Loendi hankimine, palun oodake..."
+
+msgid "Nothing ... Retry"
+msgstr "Mitte midagi... Proovi uuesti"
+
+msgid "Play"
+msgstr "Mängi"
+
+msgid "Please select ..."
+msgstr "Palun valige..."
+
+msgid "Select"
+msgstr "Valige"
+
+msgid "Sorry no found!"
+msgstr "Kahjuks ei leitud!"
+
+msgid "Sorry no found!!!"
+msgstr "Kahjuks ei leitud!!!"
+
+msgid "TVD Regions"
+msgstr "TVD piirkonnad"
+
+msgid "TVD State"
+msgstr "TVD osariik"
+
+msgid "Update"
+msgstr "Värskenda"
+
+msgid "Update Aborted!"
+msgstr "Värskendus katkestatud!"

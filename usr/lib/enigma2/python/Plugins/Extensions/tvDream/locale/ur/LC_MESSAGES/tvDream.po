@@ -1,0 +1,62 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:27+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Urdu <jessbody@gmail.com>\n"
+"Language: ur\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Back"
+msgstr "پیچھے"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "مبارک ہو! آپ کے پاس پہلے سے ہی تازہ ترین ورژن ہے..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "کیا آپ ابھی اپ ڈیٹ (%s) انسٹال کرنا چاہتے ہیں؟"
+
+msgid "Exit"
+msgstr "باہر نکلیں۔"
+
+msgid "Getting the list, please wait ..."
+msgstr "فہرست حاصل ہو رہی ہے، براہ کرم انتظار کریں..."
+
+msgid "Nothing ... Retry"
+msgstr "کچھ نہیں... دوبارہ کوشش کریں۔"
+
+msgid "Play"
+msgstr "کھیلیں"
+
+msgid "Please select ..."
+msgstr "براہ کرم منتخب کریں..."
+
+msgid "Select"
+msgstr "منتخب کریں۔"
+
+msgid "Sorry no found!"
+msgstr "معذرت کوئی نہیں ملا!"
+
+msgid "Sorry no found!!!"
+msgstr "معذرت کوئی نہیں ملا !!!"
+
+msgid "TVD Regions"
+msgstr "TVD ریجنز"
+
+msgid "TVD State"
+msgstr "ٹی وی ڈی اسٹیٹ"
+
+msgid "Update"
+msgstr "اپڈیٹ کریں۔"
+
+msgid "Update Aborted!"
+msgstr "اپ ڈیٹ روک دیا گیا!"

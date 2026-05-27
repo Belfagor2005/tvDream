@@ -1,0 +1,63 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:27+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Turkish <gnome-turk@gnome.org>\n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Back"
+msgstr "Geri"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "Tebrikler! Zaten en son sürüme sahipsiniz..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "Güncellemeyi ( %s ) şimdi yüklemek istiyor musunuz?"
+
+msgid "Exit"
+msgstr "Çıkış"
+
+msgid "Getting the list, please wait ..."
+msgstr "Liste alınıyor, lütfen bekleyin..."
+
+msgid "Nothing ... Retry"
+msgstr "Hiçbir şey... Tekrar dene"
+
+msgid "Play"
+msgstr "Oynamak"
+
+msgid "Please select ..."
+msgstr "Lütfen seçin..."
+
+msgid "Select"
+msgstr "Seçme"
+
+msgid "Sorry no found!"
+msgstr "Üzgünüm bulunamadı!"
+
+msgid "Sorry no found!!!"
+msgstr "Üzgünüm bulunamadı!!!"
+
+msgid "TVD Regions"
+msgstr "TVD Bölgeleri"
+
+msgid "TVD State"
+msgstr "TVD Durumu"
+
+msgid "Update"
+msgstr "Güncelleme"
+
+msgid "Update Aborted!"
+msgstr "Güncelleme İptal Edildi!"

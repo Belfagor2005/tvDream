@@ -1,0 +1,62 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:25+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Sinhala\n"
+"Language: si\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Back"
+msgstr "ආපසු"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "සුභ පැතුම්! ඔබට දැනටමත් නවතම අනුවාදය ඇත..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "ඔබට දැන් යාවත්කාලීන (%s ) ස්ථාපනය කිරීමට අවශ්‍යද?"
+
+msgid "Exit"
+msgstr "පිටවෙන්න"
+
+msgid "Getting the list, please wait ..."
+msgstr "ලැයිස්තුව ලබා ගනිමින්, කරුණාකර රැඳී සිටින්න..."
+
+msgid "Nothing ... Retry"
+msgstr "කිසිවක් නැත ... නැවත උත්සාහ කරන්න"
+
+msgid "Play"
+msgstr "සෙල්ලම් කරන්න"
+
+msgid "Please select ..."
+msgstr "කරුණාකර තෝරන්න..."
+
+msgid "Select"
+msgstr "තෝරන්න"
+
+msgid "Sorry no found!"
+msgstr "සමාවෙන්න හම්බුනේ නෑ!"
+
+msgid "Sorry no found!!!"
+msgstr "සමාවෙන්න හම්බුනේ නෑ!!!"
+
+msgid "TVD Regions"
+msgstr "TVD කලාප"
+
+msgid "TVD State"
+msgstr "TVD රාජ්යය"
+
+msgid "Update"
+msgstr "යාවත්කාලීන කරන්න"
+
+msgid "Update Aborted!"
+msgstr "යාවත්කාලීන කිරීම නවත්වන ලදී!"

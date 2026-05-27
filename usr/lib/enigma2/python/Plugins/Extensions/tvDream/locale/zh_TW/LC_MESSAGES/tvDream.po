@@ -1,0 +1,62 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:28+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Language zh-TW\n"
+"Language: zh-TW\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Back"
+msgstr "後退"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "恭喜！您已經擁有最新版本..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "您想立即安裝更新 (%s) 嗎？"
+
+msgid "Exit"
+msgstr "出口"
+
+msgid "Getting the list, please wait ..."
+msgstr "正在獲取列表，請稍候..."
+
+msgid "Nothing ... Retry"
+msgstr "沒什麼...重試"
+
+msgid "Play"
+msgstr "玩"
+
+msgid "Please select ..."
+msgstr "請選擇..."
+
+msgid "Select"
+msgstr "選擇"
+
+msgid "Sorry no found!"
+msgstr "抱歉沒有找到！"
+
+msgid "Sorry no found!!!"
+msgstr "抱歉沒有找到！ ！ ！"
+
+msgid "TVD Regions"
+msgstr "TVD 地區"
+
+msgid "TVD State"
+msgstr "TVD狀態"
+
+msgid "Update"
+msgstr "更新"
+
+msgid "Update Aborted!"
+msgstr "更新中止！"

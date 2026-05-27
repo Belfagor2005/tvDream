@@ -1,0 +1,62 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:26+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Tagalog\n"
+"Language: tl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Back"
+msgstr "Bumalik"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "Congrats! Mayroon ka nang pinakabagong bersyon..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "Gusto mo bang mag-install ng update ( %s ) ngayon?"
+
+msgid "Exit"
+msgstr "Lumabas"
+
+msgid "Getting the list, please wait ..."
+msgstr "Kinukuha ang listahan, mangyaring maghintay ..."
+
+msgid "Nothing ... Retry"
+msgstr "Wala... Subukan muli"
+
+msgid "Play"
+msgstr "Maglaro"
+
+msgid "Please select ..."
+msgstr "Pakipili..."
+
+msgid "Select"
+msgstr "Pumili"
+
+msgid "Sorry no found!"
+msgstr "Paumanhin walang nahanap!"
+
+msgid "Sorry no found!!!"
+msgstr ""
+
+msgid "TVD Regions"
+msgstr "Mga Rehiyon ng TVD"
+
+msgid "TVD State"
+msgstr "Estado ng TVD"
+
+msgid "Update"
+msgstr ""
+
+msgid "Update Aborted!"
+msgstr "Na-abort ang Update!"

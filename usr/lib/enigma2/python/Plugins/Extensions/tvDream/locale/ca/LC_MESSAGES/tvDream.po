@@ -1,0 +1,62 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:17+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Catalan <ca@dodds.net>\n"
+"Language: ca\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Back"
+msgstr "Enrere"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "Felicitats! Ja tens la darrera versió..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "Voleu instal·lar l'actualització ( %s ) ara?"
+
+msgid "Exit"
+msgstr "Sortida"
+
+msgid "Getting the list, please wait ..."
+msgstr "Aconseguint la llista, espereu..."
+
+msgid "Nothing ... Retry"
+msgstr "Res... Torna-ho a provar"
+
+msgid "Play"
+msgstr "Jugar"
+
+msgid "Please select ..."
+msgstr "Seleccioneu..."
+
+msgid "Select"
+msgstr "Seleccioneu"
+
+msgid "Sorry no found!"
+msgstr "Ho sento, no s'ha trobat!"
+
+msgid "Sorry no found!!!"
+msgstr "Ho sento no s'ha trobat!!!"
+
+msgid "TVD Regions"
+msgstr "Regions TVD"
+
+msgid "TVD State"
+msgstr "Estat TVD"
+
+msgid "Update"
+msgstr "Actualització"
+
+msgid "Update Aborted!"
+msgstr "Actualització avortada!"

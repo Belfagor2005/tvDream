@@ -1,0 +1,62 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:18+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Basque <translation-team-eu@googlegroups.com>\n"
+"Language: eu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Back"
+msgstr "Itzuli"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "Zorionak! Dagoeneko duzu azken bertsioa..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "Eguneraketa ( %s ) instalatu nahi duzu orain?"
+
+msgid "Exit"
+msgstr "Irten"
+
+msgid "Getting the list, please wait ..."
+msgstr "Zerrenda eskuratzen, itxaron mesedez..."
+
+msgid "Nothing ... Retry"
+msgstr "Ezer ez... Saiatu berriro"
+
+msgid "Play"
+msgstr "Jolastu"
+
+msgid "Please select ..."
+msgstr "Mesedez, hautatu..."
+
+msgid "Select"
+msgstr "Hautatu"
+
+msgid "Sorry no found!"
+msgstr "Barkatu ez da aurkitu!"
+
+msgid "Sorry no found!!!"
+msgstr "Barkatu ez da aurkitu!!!"
+
+msgid "TVD Regions"
+msgstr "TVD Eskualdeak"
+
+msgid "TVD State"
+msgstr "TVD Estatua"
+
+msgid "Update"
+msgstr "Eguneratu"
+
+msgid "Update Aborted!"
+msgstr "Eguneratzea bertan behera utzi da!"

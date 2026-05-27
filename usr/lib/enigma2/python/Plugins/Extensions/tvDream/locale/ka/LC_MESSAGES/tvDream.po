@@ -1,0 +1,62 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:21+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Georgian <(nothing)>\n"
+"Language: ka\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Back"
+msgstr "უკან"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "გილოცავ! თქვენ უკვე გაქვთ უახლესი ვერსია..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "გსურთ განახლების ( %s ) ინსტალაცია ახლა?"
+
+msgid "Exit"
+msgstr "გასვლა"
+
+msgid "Getting the list, please wait ..."
+msgstr "სიის მიღება, გთხოვთ დაელოდოთ..."
+
+msgid "Nothing ... Retry"
+msgstr "არაფერი... ხელახლა სცადე"
+
+msgid "Play"
+msgstr "ითამაშეთ"
+
+msgid "Please select ..."
+msgstr "გთხოვთ, აირჩიოთ..."
+
+msgid "Select"
+msgstr "აირჩიეთ"
+
+msgid "Sorry no found!"
+msgstr "უკაცრავად, ვერ მოიძებნა!"
+
+msgid "Sorry no found!!!"
+msgstr "ბოდიში ვერ მოიძებნა!!!"
+
+msgid "TVD Regions"
+msgstr "TVD რეგიონები"
+
+msgid "TVD State"
+msgstr "TVD სახელმწიფო"
+
+msgid "Update"
+msgstr "განახლება"
+
+msgid "Update Aborted!"
+msgstr "განახლება შეწყდა!"

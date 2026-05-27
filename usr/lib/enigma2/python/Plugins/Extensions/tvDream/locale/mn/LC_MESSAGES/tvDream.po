@@ -1,0 +1,62 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:22+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Mongolian <openmn-translation@lists.sourceforge.net>\n"
+"Language: mn\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Back"
+msgstr "Буцах"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "Баяр хүргэе! Танд хамгийн сүүлийн хувилбар байгаа..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "Та одоо шинэчлэлтийг ( %s ) суулгахыг хүсэж байна уу?"
+
+msgid "Exit"
+msgstr "Гарах"
+
+msgid "Getting the list, please wait ..."
+msgstr "Жагсаалтыг авч байна, түр хүлээнэ үү..."
+
+msgid "Nothing ... Retry"
+msgstr "Юу ч биш ... Дахин оролдоно уу"
+
+msgid "Play"
+msgstr "Тоглох"
+
+msgid "Please select ..."
+msgstr "Сонгоно уу ..."
+
+msgid "Select"
+msgstr "Сонго"
+
+msgid "Sorry no found!"
+msgstr "Уучлаарай олдсонгүй!"
+
+msgid "Sorry no found!!!"
+msgstr "Уучлаарай олдсонгүй!!!"
+
+msgid "TVD Regions"
+msgstr "TVD бүсүүд"
+
+msgid "TVD State"
+msgstr "TVD төлөв"
+
+msgid "Update"
+msgstr "Шинэчлэх"
+
+msgid "Update Aborted!"
+msgstr "Шинэчлэлтийг зогсоосон!"

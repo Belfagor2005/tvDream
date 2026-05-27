@@ -1,0 +1,62 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:19+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Scottish Gaelic <fios@foramnagaidhlig.net>\n"
+"Language: gd\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Back"
+msgstr "Air ais"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "Mealaibh ur naidheachd! Tha an tionndadh as ùire agad mu thràth ..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "A bheil thu airson ùrachadh ( %s ) a stàladh an-dràsta?"
+
+msgid "Exit"
+msgstr "Ar-a-mach"
+
+msgid "Getting the list, please wait ..."
+msgstr "A’ faighinn an liosta, fuirich thusa…"
+
+msgid "Nothing ... Retry"
+msgstr "Chan eil dad ... Feuch a-rithist"
+
+msgid "Play"
+msgstr "Seinn"
+
+msgid "Please select ..."
+msgstr "Feuch an tagh thu ..."
+
+msgid "Select"
+msgstr "Tagh"
+
+msgid "Sorry no found!"
+msgstr "Duilich cha deach a lorg!"
+
+msgid "Sorry no found!!!"
+msgstr "Duilich cha deach a lorg !!!"
+
+msgid "TVD Regions"
+msgstr "Roinnean TVD"
+
+msgid "TVD State"
+msgstr "Stàite TVD"
+
+msgid "Update"
+msgstr "Ùraich"
+
+msgid "Update Aborted!"
+msgstr "Ùrachadh air a sguireadh!"

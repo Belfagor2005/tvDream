@@ -1,0 +1,62 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:18+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Persian <translation-team-fa@lists.sourceforge.net>\n"
+"Language: fa\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Back"
+msgstr "برگشت"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "تبریک میگم شما در حال حاضر آخرین نسخه را دارید ..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "آیا می خواهید به روز رسانی ( %s ) را اکنون نصب کنید؟"
+
+msgid "Exit"
+msgstr "خارج شوید"
+
+msgid "Getting the list, please wait ..."
+msgstr "در حال دریافت لیست، لطفا صبر کنید..."
+
+msgid "Nothing ... Retry"
+msgstr "هیچی... دوباره امتحان کنید"
+
+msgid "Play"
+msgstr "بازی کنید"
+
+msgid "Please select ..."
+msgstr "لطفا انتخاب کنید..."
+
+msgid "Select"
+msgstr "انتخاب کنید"
+
+msgid "Sorry no found!"
+msgstr "با عرض پوزش یافت نشد!"
+
+msgid "Sorry no found!!!"
+msgstr "ببخشید پیدا نشد!!!"
+
+msgid "TVD Regions"
+msgstr "مناطق TVD"
+
+msgid "TVD State"
+msgstr "وضعیت TVD"
+
+msgid "Update"
+msgstr "به روز رسانی"
+
+msgid "Update Aborted!"
+msgstr "به روز رسانی لغو شد!"

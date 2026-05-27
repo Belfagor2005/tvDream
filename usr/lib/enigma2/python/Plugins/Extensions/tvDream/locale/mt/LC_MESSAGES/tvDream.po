@@ -1,0 +1,62 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:23+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Maltese <translation-team-mt@lists.sourceforge.net>\n"
+"Language: mt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Back"
+msgstr "Lura"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "Prosit! Diġà għandek l-aħħar verżjoni..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "Trid tinstalla l-aġġornament ( %s ) issa?"
+
+msgid "Exit"
+msgstr "Ħruġ"
+
+msgid "Getting the list, please wait ..."
+msgstr "Nibdew il-lista, jekk jogħġbok stenna..."
+
+msgid "Nothing ... Retry"
+msgstr "Xejn... Erġa' pprova"
+
+msgid "Play"
+msgstr ""
+
+msgid "Please select ..."
+msgstr "Jekk jogħġbok agħżel..."
+
+msgid "Select"
+msgstr "Agħżel"
+
+msgid "Sorry no found!"
+msgstr "Jiddispjacini ma nstabx!"
+
+msgid "Sorry no found!!!"
+msgstr "Jiddispjacini ma nstabx!!!"
+
+msgid "TVD Regions"
+msgstr "Reġjuni TVD"
+
+msgid "TVD State"
+msgstr "TVD Istat"
+
+msgid "Update"
+msgstr "Aġġornament"
+
+msgid "Update Aborted!"
+msgstr "Aġġornament Abortat!"

@@ -1,0 +1,62 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:22+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Kurdish <translation-team-ku (at) ferheng.org>\n"
+"Language: ku\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Back"
+msgstr "Paş"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "Pîroz be! Berê te guhertoya herî dawî heye..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "Tu dixwazî ​​nûvekirina ( %s ) niha saz bikî?"
+
+msgid "Exit"
+msgstr "Derî"
+
+msgid "Getting the list, please wait ..."
+msgstr "Distînin navnîşê, ji kerema xwe li bendê bin ..."
+
+msgid "Nothing ... Retry"
+msgstr "Tiştek ... Dubare biceribîne"
+
+msgid "Play"
+msgstr "Bazî"
+
+msgid "Please select ..."
+msgstr "Ji kerema xwe hilbijêrin ..."
+
+msgid "Select"
+msgstr "Neqandin"
+
+msgid "Sorry no found!"
+msgstr "Mixabin nehat dîtin!"
+
+msgid "Sorry no found!!!"
+msgstr "Mixabin nehat dîtin!!!"
+
+msgid "TVD Regions"
+msgstr "Herêmên TVD"
+
+msgid "TVD State"
+msgstr "Dewleta TVD"
+
+msgid "Update"
+msgstr "Nûvekirin"
+
+msgid "Update Aborted!"
+msgstr "Nûvekirin hate betal kirin!"

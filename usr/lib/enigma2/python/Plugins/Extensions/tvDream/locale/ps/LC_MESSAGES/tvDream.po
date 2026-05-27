@@ -1,0 +1,62 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:24+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Pashto\n"
+"Language: ps\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Back"
+msgstr "شاته"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "مبارک شه! تاسو لا دمخه وروستۍ نسخه لرئ ..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "ایا تاسو غواړئ اوسمهال (%s) نصب کړئ؟"
+
+msgid "Exit"
+msgstr "وتل"
+
+msgid "Getting the list, please wait ..."
+msgstr "لیست ترلاسه کول، مهرباني وکړئ انتظار وکړئ ..."
+
+msgid "Nothing ... Retry"
+msgstr "هیڅ نه ... بیا هڅه وکړئ"
+
+msgid "Play"
+msgstr "لوبې"
+
+msgid "Please select ..."
+msgstr "مهرباني وکړئ غوره کړئ ..."
+
+msgid "Select"
+msgstr "وټاکئ"
+
+msgid "Sorry no found!"
+msgstr "بخښنه ونه موندل شوه!"
+
+msgid "Sorry no found!!!"
+msgstr "بخښنه ونه موندل شوه !!!"
+
+msgid "TVD Regions"
+msgstr "د TVD سیمې"
+
+msgid "TVD State"
+msgstr "د تلویزیون ریاست"
+
+msgid "Update"
+msgstr "تازه کول"
+
+msgid "Update Aborted!"
+msgstr "تازه کول لغوه شوي!"

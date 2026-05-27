@@ -1,0 +1,62 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:24+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Punjabi <punjabi-l10n@lists.sourceforge.net>\n"
+"Language: pa\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Back"
+msgstr "ਪਿੱਛੇ"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "ਵਧਾਈਆਂ! ਤੁਹਾਡੇ ਕੋਲ ਪਹਿਲਾਂ ਹੀ ਨਵੀਨਤਮ ਸੰਸਕਰਣ ਹੈ..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "ਕੀ ਤੁਸੀਂ ਹੁਣੇ ਅੱਪਡੇਟ (%s) ਨੂੰ ਸਥਾਪਿਤ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?"
+
+msgid "Exit"
+msgstr "ਨਿਕਾਸ"
+
+msgid "Getting the list, please wait ..."
+msgstr "ਸੂਚੀ ਪ੍ਰਾਪਤ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ, ਕਿਰਪਾ ਕਰਕੇ ਉਡੀਕ ਕਰੋ..."
+
+msgid "Nothing ... Retry"
+msgstr "ਕੁਝ ਨਹੀਂ... ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ"
+
+msgid "Play"
+msgstr "ਖੇਡੋ"
+
+msgid "Please select ..."
+msgstr "ਕਿਰਪਾ ਕਰਕੇ ਚੁਣੋ..."
+
+msgid "Select"
+msgstr "ਚੁਣੋ"
+
+msgid "Sorry no found!"
+msgstr "ਮਾਫ ਕਰਨਾ ਕੋਈ ਨਹੀਂ ਮਿਲਿਆ!"
+
+msgid "Sorry no found!!!"
+msgstr "ਮਾਫ ਕਰਨਾ ਕੋਈ ਨਹੀਂ ਮਿਲਿਆ !!!"
+
+msgid "TVD Regions"
+msgstr "TVD ਖੇਤਰ"
+
+msgid "TVD State"
+msgstr "TVD ਸਥਿਤੀ"
+
+msgid "Update"
+msgstr "ਅੱਪਡੇਟ ਕਰੋ"
+
+msgid "Update Aborted!"
+msgstr "ਅੱਪਡੇਟ ਅਧੂਰਾ ਛੱਡਿਆ ਗਿਆ!"

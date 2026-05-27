@@ -1,0 +1,62 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:21+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Central Khmer\n"
+"Language: km\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Back"
+msgstr "ត្រឡប់មកវិញ"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "អបអរសាទរ! អ្នកមានកំណែចុងក្រោយបង្អស់..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "តើអ្នកចង់ដំឡើងអាប់ដេត (%s) ឥឡូវនេះទេ?"
+
+msgid "Exit"
+msgstr "ចេញ"
+
+msgid "Getting the list, please wait ..."
+msgstr "ទទួលបានបញ្ជី សូមរង់ចាំ..."
+
+msgid "Nothing ... Retry"
+msgstr "គ្មានអ្វីទេ... ព្យាយាមម្តងទៀត"
+
+msgid "Play"
+msgstr "លេង"
+
+msgid "Please select ..."
+msgstr "សូមជ្រើសរើស..."
+
+msgid "Select"
+msgstr "ជ្រើសរើស"
+
+msgid "Sorry no found!"
+msgstr "សុំទោសរកមិនឃើញ!"
+
+msgid "Sorry no found!!!"
+msgstr "សុំទោសរកមិនឃើញ!!!"
+
+msgid "TVD Regions"
+msgstr "តំបន់ TVD"
+
+msgid "TVD State"
+msgstr "រដ្ឋ TVD"
+
+msgid "Update"
+msgstr "ធ្វើបច្ចុប្បន្នភាព"
+
+msgid "Update Aborted!"
+msgstr "ការអាប់ដេតត្រូវបានលុបចោល!"

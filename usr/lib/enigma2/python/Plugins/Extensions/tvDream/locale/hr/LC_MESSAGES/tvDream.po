@@ -1,0 +1,63 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:20+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Croatian <lokalizacija@linux.hr>\n"
+"Language: hr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "Back"
+msgstr "Nazad"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "Svaka čast! Već imate najnoviju verziju..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "Želite li sada instalirati ažuriranje ( %s )?"
+
+msgid "Exit"
+msgstr "Izlaz"
+
+msgid "Getting the list, please wait ..."
+msgstr "Dobivanje popisa, pričekajte..."
+
+msgid "Nothing ... Retry"
+msgstr "Ništa... Pokušaj ponovo"
+
+msgid "Play"
+msgstr "Igrati"
+
+msgid "Please select ..."
+msgstr "Odaberite..."
+
+msgid "Select"
+msgstr "Odaberite"
+
+msgid "Sorry no found!"
+msgstr "Nažalost nije pronađeno!"
+
+msgid "Sorry no found!!!"
+msgstr "Nažalost nije pronađeno!!!"
+
+msgid "TVD Regions"
+msgstr "TVD regije"
+
+msgid "TVD State"
+msgstr "TVD država"
+
+msgid "Update"
+msgstr "Ažurirati"
+
+msgid "Update Aborted!"
+msgstr "Ažuriranje prekinuto!"

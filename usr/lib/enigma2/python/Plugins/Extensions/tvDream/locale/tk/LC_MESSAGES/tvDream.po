@@ -1,0 +1,62 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:26+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Turkmen\n"
+"Language: tk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Back"
+msgstr "Yzyna"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "Gutlaýarys! Sizde iň soňky wersiýa bar ..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "Indi täzelenme (% s) gurmak isleýärsiňizmi?"
+
+msgid "Exit"
+msgstr "Çyk"
+
+msgid "Getting the list, please wait ..."
+msgstr "Sanawy almak üçin garaşyň ..."
+
+msgid "Nothing ... Retry"
+msgstr "Hiç zat ... Gaýtadan synanyşyň"
+
+msgid "Play"
+msgstr "Oýna"
+
+msgid "Please select ..."
+msgstr "Saýlaň ..."
+
+msgid "Select"
+msgstr "Saýlaň"
+
+msgid "Sorry no found!"
+msgstr "Bagyşlaň, tapylmady!"
+
+msgid "Sorry no found!!!"
+msgstr "Bagyşlaň, tapylmady !!!"
+
+msgid "TVD Regions"
+msgstr "TVD sebitleri"
+
+msgid "TVD State"
+msgstr "TVD ýagdaýy"
+
+msgid "Update"
+msgstr "Täzelen"
+
+msgid "Update Aborted!"
+msgstr "Täzelenme ýatyryldy!"

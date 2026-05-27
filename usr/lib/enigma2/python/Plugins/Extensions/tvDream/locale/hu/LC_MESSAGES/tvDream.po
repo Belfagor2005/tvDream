@@ -1,0 +1,63 @@
+# tvDream translations
+# Copyright (C) 2025 Lululla Team
+# This file is distributed under the same license as the Lululla package.
+# [lululla] <ekekaz@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tvDream\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2026-05-27 19:20+0000\n"
+"Last-Translator:  <EMAIL@ADDRESS>\n"
+"Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
+"Language: hu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Back"
+msgstr "Vissza"
+
+msgid "Congrats! You already have the latest version..."
+msgstr "Gratulálunk! Már megvan a legújabb verzió..."
+
+msgid "Do you want to install update ( %s ) now?"
+msgstr "Szeretné most telepíteni a frissítést ( %s )?"
+
+msgid "Exit"
+msgstr "Kijárat"
+
+msgid "Getting the list, please wait ..."
+msgstr "A lista lekérése, kérem, várjon..."
+
+msgid "Nothing ... Retry"
+msgstr "Semmi... Próbáld újra"
+
+msgid "Play"
+msgstr "Játék"
+
+msgid "Please select ..."
+msgstr "Kérjük, válasszon..."
+
+msgid "Select"
+msgstr "Válassza ki"
+
+msgid "Sorry no found!"
+msgstr "Sajnos nem található!"
+
+msgid "Sorry no found!!!"
+msgstr "Sajnos nem található!!!"
+
+msgid "TVD Regions"
+msgstr "TVD régiók"
+
+msgid "TVD State"
+msgstr "TVD állam"
+
+msgid "Update"
+msgstr "Frissítés"
+
+msgid "Update Aborted!"
+msgstr "Frissítés megszakítva!"
