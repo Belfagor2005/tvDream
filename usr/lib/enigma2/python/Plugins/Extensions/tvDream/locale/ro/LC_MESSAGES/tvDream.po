@@ -54,7 +54,7 @@ msgid "TVD Regions"
 msgstr "Regiunile TVD"
 
 msgid "TVD State"
-msgstr ""
+msgstr "Stare TVD"
 
 msgid "Update"
 msgstr "Actualizare"
