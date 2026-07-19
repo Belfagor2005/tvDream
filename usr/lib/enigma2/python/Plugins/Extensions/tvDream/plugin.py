@@ -43,7 +43,7 @@ import json
 
 from . import _, __version__
 from . import Utils
-from . import html_conv
+from .lib.html_conv import html_unescape
 from .Console import Console as xConsole
 
 '''
@@ -205,7 +205,7 @@ def returnIMDB(text_clear):
     TMDB = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('TMDB'))
     tmdb = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('tmdb'))
     IMDb = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('IMDb'))
-    text = html_conv.html_unescape(text_clear)
+    text = html_unescape(text_clear)
     if os.path.exists(TMDB):
         try:
             from Plugins.Extensions.TMBD.plugin import TMBD
@@ -468,7 +468,7 @@ class State(Screen):
                     print('name : ', name)
                     print('url:  ', url)
                     self.urls.append(url)
-                    self.names.append(html_conv.html_unescape(name))
+                    self.names.append(html_unescape(name))
             except BaseException:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
@@ -551,7 +551,7 @@ class tvRegioni(Screen):
                     if 'Logo di TVdream' in name:
                         continue
                     self.urls.append(url)
-                    self.names.append(html_conv.html_unescape(name))
+                    self.names.append(html_unescape(name))
             except BaseException:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
@@ -626,7 +626,7 @@ class tvItalia(Screen):
                     print('name it : ', name)
                     print('url it:  ', url1)
                     self.urls.append(url1)
-                    self.names.append(html_conv.html_unescape(name))
+                    self.names.append(html_unescape(name))
             except BaseException:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
@@ -703,7 +703,7 @@ class tvCanal(Screen):
                 if 'Logo di TVdream' in name:
                     continue
                 self.urls.append(url)
-                self.names.append(html_conv.html_unescape(name))
+                self.names.append(html_unescape(name))
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
             showlist(self.names, self['text'])
@@ -1024,7 +1024,7 @@ class tvCategory(Screen):
                     print('name : ', name)
                     print('url:  ', url)
                     self.urls.append(url)
-                    self.names.append(html_conv.html_unescape(name))
+                    self.names.append(html_unescape(name))
             except BaseException:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
@@ -1099,7 +1099,7 @@ class subCategory(Screen):
                     print('name it : ', name)
                     print('url it:  ', url1)
                     self.urls.append(url1)
-                    self.names.append(html_conv.html_unescape(name))
+                    self.names.append(html_unescape(name))
             except BaseException:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
@@ -1178,7 +1178,7 @@ class tvNew(Screen):
                     if 'Logo di TVdream' in name:
                         continue
                     self.urls.append(url)
-                    self.names.append(html_conv.html_unescape(name))
+                    self.names.append(html_unescape(name))
             except BaseException:
                 self['info'].setText(_('Nothing ... Retry'))
             self['info'].setText(_('Please select ...'))
@@ -1596,7 +1596,7 @@ class Playstream2(InfoBarBase,
         self.service = None
         self.url = url
         self.pcip = 'None'
-        self.name = html_conv.html_unescape(name)
+        self.name = html_unescape(name)
         self.state = self.STATE_PLAYING
         self.srefInit = self.session.nav.getCurrentlyPlayingServiceReference()
         if '8088' in str(self.url):
